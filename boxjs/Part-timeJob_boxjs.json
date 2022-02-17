@@ -1,0 +1,57 @@
+{
+  "id": "Part-timeJob",
+  "name": "打工仔",
+  "author": "@CrawlID",
+  "icon": "https://raw.githubusercontent.com/Former-Years/icon/master/Part-timeJob.png",
+  "repo": "",
+  "apps": [
+    {
+      "id": "CrawlID",
+      "name": "组队瓜分/会员开卡/关注有礼/收藏有礼",
+      "keys": [
+        "TG_BOT_TOKEN",
+        "TG_USER_ID",
+        "QUOTATION"
+      ],
+      "settings": [
+        {
+          "id": "TG_BOT_TOKEN",
+          "name": "TG_BOT_TOKEN",
+          "val": "",
+          "type": "text",
+          "placeholder": "123:ABCD",
+          "autoGrow": true,
+          "rows": 2,
+          "desc": "输入后你将是一个合格的打工人"
+        },
+        {
+          "id": "TG_USER_ID",
+          "name": "TG群组ID",
+          "type": "text",
+          "val": "-1001589058412",
+          "placeholder": "TG群组ID",
+          "autoGrow": true,
+          "rows": 2,
+          "desc": "默认为偷撸群ID-1001589058412"
+        },
+        {
+          "id": "QUOTATION",
+          "name": "打工语录",
+          "type": "textarea",
+          "val": "",
+          "placeholder": "打工人，打工魂！",
+          "autoGrow": false,
+          "rows": 4,
+          "desc": "使用&分割"
+        }
+      ],
+      "author": "@打工仔",
+      "repo": "",
+      "script": "",
+      "icons": [
+        "https://raw.githubusercontent.com/Former-Years/icon/master/Part-timeJob.png",
+        "https://raw.githubusercontent.com/Former-Years/icon/master/Part-timeJob.png"
+      ]
+    }
+  ]
+}
