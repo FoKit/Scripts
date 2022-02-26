@@ -1,9 +1,0 @@
-#!name=获取 京东 Cookie
-#!desc=使用浏览器访问 https://bean.m.jd.com/bean/signIndex.action 点击签到即可获取Cookie
-
-[Script]
-# > 京东系列
-获取CK = type=http-response,pattern=https:\/\/api\.m\.jd\.com\/client\.action.*functionId=signBean,requires-body=0,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/NobyDa/Script/master/JD-DailyBonus/JD_DailyBonus.js
-
-[MITM]
-hostname = %INSERT% api.m.jd.com
