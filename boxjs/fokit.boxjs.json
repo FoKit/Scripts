@@ -69,6 +69,18 @@
                     "type": "text"
                 },
                 {
+                    "id": "@ql.client_id_ng",
+                    "name": "脑瓜Client ID",
+                    "val": "",
+                    "type": "text"
+                },
+                {
+                    "id": "@ql.client_secret_ng",
+                    "name": "脑瓜Client Secret",
+                    "val": "",
+                    "type": "text"
+                },
+                {
                     "id": "@ql.mute",
                     "name": "静默同步（BoxJs⁩▸⁩⁨青龙）",
                     "val": false,
