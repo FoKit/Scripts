@@ -1,6 +1,6 @@
 {
     "id": "fokit.app.sub",
-    "name": "FoKit自用订阅",
+    "name": "FoKit 自用订阅",
     "author": "@FoKit",
     "icon": "https://avatars.githubusercontent.com/u/44187836",
     "repo": "https://github.com/FoKit",
@@ -10,21 +10,13 @@
             "name": "数据同步",
             "author": "@FoKit",
             "descs_html": [
-                "用于脑瓜容器、青龙容器和BoxJS之间的数据同步"
+                "用于 青龙、ng 容器和 BoxJS 之间的数据同步"
             ],
             "icons": [
                 "https://raw.githubusercontent.com/FoKit/Quantumult-X/main/images/sync.png",
                 "https://raw.githubusercontent.com/FoKit/Quantumult-X/main/images/sync.png"
             ],
             "keys": [
-                "@ql.ip_ng",
-                "@ql.client_id_ng",
-                "@ql.client_secret_ng",
-                "@ql.username_ng",
-                "@ql.password_ng",
-                "@ql.env_ng",
-                "@ql.mute_ng",
-                "@ql.is_pwd_ng",
                 "@ql.ip",
                 "@ql.client_id",
                 "@ql.client_secret",
@@ -32,57 +24,20 @@
                 "@ql.password",
                 "@ql.env",
                 "@ql.mute",
-                "@ql.is_pwd"
+                "@ql.is_pwd",
+                "@ql.ip_ng",
+                "@ql.client_id_ng",
+                "@ql.client_secret_ng",
+                "@ql.username_ng",
+                "@ql.password_ng",
+                "@ql.env_ng",
+                "@ql.mute_ng",
+                "@ql.is_pwd_ng"
             ],
             "settings": [
                 {
-                    "id": "@ql.mute_ng",
-                    "name": "静默同步（脑瓜▸BoxJs⁩）",
-                    "val": false,
-                    "type": "boolean",
-                    "desc": "同步时不会显示通知"
-                },
-                {
-                    "id": "@ql.is_pwd_ng",
-                    "name": "使用密码登陆",
-                    "val": true,
-                    "type": "boolean",
-                    "desc": "同步时优先使用密码登陆"
-                },
-                {
-                    "id": "@ql.ip_ng",
-                    "name": "脑瓜容器登陆地址",
-                    "val": "",
-                    "type": "text",
-                    "placeholder": "ip:port"
-                },
-                {
-                    "id": "@ql.username_ng",
-                    "name": "脑瓜容器账号",
-                    "val": "",
-                    "type": "text"
-                },
-                {
-                    "id": "@ql.password_ng",
-                    "name": "脑瓜容器密码",
-                    "val": "",
-                    "type": "text"
-                },
-                {
-                    "id": "@ql.client_id_ng",
-                    "name": "脑瓜Client ID",
-                    "val": "",
-                    "type": "text"
-                },
-                {
-                    "id": "@ql.client_secret_ng",
-                    "name": "脑瓜Client Secret",
-                    "val": "",
-                    "type": "text"
-                },
-                {
                     "id": "@ql.mute",
-                    "name": "静默同步（BoxJs⁩▸⁩⁨青龙）",
+                    "name": "静默同步（BoxJs⁩ ▸⁩⁨ 青龙）",
                     "val": false,
                     "type": "boolean",
                     "desc": "同步时不会显示通知"
@@ -92,7 +47,7 @@
                     "name": "使用密码登陆青龙容器",
                     "val": false,
                     "type": "boolean",
-                    "desc": "同步时优先使用密码登陆"
+                    "desc": "优先使用密码登陆"
                 },
                 {
                     "id": "@ql.ip",
@@ -115,34 +70,83 @@
                 },
                 {
                     "id": "@ql.client_id",
-                    "name": "青龙Client ID",
+                    "name": "青龙 Client ID",
                     "val": "",
                     "type": "text"
                 },
                 {
                     "id": "@ql.client_secret",
-                    "name": "青龙Client Secret",
+                    "name": "青龙 Client Secret",
+                    "val": "",
+                    "type": "text"
+                },
+                {
+                    "id": "@ql.mute_ng",
+                    "name": "静默同步（脑瓜 ▸ BoxJs⁩）",
+                    "val": false,
+                    "type": "boolean",
+                    "desc": "同步时不会显示通知"
+                },
+                {
+                    "id": "@ql.is_pwd_ng",
+                    "name": "使用密码登陆",
+                    "val": true,
+                    "type": "boolean",
+                    "desc": "优先使用密码登陆"
+                },
+                {
+                    "id": "@ql.ip_ng",
+                    "name": "脑瓜容器登陆地址",
+                    "val": "",
+                    "type": "text",
+                    "placeholder": "ip:port"
+                },
+                {
+                    "id": "@ql.username_ng",
+                    "name": "脑瓜容器账号",
+                    "val": "",
+                    "type": "text"
+                },
+                {
+                    "id": "@ql.password_ng",
+                    "name": "脑瓜容器密码",
+                    "val": "",
+                    "type": "text"
+                },
+                {
+                    "id": "@ql.client_id_ng",
+                    "name": "脑瓜 Client ID",
+                    "val": "",
+                    "type": "text"
+                },
+                {
+                    "id": "@ql.client_secret_ng",
+                    "name": "脑瓜 Client Secret",
                     "val": "",
                     "type": "text"
                 }
             ],
             "scripts": [
                 {
-                    "name": "脑瓜容器同步到BoxJS",
+                    "name": "青龙容器同步到 BoxJS",
+                    "script": "https://raw.githubusercontent.com/dompling/Script/master/jd/ql_sync_box.js"
+                },
+                {
+                    "name": "脑瓜容器同步到 BoxJS",
                     "script": "https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/ng_sync_box.js"
                 },
                 {
-                    "name": "BoxJS同步到青龙容器",
+                    "name": "BoxJS 同步到青龙容器",
                     "script": "https://raw.githubusercontent.com/dompling/Script/master/jd/ql_cookie_sync.js"
                 }
             ]
         },
         {
             "id": "wskey",
-            "name": "京东WsKey",
+            "name": "京东 WsKey",
             "author": "@FoKit",
             "descs_html": [
-                "用于自动抓取京东WsKey"
+                "用于自动抓取京东 WsKey"
             ],
             "icons": [
                 "https://raw.githubusercontent.com/FoKit/Quantumult-X/main/images/jdjoy.png",
@@ -156,24 +160,24 @@
             "settings": [
                 {
                     "id": "WSKEY_TG_BOT_TOKEN",
-                    "name": "Telegram机器人Token",
+                    "name": "Telegram 机器人 Token",
                     "val": "",
                     "type": "text",
-                    "desc": "填写Telegram机器人的Token"
+                    "desc": "填写 Telegram 机器人的 Token"
                 },
                 {
                     "id": "WSKEY_TG_USER_ID",
                     "name": "Telegram会话ID",
                     "val": "[\"-1001701121614\"]",
                     "type": "text",
-                    "desc": "填写Telegram会话ID，以数组形式保存[\"-1001701121614\"]"
+                    "desc": "填写 Telegram 会话 ID，以数组形式保存[\"-1001701121614\"]"
                 },
                 {
                     "id": "wskeyList",
-                    "name": "京东WsKey",
+                    "name": "京东 WsKey",
                     "val": "",
                     "type": "text",
-                    "desc": "京东WsKey列表"
+                    "desc": "京东 WsKey 列表"
                 }
             ]
         }
