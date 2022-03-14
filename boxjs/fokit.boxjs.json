@@ -99,7 +99,7 @@
                     "name": "青龙容器登陆地址",
                     "val": "",
                     "type": "text",
-                    "placeholder": "111.21.0.32:5700"
+                    "placeholder": "ip:port"
                 },
                 {
                     "id": "@ql.username",
