@@ -10,7 +10,7 @@
             "name": "数据同步",
             "author": "@FoKit",
             "descs_html": [
-                "用于 青龙、ng 容器和 BoxJS 之间的数据同步"
+                "用于 QL / NG 和 BoxJS 之间的数据同步"
             ],
             "icons": [
                 "https://raw.githubusercontent.com/FoKit/Quantumult-X/main/images/sync.png",
@@ -37,52 +37,52 @@
             "settings": [
                 {
                     "id": "@ql.mute",
-                    "name": "静默同步（BoxJs⁩ ▸⁩⁨ 青龙）",
+                    "name": "静默同步（BoxJs⁩ > QL）",
                     "val": false,
                     "type": "boolean",
                     "desc": "同步时不会显示通知"
                 },
                 {
                     "id": "@ql.is_pwd",
-                    "name": "使用密码登陆青龙容器",
+                    "name": "使用密码登陆 QL 容器",
                     "val": false,
                     "type": "boolean",
                     "desc": "优先使用密码登陆"
                 },
                 {
                     "id": "@ql.ip",
-                    "name": "青龙容器登陆地址",
+                    "name": "QL Domains",
                     "val": "",
                     "type": "text",
                     "placeholder": "ip:port"
                 },
                 {
                     "id": "@ql.username",
-                    "name": "青龙容器账号",
+                    "name": "QL UserName",
                     "val": "",
                     "type": "text"
                 },
                 {
                     "id": "@ql.password",
-                    "name": "青龙容器密码",
+                    "name": "QL PassWord",
                     "val": "",
                     "type": "text"
                 },
                 {
                     "id": "@ql.client_id",
-                    "name": "青龙 Client ID",
+                    "name": "QL Client ID",
                     "val": "",
                     "type": "text"
                 },
                 {
                     "id": "@ql.client_secret",
-                    "name": "青龙 Client Secret",
+                    "name": "QL Client Secret",
                     "val": "",
                     "type": "text"
                 },
                 {
                     "id": "@ql.mute_ng",
-                    "name": "静默同步（脑瓜 ▸ BoxJs⁩）",
+                    "name": "静默同步（NG > BoxJs⁩）",
                     "val": false,
                     "type": "boolean",
                     "desc": "同步时不会显示通知"
@@ -96,47 +96,47 @@
                 },
                 {
                     "id": "@ql.ip_ng",
-                    "name": "脑瓜容器登陆地址",
+                    "name": "NG Domains",
                     "val": "",
                     "type": "text",
                     "placeholder": "ip:port"
                 },
                 {
                     "id": "@ql.username_ng",
-                    "name": "脑瓜容器账号",
+                    "name": "NG UserName",
                     "val": "",
                     "type": "text"
                 },
                 {
                     "id": "@ql.password_ng",
-                    "name": "脑瓜容器密码",
+                    "name": "NG PassWord",
                     "val": "",
                     "type": "text"
                 },
                 {
                     "id": "@ql.client_id_ng",
-                    "name": "脑瓜 Client ID",
+                    "name": "NG Client ID",
                     "val": "",
                     "type": "text"
                 },
                 {
                     "id": "@ql.client_secret_ng",
-                    "name": "脑瓜 Client Secret",
+                    "name": "NG Client Secret",
                     "val": "",
                     "type": "text"
                 }
             ],
             "scripts": [
                 {
-                    "name": "青龙容器同步到 BoxJS",
+                    "name": "QL 同步到 BoxJS",
                     "script": "https://raw.githubusercontent.com/dompling/Script/master/jd/ql_sync_box.js"
                 },
                 {
-                    "name": "脑瓜容器同步到 BoxJS",
+                    "name": "NG  同步到 BoxJS",
                     "script": "https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/ng_sync_box.js"
                 },
                 {
-                    "name": "BoxJS 同步到青龙容器",
+                    "name": "BoxJS 同步到 QL",
                     "script": "https://raw.githubusercontent.com/dompling/Script/master/jd/ql_cookie_sync.js"
                 }
             ]
