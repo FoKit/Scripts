@@ -163,7 +163,7 @@
                     "name": "Telegram 机器人 Token",
                     "val": "",
                     "type": "text",
-                    "desc": "填写 Telegram 机器人的 Token"
+                    "desc": "填写 Telegram 机器人的 Token，格式：123456:abcdefgabcdefgabcdefg"
                 },
                 {
                     "id": "WSKEY_TG_USER_ID",
