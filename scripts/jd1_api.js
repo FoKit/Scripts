@@ -66,17 +66,17 @@ try {
   $.ql_config = {};
 }
 
-$.ql_url = $.ql_config.ip_ng;
+$.ql_url = $.ql_config.ip_jd1;
 if (!$.ql_url.match(/^(http|https)/)) $.ql_url = `http://${$.ql_url}`;
 
 $.application = {
-  client_id: $.ql_config.client_id_ng,
-  client_secret: $.ql_config.client_secret_ng,
+  client_id: $.ql_config.client_id_jd1,
+  client_secret: $.ql_config.client_secret_jd1,
 };
 
 $.ql_account = {
-  username: $.ql_config.username_ng,
-  password: $.ql_config.password_ng,
+  username: $.ql_config.username_jd1,
+  password: $.ql_config.password_jd1,
 };
 
 $.log(`地址：${$.ql_url}`);
@@ -86,7 +86,7 @@ function noReady() {
   $.log('请配置好相关信息');
 }
 
-if ($.ql_config.is_pwd_ng === 'true') {
+if ($.ql_config.is_pwd_jd1 === 'true') {
   if ($.ql_account.username && $.ql_account.password) {
     $.ql.login = async () => {
       const options = {
