@@ -10,134 +10,130 @@
             "name": "数据同步",
             "author": "@FoKit",
             "descs_html": [
-                "用于 QL / NG 和 BoxJS 之间的数据同步"
+                "用于 JD1 / JD2 和 BoxJS 之间的数据同步"
             ],
             "icons": [
                 "https://raw.githubusercontent.com/FoKit/Quantumult-X/main/images/sync.png",
                 "https://raw.githubusercontent.com/FoKit/Quantumult-X/main/images/sync.png"
             ],
             "keys": [
-                "@ql.ip",
-                "@ql.client_id",
-                "@ql.client_secret",
-                "@ql.username",
-                "@ql.password",
-                "@ql.env",
-                "@ql.mute",
-                "@ql.is_pwd",
-                "@ql.ip_ng",
-                "@ql.client_id_ng",
-                "@ql.client_secret_ng",
-                "@ql.username_ng",
-                "@ql.password_ng",
-                "@ql.env_ng",
-                "@ql.mute_ng",
-                "@ql.is_pwd_ng"
+                "@ql.ip_jd1",
+                "@ql.client_id_jd1",
+                "@ql.client_secret_jd1",
+                "@ql.username_jd1",
+                "@ql.password_jd1",
+                "@ql.env_jd1",
+                "@ql.mute_jd1",
+                "@ql.is_pwd_jd1",
+                "@ql.ip_jd2",
+                "@ql.client_id_jd2",
+                "@ql.client_secret_jd2",
+                "@ql.username_jd2",
+                "@ql.password_jd2",
+                "@ql.env_jd2",
+                "@ql.mute_jd2",
+                "@ql.is_pwd_jd2"
             ],
             "settings": [
                 {
-                    "id": "@ql.mute",
-                    "name": "静默同步（BoxJs⁩ > QL）",
+                    "id": "@ql.mute_jd1",
+                    "name": "静默同步（BoxJs > JD1）",
                     "val": false,
                     "type": "boolean",
                     "desc": "同步时不会显示通知"
                 },
                 {
-                    "id": "@ql.is_pwd",
-                    "name": "使用密码登陆 QL 容器",
+                    "id": "@ql.is_pwd_jd1",
+                    "name": "使用密码登陆 JD1 容器",
                     "val": false,
                     "type": "boolean",
                     "desc": "优先使用密码登陆"
                 },
                 {
-                    "id": "@ql.ip",
-                    "name": "QL Domains",
+                    "id": "@ql.ip_jd1",
+                    "name": "JD1 Domains",
                     "val": "",
                     "type": "text",
                     "placeholder": "ip:port"
                 },
                 {
-                    "id": "@ql.username",
-                    "name": "QL UserName",
+                    "id": "@ql.username_jd1",
+                    "name": "JD1 UserName",
                     "val": "",
                     "type": "text"
                 },
                 {
-                    "id": "@ql.password",
-                    "name": "QL PassWord",
+                    "id": "@ql.password_jd1",
+                    "name": "JD1 PassWord",
                     "val": "",
                     "type": "text"
                 },
                 {
-                    "id": "@ql.client_id",
-                    "name": "QL Client ID",
+                    "id": "@ql.client_id_jd1",
+                    "name": "JD1 Client ID",
                     "val": "",
                     "type": "text"
                 },
                 {
-                    "id": "@ql.client_secret",
-                    "name": "QL Client Secret",
+                    "id": "@ql.client_secret_jd1",
+                    "name": "JD1 Client Secret",
                     "val": "",
                     "type": "text"
                 },
                 {
-                    "id": "@ql.mute_ng",
-                    "name": "静默同步（NG > BoxJs⁩）",
+                    "id": "@ql.mute_jd2",
+                    "name": "静默同步（JD2 > BoxJs）",
                     "val": false,
                     "type": "boolean",
                     "desc": "同步时不会显示通知"
                 },
                 {
-                    "id": "@ql.is_pwd_ng",
+                    "id": "@ql.is_pwd_jd2",
                     "name": "使用密码登陆",
                     "val": true,
                     "type": "boolean",
                     "desc": "优先使用密码登陆"
                 },
                 {
-                    "id": "@ql.ip_ng",
-                    "name": "NG Domains",
+                    "id": "@ql.ip_jd2",
+                    "name": "JD2 Domains",
                     "val": "",
                     "type": "text",
                     "placeholder": "ip:port"
                 },
                 {
-                    "id": "@ql.username_ng",
-                    "name": "NG UserName",
+                    "id": "@ql.username_jd2",
+                    "name": "JD2 UserName",
                     "val": "",
                     "type": "text"
                 },
                 {
-                    "id": "@ql.password_ng",
-                    "name": "NG PassWord",
+                    "id": "@ql.password_jd2",
+                    "name": "JD2 PassWord",
                     "val": "",
                     "type": "text"
                 },
                 {
-                    "id": "@ql.client_id_ng",
-                    "name": "NG Client ID",
+                    "id": "@ql.client_id_jd2",
+                    "name": "JD2 Client ID",
                     "val": "",
                     "type": "text"
                 },
                 {
-                    "id": "@ql.client_secret_ng",
-                    "name": "NG Client Secret",
+                    "id": "@ql.client_secret_jd2",
+                    "name": "JD2 Client Secret",
                     "val": "",
                     "type": "text"
                 }
             ],
             "scripts": [
                 {
-                    "name": "QL 同步到 BoxJS",
-                    "script": "https://raw.githubusercontent.com/dompling/Script/master/jd/ql_sync_box.js"
+                    "name": "JD1 同步到 BoxJS",
+                    "script": "https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/jd1_sync_box.js"
                 },
                 {
-                    "name": "NG  同步到 BoxJS",
-                    "script": "https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/ng_sync_box.js"
-                },
-                {
-                    "name": "BoxJS 同步到 QL",
-                    "script": "https://raw.githubusercontent.com/dompling/Script/master/jd/ql_cookie_sync.js"
+                    "name": "JD2 同步到 BoxJS",
+                    "script": "https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/jd2_sync_box.js"
                 }
             ]
         },
