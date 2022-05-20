@@ -37,7 +37,7 @@
             "settings": [
                 {
                     "id": "@ql.mute_jd1",
-                    "name": "静默同步（BoxJs > JD1）",
+                    "name": "静默同步（JD1 > BoxJs）",
                     "val": false,
                     "type": "boolean",
                     "desc": "同步时不会显示通知"
