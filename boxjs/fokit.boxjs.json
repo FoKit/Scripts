@@ -176,6 +176,46 @@
                     "desc": "京东 WsKey 列表"
                 }
             ]
+        },
+        {
+            "id": "jparking",
+            "name": "捷停车",
+            "author": "@FoKit",
+            "descs_html": [
+                "捷停车签到"
+            ],
+            "icons": [
+                "https://raw.githubusercontent.com/FoKit/Quantumult-X/main/images/jparking.png",
+                "https://raw.githubusercontent.com/FoKit/Quantumult-X/main/images/jparking.png"
+            ],
+            "keys": [
+                "jtc_mobile"
+                "jtc_userId",
+                "jtc_taskNo"
+            ],
+            "settings": [
+                {
+                    "id": "jtc_mobile",
+                    "name": "手机号",
+                    "val": "",
+                    "type": "text",
+                    "desc": "捷停车注册手机号"
+                },
+                {
+                    "id": "jtc_userId",
+                    "name": "用户名",
+                    "val": "",
+                    "type": "text",
+                    "desc": "捷停车用户ID"
+                },
+                {
+                    "id": "jtc_taskNo",
+                    "name": "任务ID",
+                    "val": "T71811221608",
+                    "type": "text",
+                    "desc": "签到活动任务ID，默认为 T71811221608"
+                }
+            ]
         }
     ]
 }
