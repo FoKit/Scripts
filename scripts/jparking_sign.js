@@ -31,10 +31,10 @@ const notify = $.isNode() ? require('./sendNotify') : '';
 const API_HOST = 'https://jparking.jslife.com.cn';
 let userId = $.getdata('jtc_userId');
 let taskNo = $.getdata('jtc_taskNo');
+let mobile = $.getdata('jtc_mobile') || "";
 let KEY_jtc_userId = 'jtc_userId'
 let KEY_jtc_mobile = 'jtc_mobile'
 let allMessage = "";
-let mobile = "";
 
 if (isGetCookie = typeof $request !== `undefined`) {
   GetCookie();
@@ -89,14 +89,11 @@ function main() {
           if (data) {
             data = JSON.parse(data);
             if (data.right) {
-              if (KEY_jtc_mobile) {
-                mobile = KEY_jtc_mobile + "\n"
-              }
-              console.log(`${mobile}🎉 签到${data.message}`);
-              allMessage += `${mobile}🎉 签到${data.message}`
+              console.log(`${mobile}\n🎉 签到${data.message}`);
+              allMessage += `${mobile}\n🎉 签到${data.message}`
             } else {
-              console.log(`${mobile}❌ 签到${data.message}`);
-              allMessage += `${mobile}❌ 签到${data.message}`
+              console.log(`${mobile}\n❌ 签到${data.message}`);
+              allMessage += `${mobile}\n❌ 签到${data.message}`
             }
           } else {
             $.log("服务器返回了空数据")
