@@ -203,7 +203,7 @@
                 },
                 {
                     "id": "jtc_userId",
-                    "name": "用户名",
+                    "name": "用户ID",
                     "val": "",
                     "type": "text",
                     "desc": "捷停车用户ID"
