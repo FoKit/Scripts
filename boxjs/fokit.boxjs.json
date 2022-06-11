@@ -189,7 +189,7 @@
                 "https://raw.githubusercontent.com/FoKit/Quantumult-X/main/images/jparking.png"
             ],
             "keys": [
-                "jtc_mobile"
+                "jtc_mobile",
                 "jtc_userId",
                 "jtc_taskNo"
             ],
@@ -216,6 +216,6 @@
                     "desc": "签到活动任务ID，默认为 T71811221608"
                 }
             ]
-        },
+        }
     ]
 }
