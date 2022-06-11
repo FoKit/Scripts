@@ -34,6 +34,7 @@ let taskNo = $.getdata('jtc_taskNo');
 let KEY_jtc_userId = 'jtc_userId'
 let KEY_jtc_mobile = 'jtc_mobile'
 let allMessage = "";
+let mobile = "";
 
 if (isGetCookie = typeof $request !== `undefined`) {
   GetCookie();
@@ -88,11 +89,14 @@ function main() {
           if (data) {
             data = JSON.parse(data);
             if (data.right) {
-              console.log(`${userId}\n🎉签到${data.message}`);
-              allMessage += `${userId}\n🎉签到${data.message}`
+              if (KEY_jtc_mobile) {
+                mobile = KEY_jtc_mobile + "\n"
+              }
+              console.log(`${mobile}🎉 签到${data.message}`);
+              allMessage += `${mobile}🎉 签到${data.message}`
             } else {
-              console.log(`${userId}\n❌签到${data.message}`);
-              allMessage += `${userId}\n❌签到${data.message}`
+              console.log(`${mobile}❌ 签到${data.message}`);
+              allMessage += `${mobile}❌ 签到${data.message}`
             }
           } else {
             $.log("服务器返回了空数据")
