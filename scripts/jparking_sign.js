@@ -29,11 +29,20 @@ jparking.jslife.com.cn
 const $ = new Env('捷停车签到');
 const notify = $.isNode() ? require('./sendNotify') : '';
 const API_HOST = 'https://jparking.jslife.com.cn';
-let userId = process.env.jtc_userId || $.getdata('jtc_userId'); || "";
-let taskNo = process.env.jtc_taskNo || $.getdata('jtc_taskNo'); || "T71811221608";
+let userId = $.getdata('jtc_userId');
+let taskNo = $.getdata('jtc_taskNo');
 let KEY_jtc_userId = 'jtc_userId'
 let KEY_jtc_mobile = 'jtc_mobile'
 let allMessage = "";
+
+if (!$.isNode()) {
+  userId = process.env.jtc_userId；
+  taskNo = process.env.jtc_taskNo；
+}
+
+if (!taskNo) {
+  taskNo = "T71811221608";
+}
 
 if ($request && $request.headers && $request.body) {
   const rest_body = $request.body
