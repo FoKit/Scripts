@@ -22,7 +22,7 @@ jparking.jslife.com.cn
 ^https:\/\/jparking\.jslife\.com\.cn\/jparking-service\/pay\/login_to_jsjk url script-request-body https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/jparking_sign.js
 
 [task_local]
-15 9 * * * https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/jparking_sign.js
+15 9 * * * https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/jparking_sign.js, tag=捷停车签到, enabled=true
 ====================================================================================================
 */
 
