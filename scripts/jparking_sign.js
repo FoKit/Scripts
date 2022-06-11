@@ -35,34 +35,39 @@ let KEY_jtc_userId = 'jtc_userId'
 let KEY_jtc_mobile = 'jtc_mobile'
 let allMessage = "";
 
-if (!$.isNode()) {
-  userId = process.env.jtc_userId;
-  taskNo = process.env.jtc_taskNo;
+if (isGetCookie = typeof $request !== `undefined`) {
+  GetCookie();
+  $.done()
+} else {
+  !(async () => {
+    if ($.isNode()) {
+      userId = process.env.jtc_userId;
+      taskNo = process.env.jtc_taskNo;
+    }
+    if (!taskNo) {
+      taskNo = "T71811221608";
+    }
+    await main();
+    if (allMessage) {
+      $.msg($.name, '', allMessage);
+      if ($.isNode()) await notify.sendNotify($.name, allMessage);
+    }
+  })()
+  .catch((e) => {
+      $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
+    })
+    .finally(() => {
+      $.done();
+    })
 }
 
-if (!taskNo) {
-  taskNo = "T71811221608";
-}
-
-if ($request && $request.headers && $request.body) {
-  const rest_body = $request.body
-  if (rest_body) $.setdata(rest_body.userId, KEY_jtc_userId) && $.setdata(rest_body.mobile, KEY_jtc_mobile)
-  $.msg($.name, `用户 ${rest_body.mobile}`, `userId 获取成功`)
-}
-
-!(async () => {
-  await main();
-  if (allMessage) {
-    $.msg($.name, '', allMessage);
-    if ($.isNode()) await notify.sendNotify($.name, allMessage);
+function GetCookie() {
+  if ($request && $request.headers && $request.body) {
+    let rest_body = JSON.parse($request.body);
+    if (rest_body) $.setdata(rest_body.userId, KEY_jtc_userId) && $.setdata(rest_body.mobile, KEY_jtc_mobile)
+    $.msg($.name, `用户 ${rest_body.mobile}`, `userId 获取成功`)
   }
-})()
-.catch((e) => {
-    $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
-  })
-  .finally(() => {
-    $.done();
-  })
+}
 
 function main() {
   let opt = {
