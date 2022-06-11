@@ -12,7 +12,7 @@ jparking.jslife.com.cn
 
 [Script]
 http-request ^https:\/\/jparking\.jslife\.com\.cn\/jparking-service\/pay\/login_to_jsjk script-path=https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/jparking_sign.js, requires-body=true
-cron "15 9 * * *" script-path=https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/jparking_sign.js
+捷停车签到 = type=cron,cronexp=15 9 * * *,timeout=60,script-path=https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/jparking_sign.js,script-update-interval=0
 ----------------------------------------------------------------------------------------------------
 配置 (QuanX)
 [MITM]
@@ -36,8 +36,8 @@ let KEY_jtc_mobile = 'jtc_mobile'
 let allMessage = "";
 
 if (!$.isNode()) {
-  userId = process.env.jtc_userId；
-  taskNo = process.env.jtc_taskNo；
+  userId = process.env.jtc_userId;
+  taskNo = process.env.jtc_taskNo;
 }
 
 if (!taskNo) {
