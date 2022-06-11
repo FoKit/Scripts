@@ -2,7 +2,8 @@
 脚本名称：捷停车签到
 签到规则：连签奖励，首日1积分，次日2积分，以此类推
 活动入口：捷停车APP-积分签到
-环境变量：jtc_userId、jtc_taskNo
+环境变量：jtc_userId
+使用说明：捷停车APP抓包签到获取 userId 即可
 更新时间：2022-6-11
 */
 
@@ -11,7 +12,7 @@ const notify = $.isNode() ? require('./sendNotify') : '';
 const API_HOST = 'https://jparking.jslife.com.cn';
 let allMessage = "";
 let userId = process.env.jtc_userId || "";
-let taskNo = process.env.jtc_taskNo || "";
+let taskNo = process.env.jtc_taskNo || "T71811221608";
 
 !(async () => {
   await main();
