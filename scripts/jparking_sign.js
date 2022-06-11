@@ -30,7 +30,7 @@ const $ = new Env('捷停车签到');
 const notify = $.isNode() ? require('./sendNotify') : '';
 const API_HOST = 'https://jparking.jslife.com.cn';
 let userId = $.getdata('jtc_userId');
-let taskNo = $.getdata('jtc_taskNo');
+let taskNo = $.getdata('jtc_taskNo') || "T71811221608";
 let mobile = $.getdata('jtc_mobile') || "";
 let KEY_jtc_userId = 'jtc_userId'
 let KEY_jtc_mobile = 'jtc_mobile'
@@ -44,9 +44,6 @@ if (isGetCookie = typeof $request !== `undefined`) {
     if ($.isNode()) {
       userId = process.env.jtc_userId;
       taskNo = process.env.jtc_taskNo;
-    }
-    if (!taskNo) {
-      taskNo = "T71811221608";
     }
     await main();
     if (allMessage) {
