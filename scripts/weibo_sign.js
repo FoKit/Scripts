@@ -1,10 +1,28 @@
 /*
-更新时间: 2021-12-14 22:10
+脚本名称：新浪微博签到
+脚本说明：本脚本仅适用于微博每日签到，支持多账号运行
+环境变量：WB_TOKEN、WB_COOKIE（青龙）
+更新时间：2022-6-13
+====================================================================================================
+配置 (Surge)
+[MITM]
+api.weibo.cn
 
-本脚本仅适用于微博每日签到，支持多账号运行
+[Script]
+获取微博CK = type=http-request,pattern=^https\:\/\/api\.m\.jd\.com\/client\.action\?functionId\=jComExchange,requires-body=0,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/weibo_sign.js
 
+新浪微博 = type=cron,cronexp=15 8 * * *,timeout=60,script-path=https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/weibo_sign.js,script-update-interval=0
+----------------------------------------------------------------------------------------------------
+配置 (QuanX)
+[MITM]
+api.weibo.cn
 
-获取ck: https:\/\/m?api\.weibo\.c(n|om)\/\d\/users\/show url script-request-header weibo.js
+[rewrite_local]
+^https:\/\/api\.weibo\.c(n|om)\/\d\/users\/show url script-request-header https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/weibo_sign.js
+
+[task_local]
+15 8 * * * https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/weibo_sign.js, tag=新浪微博, enabled=true
+====================================================================================================
 */
 
 const $ = new Env('新浪微博')
@@ -13,7 +31,7 @@ let tokenArr = [],  cookieArr = [];
 let wbtoken = $.getdata('sy_token_wb');
 let cookies = $.getdata('wb_cookie');
 let signcash = "";
-
+let myPaybag = "";
 
 if (isGetCookie = typeof $request !== `undefined`) {
     GetCookie();
@@ -128,8 +146,9 @@ function GetCookie() {
             }
         }
     }
-    //微博签到
 
+
+//微博签到
 function getsign() {
     return new Promise((resolve, reject) => {
         let signurl = {
@@ -141,16 +160,16 @@ function getsign() {
         $.get(signurl, async(error, resp, data) => {
             let result = JSON.parse(data)
             if (result.status == 10000) {
-                wbsign = `每日签到：连续签到 ${result.data.continuous} 天\n`
+                wbsign = `每日签到：连续签到 ${result.data.continuous} 天，${result.data.desc}`
             } else if (result.errno == 30000) {
-                wbsign = `每日签到：当日已签到\n`
+                wbsign = `每日签到：重复签到`
                 if (cookie) {
                     await getcash()
                 }
             } else if (result.status == 90005) {
-                wbsign = `每日签到：` + result.msg + '\n'
+                wbsign = `每日签到：` + result.msg
             } else {
-                wbsign = `每日签到：签到失败，自动清除CK ` + result.errmsg;
+                wbsign = `每日签到：签到失败，自动清除 Cookie ` + result.errmsg;
                 let retoken =  $.getdata('sy_token_wb').replace(token,``)
                 if ((retoken.indexOf("#") == '0')||(retoken.indexOf("\n") == '0')){
                     retoken = retoken.substr(1)
@@ -169,6 +188,7 @@ function getsign() {
     })
 }
 
+// 红包余额
 function getcash() {
     return new Promise((resolve, reject) => {
         let url = {
@@ -181,7 +201,7 @@ function getcash() {
         $.get(url, async(error, resp, data) => {
             let cashres = JSON.parse(data)
             if (cashres.apiCode == 10000) {
-                signcash = `【${cashres.data.header[0].title}】 💰 ${cashres.data.header[0].value} 元`
+                signcash = `红包：${cashres.data.header[0].value}元  `
             }
             resolve()
         })
@@ -201,9 +221,9 @@ function myJifen() {
         $.get(doCardurl, (error, resp, data) => {
             let result = JSON.parse(data)
             if (result.code === "100000") {
-                myScore = `积分： ${result.data.score}\n`
+                myScore = `积分：${result.data.score}  `
             } else {
-                myScore = `积分：获取失败`
+                myScore = `积分：获取失败  `
             }
             resolve()
         })
@@ -216,12 +236,12 @@ function paysign() {
         $.post(payApi('aj/mobile/home/welfare/signin/do?_=' + $.startTime + 10), async(error, resp, data) => {
             let result = JSON.parse(data)
             if (result.status == 1) {
-                paybag = '钱包签到：签到成功，获得 ' + result.score + ' 积分\n'
+                paybag = '钱包签到：签到成功，获得' + result.score + '积分'
             } else if (result.status == '2') {
-                paybag = `钱包签到：`
+                paybag = `钱包签到：重复签到`
                 await payinfo()
             } else {
-                paybag = `钱包签到：Cookie失效` + '\n'
+                paybag = `钱包签到：Cookie失效`
             }
             resolve()
 
@@ -244,12 +264,13 @@ function payApi(api) {
     }
 }
 
+// 钱包余额
 function payinfo() {
     return new Promise((resolve, reject) => {
         $.post(payApi('api/client/sdk/app/balance'), (error, resp, data) => {
             let paynum = JSON.parse(data)
             if (paynum.code == 100000) {
-                paybag += paynum.data.balance + ' 元\n'
+                myPaybag = `余额：${paynum.data.balance}元  `
             }
             resolve()
         })
@@ -258,9 +279,9 @@ function payinfo() {
 
 async function showmsg() {
     if (paybag) {
-        $.msg($.name, wbsign, paybag + myScore + (signcash ? signcash : ""));
+        $.msg($.name, wbsign , paybag + "\n" + (signcash ? signcash : "") + myPaybag + myScore);
         if ($.isNode()) {
-            await notify.sendNotify($.name, (signcash ? signcash : "") + myScore + wbsign + paybag)
+            await notify.sendNotify($.name, wbsign + paybag + "\n" + (signcash ? signcash : "") + "\n" + myPaybag + "\n" + myScore + "\n")
         }
     }
 }
