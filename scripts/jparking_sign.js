@@ -150,11 +150,10 @@ function Amt() {
             data = JSON.parse(data);
             // console.log(data)
             if (data.right) {
-              console.log(`当前共有 ${data.accountAmt} 积分`);
-              allMessage += `，当前共有 ${data.accountAmt} 积分`
+              console.log(`当前共有 ${data.obj.accountAmt} 积分`);
+              allMessage += `，当前共有 ${data.obj.accountAmt} 积分`
             } else {
-              console.log(`❌ 积分查询失败 ${data}`);
-              // allMessage += `${mobile}\n❌ 签到${data.message}`
+              console.log(`❌ 积分查询失败\n${data}`);
             }
           } else {
             $.log("服务器返回了空数据")
