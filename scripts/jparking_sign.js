@@ -50,6 +50,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
       $.msg($.name, '', allMessage);
       if ($.isNode()) await notify.sendNotify($.name, allMessage);
     }
+    await main(); // 每天签到 2 次，第 2 次不再通知。
   })()
   .catch((e) => {
       $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
