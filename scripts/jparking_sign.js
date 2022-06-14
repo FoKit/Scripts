@@ -47,6 +47,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
       taskNo = process.env.jtc_taskNo || "T71811221608";
     }
     await main();
+    await Amt();
     if (allMessage) {
       $.msg($.name, '', allMessage);
       if ($.isNode()) await notify.sendNotify($.name, allMessage);
@@ -69,6 +70,7 @@ function GetCookie() {
   }
 }
 
+// 签到主函数
 function main() {
   let opt = {
     url: `${API_HOST}/jparking-other-service/coupons/integral/receive`,
@@ -104,6 +106,55 @@ function main() {
             } else {
               console.log(`${mobile}\n❌ 签到${data.message}`);
               allMessage += `${mobile}\n❌ 签到${data.message}`
+            }
+          } else {
+            $.log("服务器返回了空数据")
+          }
+        }
+      } catch (error) {
+        $.log(error)
+      } finally {
+        resolve();
+      }
+    })
+  })
+}
+
+// 查询当前积分
+function Amt() {
+  let opt = {
+    url: `${API_HOST}/jparking-service/account/balance/query`,
+    headers: {
+      "Accept": "application/json, text/plain, */*",
+      "Accept-Encoding": "gzip, deflate, br",
+      "Accept-Language": "zh-CN,zh-Hans;q=0.9",
+      "Connection": "keep-alive",
+      "Content-Length": "89",
+      "Content-Type": "application/json;charset=UTF-8",
+      "Host": "jparking.jslife.com.cn",
+      "Origin": "https://www.jslife.com.cn",
+      "Referer": "https://www.jslife.com.cn/",
+      "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;JTC_IOS",
+      "axiosSrc": "dataService"
+    },
+    body: `{"userId": "${userId}","reqSource": "JTC_I"}`
+  }
+  return new Promise(resolve => {
+    // console.log(opt)
+    $.post(opt, (err, resp, data) => {
+      try {
+        if (err) {
+          $.log(err)
+        } else {
+          if (data) {
+            data = JSON.parse(data);
+            // console.log(data)
+            if (data.right) {
+              console.log(`$当前共有 ${data.accountAmt} 积分`);
+              allMessage += `，当前共有 ${data.accountAmt} 积分`
+            } else {
+              console.log(`❌ 积分查询失败 ${data}`);
+              // allMessage += `${mobile}\n❌ 签到${data.message}`
             }
           } else {
             $.log("服务器返回了空数据")
