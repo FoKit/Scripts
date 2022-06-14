@@ -11,7 +11,8 @@
 jparking.jslife.com.cn
 
 [Script]
-http-request ^https:\/\/jparking\.jslife\.com\.cn\/jparking-service\/pay\/login_to_jsjk script-path=https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/jparking_sign.js, requires-body=true
+获取捷停车userId = type=http-request,pattern=^https:\/\/jparking\.jslife\.com\.cn\/jparking-service\/pay\/login_to_jsjk,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/jparking_sign.js
+
 捷停车签到 = type=cron,cronexp=15 9 * * *,timeout=60,script-path=https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/jparking_sign.js,script-update-interval=0
 ----------------------------------------------------------------------------------------------------
 配置 (QuanX)
