@@ -214,14 +214,14 @@ function getcash() {
 // 当前积分
 function myJifen() {
     return new Promise((resolve, reject) => {
-        let doCardurl = {
+        let opt = {
             url: `https://luck.sc.weibo.com/aj/jifen/info`,
             headers: {
                 "User-Agent": `Weibo/62823 (iPhone; iOS 15.2; Scale/3.00)`,
                 "Cookie": cookies
             }
         }
-        $.get(doCardurl, (error, resp, data) => {
+        $.get(opt, (error, resp, data) => {
             let result = JSON.parse(data)
             if (result.code === "100000") {
                 myScore = `积分：${result.data.score}  `
@@ -236,7 +236,19 @@ function myJifen() {
 // 钱包签到
 function paysign() {
     return new Promise((resolve, reject) => {
-        $.post(payApi('aj/mobile/home/welfare/signin/do?_=' + $.startTime + 10), async(error, resp, data) => {
+        let opt = {
+            url: `https://pay.sc.weibo.com/aj/mobile/home/welfare/signin/do?_=${$.startTime + 10}`,
+            headers: {
+                'Accept-Encoding': 'gzip, deflate',
+                'Connection': 'keep-alive',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Host': 'pay.sc.weibo.com',
+                'Referer': 'https://pay.sc.weibo.com/center/mobile/task/index',
+                'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Weibo (iPhone12,3__weibo__11.12.2__iphone__os15.2)'
+            },
+            body: token + '&lang=zh_CN&wm=3333_2001'
+        }
+        $.post(opt, async (error, resp, data) => {
             let result = JSON.parse(data)
             if (result.status == 1) {
                 paybag = '钱包签到：签到成功，获得' + result.score + '积分'
@@ -252,25 +264,22 @@ function paysign() {
     })
 }
 
-function payApi(api) {
-    return {
-        url: 'https://pay.sc.weibo.com/' + api,
-        headers: {
-            'Accept-Encoding': 'gzip, deflate',
-            'Connection': 'keep-alive',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Host': 'pay.sc.weibo.com',
-            'Referer': 'https://pay.sc.weibo.com/center/mobile/task/index',
-            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Weibo (iPhone12,3__weibo__11.12.2__iphone__os15.2)'
-        },
-        body: token + '&lang=zh_CN&wm=3333_2001'
-    }
-}
-
 // 钱包余额
 function payinfo() {
     return new Promise((resolve, reject) => {
-        $.post(payApi('api/client/sdk/app/balance'), (error, resp, data) => {
+        let opt = {
+            url: `https://pay.sc.weibo.com/api/client/sdk/app/balance`,
+            headers: {
+                'Accept-Encoding': 'gzip, deflate',
+                'Connection': 'keep-alive',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Host': 'pay.sc.weibo.com',
+                'Referer': 'https://pay.sc.weibo.com/center/mobile/task/index',
+                'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Weibo (iPhone12,3__weibo__11.12.2__iphone__os15.2)'
+            },
+            body: token + '&lang=zh_CN&wm=3333_2001'
+        }
+        $.post(opt, (error, resp, data) => {
             let paynum = JSON.parse(data)
             if (paynum.code == 100000) {
                 myPaybag = `余额：${paynum.data.balance}元  `
