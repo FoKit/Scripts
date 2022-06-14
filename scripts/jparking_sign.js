@@ -150,7 +150,7 @@ function Amt() {
             data = JSON.parse(data);
             // console.log(data)
             if (data.right) {
-              console.log(`$当前共有 ${data.accountAmt} 积分`);
+              console.log(`当前共有 ${data.accountAmt} 积分`);
               allMessage += `，当前共有 ${data.accountAmt} 积分`
             } else {
               console.log(`❌ 积分查询失败 ${data}`);
