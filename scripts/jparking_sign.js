@@ -43,7 +43,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
   !(async () => {
     if ($.isNode()) {
       userId = process.env.jtc_userId;
-      taskNo = process.env.jtc_taskNo;
+      taskNo = process.env.jtc_taskNo || "T71811221608";
     }
     await main();
     if (allMessage) {
@@ -71,13 +71,23 @@ function main() {
   let opt = {
     url: `${API_HOST}/jparking-other-service/coupons/integral/receive`,
     headers: {
-      'Content-Type': 'application/json;charset=UTF-8',
-      'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;JTC_IOS',
+      "Accept": "application/json, text/plain, */*",
+      "Accept-Encoding": "gzip, deflate, br",
+      "Accept-Language": "zh-CN,zh-Hans;q=0.9",
+      "Connection": "keep-alive",
+      "Content-Length": "89",
+      "Content-Type": "application/json;charset=UTF-8",
+      "Host": "jparking.jslife.com.cn",
+      "Origin": "https://www.jslife.com.cn",
+      "Referer": "https://www.jslife.com.cn/",
+      "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;JTC_IOS",
+      "axiosSrc": "dataService"
     },
     body: `{"userId":"${userId}","reqSource":"JTC_I","taskNo":"${taskNo}"}`
   }
   console.log(`\n********开始签到********\n`);
   return new Promise(resolve => {
+    // console.log(opt)
     $.post(opt, (err, resp, data) => {
       try {
         if (err) {
@@ -85,6 +95,7 @@ function main() {
         } else {
           if (data) {
             data = JSON.parse(data);
+            // console.log(data)
             if (data.right) {
               console.log(`${mobile}\n🎉 签到${data.message}`);
               allMessage += `${mobile}\n🎉 签到${data.message}`
