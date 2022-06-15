@@ -101,9 +101,9 @@ if (isGetCookie = typeof $request !== `undefined`) {
                     token = "&from=10B3193010"+token
                 }
                 await getsign();
-                await paysign(); 
+                await paysign();
                 await getcash();
-                await payinfo(); 
+                await payinfo();
                 await myJifen();
                 await showmsg();
             }
@@ -213,8 +213,21 @@ function myJifen() {
         let opt = {
             url: `https://luck.sc.weibo.com/aj/jifen/info`,
             headers: {
-                "User-Agent": `Weibo/62823 (iPhone; iOS 15.2; Scale/3.00)`,
-                "Cookie": cookies
+                "Accept": "application/json",
+                "Accept-Encoding": "gzip, deflate, br",
+                "Accept-Language": "zh-CN,zh-Hans;q=0.9",
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+                "Content-Length": "0",
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Cookie": cookies,
+                "Host": "luck.sc.weibo.com",
+                "If-Modified-Since": "0",
+                "Origin": "https://luck.sc.weibo.com",
+                "Pragma": "no-cache",
+                "Referer": "https://luck.sc.weibo.com/union",
+                "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Weibo (iPhone14,3__weibo__12.5.4__iphone__os15.0.2)",
+                "X-Requested-With": "XMLHttpRequest"
             }
         }
         $.get(opt, (error, resp, data) => {
@@ -223,6 +236,7 @@ function myJifen() {
                 myScore = `积分：${result.data.score}  `
             } else {
                 myScore = `积分：获取失败  `
+                console.log(result);
             }
             resolve()
         })
