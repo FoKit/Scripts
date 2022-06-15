@@ -101,9 +101,11 @@ if (isGetCookie = typeof $request !== `undefined`) {
                     token = "&from=10B3193010"+token
                 }
                 await getsign();
+                await paysign(); 
+                await getcash();
+                await payinfo(); 
                 await myJifen();
-                await paysign();
-                await showmsg()
+                await showmsg();
             }
         }
     })()
@@ -166,9 +168,6 @@ function getsign() {
                 wbsign = `每日签到：连续签到 ${result.data.continuous} 天，${result.data.desc}`
             } else if (result.errno == 30000) {
                 wbsign = `每日签到：重复签到`
-                if (cookie) {
-                    await getcash()
-                }
             } else if (result.status == 90005) {
                 wbsign = `每日签到：` + result.msg
             } else {
@@ -181,9 +180,6 @@ function getsign() {
                     retoken = retoken.substr(0,retoken.length-1)
                 }
                 $.setdata(retoken, 'sy_token_wb')
-                if ($.isNode()) {
-                    await notify.sendNotify($.name, wbsign)
-                }
                 $.done()
             }
             resolve()
@@ -254,7 +250,6 @@ function paysign() {
                 paybag = '钱包签到：签到成功，获得' + result.score + '积分'
             } else if (result.status == '2') {
                 paybag = `钱包签到：重复签到`
-                await payinfo()
             } else {
                 paybag = `钱包签到：Cookie失效`
             }
