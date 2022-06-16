@@ -220,7 +220,7 @@ function myJifen() {
                 "Connection": "keep-alive",
                 "Content-Length": "0",
                 "Content-Type": "application/x-www-form-urlencoded",
-                "Cookie": cookies,
+                "Cookie": cookie,
                 "Host": "luck.sc.weibo.com",
                 "If-Modified-Since": "0",
                 "Origin": "https://luck.sc.weibo.com",
