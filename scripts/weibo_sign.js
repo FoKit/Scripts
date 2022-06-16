@@ -292,6 +292,8 @@ function payinfo() {
             let paynum = JSON.parse(data)
             if (paynum.code == 100000) {
                 myPaybag = `余额：${paynum.data.balance}元  `
+            } else {
+                console.log(paynum);
             }
             resolve()
         })
