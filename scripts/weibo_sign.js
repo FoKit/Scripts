@@ -302,9 +302,9 @@ function payinfo() {
 
 async function showmsg() {
     if (paybag) {
-        $.msg($.name, wbsign , paybag + "\n" + (signcash ? signcash : "") + myPaybag + myScore);
+        $.msg($.name, wbsign , paybag + "\n" + myPaybag + (signcash ? signcash : "") + myScore);
         if ($.isNode()) {
-            await notify.sendNotify($.name, wbsign + paybag + "\n" + (signcash ? signcash : "") + "\n" + myPaybag + "\n" + myScore + "\n")
+            await notify.sendNotify($.name, wbsign + paybag + "\n" + myPaybag + "\n" + (signcash ? signcash : "") + "\n" + myScore + "\n")
         }
     }
 }
