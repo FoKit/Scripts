@@ -265,7 +265,7 @@ function paysign() {
             } else if (result.status == '2') {
                 paybag = `钱包签到：重复签到`
             } else {
-                paybag = `钱包签到：Cookie失效`
+                paybag = `钱包签到：Token失效`
             }
             resolve()
 
