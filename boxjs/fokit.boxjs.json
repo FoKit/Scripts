@@ -236,7 +236,7 @@
                 "wb_nick"
             ],
             "repo": "https://github.com/FoKit/Scripts/blob/main/scripts/weibo_sign.js",
-            "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/weibo_sign.js",
+            "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/weibo_sign.js"
         }
     ]
 }
