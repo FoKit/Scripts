@@ -216,6 +216,27 @@
                     "desc": "签到活动任务ID，默认为 T71811221608"
                 }
             ]
+        },
+        {
+            "id": "weibo",
+            "name": "新浪微博",
+            "author": "@sunert",
+            "descs_html": [
+                "<h4 align=\"center\">获取Cookie以及脚本配置请查看<a href=\"https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/weibo_sign.js\">配置说明</a></h4>",
+                "<br />",
+                "<p>其中<font color='#FF0000',font-weight: bold>wb_nick</font>为账号昵称，无需另外获取，脚本运行可自动生成，wb_cookie为任务红包余额，获取后方可显示，可选，sy_token_wb为微博签到token，必选</p>"
+            ],
+            "icons": [
+                "https://cdn.jsdelivr.net/gh/Orz-3/mini@master/Alpha/weibo.png",
+                "https://cdn.jsdelivr.net/gh/Orz-3/mini@master/Color/weibo.png"
+            ],
+            "keys": [
+                "sy_token_wb",
+                "wb_cookie",
+                "wb_nick"
+            ],
+            "repo": "https://github.com/FoKit/Scripts/blob/main/scripts/weibo_sign.js",
+            "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/weibo_sign.js",
         }
     ]
 }
