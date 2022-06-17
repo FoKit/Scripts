@@ -202,6 +202,10 @@
         "descs_html": [
             "用于解析京东活动数据"
         ],
+        "icons": [
+            "https://raw.githubusercontent.com/FoKit/Scripts/main/images/analyzing.png",
+            "https://raw.githubusercontent.com/FoKit/Scripts/main/images/analyzing.png"
+        ],
         "keys": [
             "TG_BOT_TOKEN",
             "TG_USER_ID",
@@ -234,13 +238,7 @@
             "autoGrow": false,
             "rows": 4,
             "desc": "多条数据使用&分隔"
-        }],
-        "repo": "",
-        "script": "",
-        "icons": [
-            "https://raw.githubusercontent.com/Former-Years/icon/master/Part-timeJob.png",
-            "https://raw.githubusercontent.com/Former-Years/icon/master/Part-timeJob.png"
-        ]
+        }]
     }, {
         "id": "wskey",
         "name": "京东WSKEY",
@@ -273,7 +271,7 @@
             "id": "wskeyList",
             "name": "京东WSKEY",
             "val": "",
-            "type": "text",
+            "type": "textarea",
             "rows": 10,
             "desc": "京东WSKEY列表"
         }]
@@ -295,7 +293,7 @@
             "id": "text_replace",
             "name": "规则",
             "val": "",
-            "type": "text",
+            "type": "textarea",
             "rows": 4,
             "desc": "示例：aaa@123|\\d{3}@666"
         }]
