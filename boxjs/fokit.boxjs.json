@@ -283,8 +283,8 @@
             "自用文本替换工具"
         ],
         "icons": [
-            "https://cdn.jsdelivr.net/gh/Orz-3/mini@master/Alpha/weibo.png",
-            "https://cdn.jsdelivr.net/gh/Orz-3/mini@master/Color/weibo.png"
+            "https://cdn.jsdelivr.net/gh/Orz-3/mini@master/Alpha/analyzing.png",
+            "https://cdn.jsdelivr.net/gh/Orz-3/mini@master/Color/analyzing.png"
         ],
         "keys": [
             "text_replace"
