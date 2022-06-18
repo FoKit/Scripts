@@ -1,11 +1,11 @@
 /*
-青龙 docker 每日自动同步 boxjs cookie
-40 * * * https://raw.githubusercontent.com/dompling/Script/master/jd/ql_cookie_sync.js
- */
+JD_COOKIE 同步工具，JD2 ---> BOXJS
+40 * * * https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jd2_sync_box.js
+*/
 
 const $ = new API('ql', true);
 
-const title = '🐉 通知提示';
+const title = '🐉 JD_COOKIE 同步';
 const cookiesKey = '#CookiesJD';
 
 let jd_cookies = [];
