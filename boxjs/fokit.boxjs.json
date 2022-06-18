@@ -280,21 +280,29 @@
         "name": "文本替换",
         "author": "@FoKit",
         "descs_html": [
-            "自用文本替换工具"
+            "文本替换工具"
         ],
         "icons": [
             "https://raw.githubusercontent.com/FoKit/Scripts/main/images/check.png",
             "https://raw.githubusercontent.com/FoKit/Scripts/main/images/check.png"
         ],
         "keys": [
-            "text_replace"
+            "text_replace",
+            "text_replace_all"
         ],
         "settings": [{
             "id": "text_replace",
             "name": "规则",
             "val": "",
             "type": "textarea",
-            "rows": 10,
+            "rows": 5,
+            "desc": "示例：replace@text 多条规则以换行分隔"
+        }, {
+            "id": "text_replace_all",
+            "name": "规则",
+            "val": "",
+            "type": "textarea",
+            "rows": 5,
             "desc": "示例：replace@text 多条规则以换行分隔"
         }]
     }]
