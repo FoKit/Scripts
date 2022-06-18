@@ -299,7 +299,7 @@
             "desc": "示例：replace@text 多条规则以换行分隔"
         }, {
             "id": "text_replace_all",
-            "name": "规则",
+            "name": "全局规则",
             "val": "",
             "type": "textarea",
             "rows": 5,
