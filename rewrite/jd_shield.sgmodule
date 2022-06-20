@@ -1,0 +1,36 @@
+#!name=京东屏蔽
+#!desc=屏蔽京东收集设备信息
+
+[URL Rewrite]
+https:\/\/wqs\.jd\.com\/_async_cookie\.html - reject
+https:\/\/st\.jingxi\.com\/_async_cookie\.html - reject
+https:\/\/wqs\.jd\.com\/portal\/wx\/m_storage_hub\.html - reject
+
+# 屏蔽京东收集信息
+https:\/\/wqs\.jd.com\/portal\/wx\/storageBridge2?\.shtml - reject
+
+[Map Local]
+# 屏蔽dns
+https:\/\/dns\.jd\.com\/v6 data="https://raw.githubusercontent.com/mieqq/mieqq/master/reject-dict.json"
+https:\/\/mapi\.m\.jd\.com\/config\/.+?\.action\?isNewVersion data="https://raw.githubusercontent.com/mieqq/mieqq/master/reject-dict.json"
+https:\/\/gia\.jd\.com\/.+\.html data="https://raw.githubusercontent.com/mieqq/mieqq/master/reject-dict.json"
+
+# 屏蔽京东收集信息
+http:\/\/.+\.jddebug\.com data="https://raw.githubusercontent.com/mieqq/mieqq/master/reject-dict.json"
+https:\/\/m\.jingxi\.com\/webmonitor\/collect\/biz\.json data="https://raw.githubusercontent.com/mieqq/mieqq/master/reject-dict.json"
+https:\/\/hermes\.jd\.com\/log\.gif data="https://raw.githubusercontent.com/mieqq/mieqq/master/reject-dict.json"
+https:\/\/saturn\.jd\.com\/log\/sdk data="https://raw.githubusercontent.com/mieqq/mieqq/master/reject-dict.json"
+https:\/\/api\.m\.jd\.com\/api\?functionId=pingou_rpds_custom data="https://raw.githubusercontent.com/mieqq/mieqq/master/reject-dict.json"
+https:\/\/api\.m\.jd\.com\/api\?functionId=pingou_webmonitor_biz data="https://raw.githubusercontent.com/mieqq/mieqq/master/reject-dict.json"
+https:\/\/sgm\-m\.jd\.com\/h5\/custom data="https://raw.githubusercontent.com/mieqq/mieqq/master/reject-dict.json"
+https:\/\/blackhole\.m\.jd\.com\/bypass data="https://raw.githubusercontent.com/mieqq/mieqq/master/reject-dict.json"
+https:\/\/blackhole\.m\.jd\.com\/getinfo data="https://raw.githubusercontent.com/mieqq/mieqq/master/reject-dict.json"
+https:\/\/ex\.m\.jd\.com\/exception_monitor\/report data="https://raw.githubusercontent.com/mieqq/mieqq/master/reject-dict.json"
+https:\/\/api\.m\.jd\.com\/client\.action\?functionId=xview2Config data="https://raw.githubusercontent.com/mieqq/mieqq/master/reject-dict.json"
+https:\/\/mars\.jd\.com\/log\/sdk data="https://raw.githubusercontent.com/mieqq/mieqq/master/reject-dict.json"
+https:\/\/.+\.m\.jd\.com\/m2 data="https://raw.githubusercontent.com/mieqq/mieqq/master/reject-dict.json"
+https:\/\/lbsgw\.m\.jd\.com\/m data="https://raw.githubusercontent.com/mieqq/mieqq/master/reject-dict.json"
+https:\/\/hawks\.jd\.com\/log data="https://raw.githubusercontent.com/mieqq/mieqq/master/reject-dict.json"
+https:\/\/perf\.m\.jd\.com\/app_monitor\/v1\/report data="https://raw.githubusercontent.com/mieqq/mieqq/master/reject-dict.json"
+
+https:\/\/wq\.jd\.com\/sendata\/getsendata data="https://raw.githubusercontent.com/mieqq/mieqq/master/reject-dict.json"
