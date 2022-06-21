@@ -1,9 +1,9 @@
 /*
 脚本名称：捷停车签到
-签到规则：连签奖励，首日1积分，次日2积分，以此类推
+签到规则：连签奖励，首日1积分，次日2积分，以此类推，7天封顶后每天可获得14积分
 活动入口：捷停车APP-积分签到
 环境变量：jtc_userId（青龙）
-使用说明：添加重写规则并打开捷停车APP即可获取 userId
+使用说明：添加重写规则并打开捷停车APP即可获取 userId，多账号userId以@隔开
 更新时间：2022-6-11
 ====================================================================================================
 配置 (Surge)
@@ -35,7 +35,8 @@ let taskNo = $.getdata('jtc_taskNo') || "T71811221608";
 let mobile = $.getdata('jtc_mobile') || "";
 let KEY_jtc_userId = 'jtc_userId'
 let KEY_jtc_mobile = 'jtc_mobile'
-let allMessage = "";
+let userIdArr = [],
+  allMessage = "";
 
 if (isGetCookie = typeof $request !== `undefined`) {
   GetCookie();
@@ -46,13 +47,29 @@ if (isGetCookie = typeof $request !== `undefined`) {
       userId = process.env.jtc_userId;
       taskNo = process.env.jtc_taskNo || "T71811221608";
     }
-    await main();
-    await Amt();
+    userId = userId.split('@')
+    Object.keys(userId).forEach((item) => {
+      userIdArr.push(userId[item]);
+    })
+    if (!userIdArr[0]) {
+      $.msg($.name, '【提示】请先获取捷停车 userId');
+      return;
+    }
+    for (let i = 0; i < userIdArr.length; i++) {
+      if (userIdArr[i]) {
+        userId = userIdArr[i];
+        $.index = i + 1;
+        console.log(`账号 ${$.index} 开始签到`);
+        allMessage += `账 号 ${$.index} ${mobile}\n`
+        await main(1);
+        await main(2);//每天可签到2次
+        await Amt();
+      }
+    }
     if (allMessage) {
       $.msg($.name, '', allMessage);
       if ($.isNode()) await notify.sendNotify($.name, allMessage);
     }
-    await main(); // 每天签到 2 次，第 2 次不再通知。
   })()
   .catch((e) => {
       $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
@@ -71,7 +88,7 @@ function GetCookie() {
 }
 
 // 签到主函数
-function main() {
+function main(num) {
   let opt = {
     url: `${API_HOST}/jparking-other-service/coupons/integral/receive`,
     headers: {
@@ -89,7 +106,6 @@ function main() {
     },
     body: `{"userId":"${userId}","reqSource":"JTC_I","taskNo":"${taskNo}"}`
   }
-  console.log(`\n********开始签到********\n`);
   return new Promise(resolve => {
     // console.log(opt)
     $.post(opt, (err, resp, data) => {
@@ -101,11 +117,11 @@ function main() {
             data = JSON.parse(data);
             // console.log(data)
             if (data.right) {
-              console.log(`${mobile}\n🎉 签到${data.message}`);
-              allMessage += `${mobile}\n🎉 签到${data.message}`
+              console.log(`🎉 第${num}次签到${data.message}`);
+              allMessage += `🎉 第${num}次签到${data.message} `
             } else {
-              console.log(`${mobile}\n❌ 签到${data.message}`);
-              allMessage += `${mobile}\n❌ 签到${data.message}`
+              console.log(`❌ 第${num}次签到${data.message}`);
+              allMessage += `❌ 第${num}次签到${data.message} `
             }
           } else {
             $.log("服务器返回了空数据")
@@ -150,10 +166,10 @@ function Amt() {
             data = JSON.parse(data);
             // console.log(data)
             if (data.right) {
-              console.log(`当前共有 ${data.obj.accountAmt} 积分`);
-              allMessage += `，当前共有 ${data.obj.accountAmt} 积分`
+              console.log(`当前共有 ${data.obj.accountAmt} 积分\n`);
+              allMessage += `，当前共有 ${data.obj.accountAmt} 积分\n`
             } else {
-              console.log(`❌ 积分查询失败\n${data}`);
+              console.log(`❌ 积分查询失败\n${data}\n`);
             }
           } else {
             $.log("服务器返回了空数据")
