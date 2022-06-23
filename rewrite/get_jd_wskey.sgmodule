@@ -1,5 +1,5 @@
-#!name=获取京东 WSKEY
-#!desc=京东 WSKEY 自动抓取（京东APP 右上角 - 消息中心），自用脚本，请勿使用！！！
+#!name=获取京东WSKEY
+#!desc=京东WSKEY自动抓取（京东APP 右上角 - 消息中心），自用脚本，请勿使用！！！
 
 [Script]
 获取京东 WSKEY = type=http-request,pattern=^https:\/\/api\-dd\.jd\.com\/client\.action\?functionId=getSessionLog,requires-body=1,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/Fokit/Quantumult-X/main/scripts/get_jd_wskey.js,script-update-interval=0

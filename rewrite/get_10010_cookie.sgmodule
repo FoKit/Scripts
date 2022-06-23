@@ -1,4 +1,4 @@
-#!name=获取 中国联通 Cookie
+#!name=获取中国联通Cookie
 #!desc=打开中国联通app，点击首页剩余话费/剩余流量即可获取Cookie
 
 [Script]
