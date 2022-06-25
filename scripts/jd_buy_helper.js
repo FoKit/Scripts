@@ -36,20 +36,6 @@ async function all() {
     let appType = "jd"
     let arr = []
     let jfcookie
-    let cookiesArr = [
-      $.getdata("CookieJD"),
-      $.getdata("CookieJD2"),
-      ...$.toObj($.getdata("CookiesJD") || "[]").map((item) => item.jfcookie)
-    ].filter((item) => !!item);
-    if (!cookiesArr[0]) {
-      $.msg($.name, '【提示】请先获取cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/', {
-        "open-url": "https://bean.m.jd.com/"
-      });
-      lk.done({
-        body: html
-      })
-    }
-    jfcookie = cookiesArr[0];
 
     if (url.includes('lite-in.m.jd.com')) {
       appType = "jsb"
@@ -151,7 +137,7 @@ async function all() {
         ext1: '200|100_3|',
       }
     }
-    let opt = {
+    let options = {
       url: `https://api.m.jd.com/api?functionId=ConvertSuperLink&appid=u&_=${Date.now()}&body=${encodeURIComponent(
       JSON.stringify(jfbody))}&loginType=2`,
       headers: {
