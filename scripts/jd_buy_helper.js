@@ -35,8 +35,8 @@ async function all() {
     let sku
     let appType = "jd"
     let arr = []
-    let jfcookie
-
+    let cookieArr = JSON.parse(lk.getVal('CookiesJD'))
+    let jfcookie = cookieArr[0].cookie
     if (url.includes('lite-in.m.jd.com')) {
       appType = "jsb"
     }
