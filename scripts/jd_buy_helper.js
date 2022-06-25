@@ -37,10 +37,15 @@ async function all() {
     let arr = []
     let cookieArr = JSON.parse(lk.getVal('CookiesJD'))
     let jfcookie = cookieArr[0].cookie
+    if (!jfcookie) {
+      lk.msg(``, `‼️京东Cookie读取失败，请检查Boxjs配置`)
+      lk.done({
+        body: html
+      })
+    }
     if (url.includes('lite-in.m.jd.com')) {
       appType = "jsb"
     }
-
     if (url.includes('graphext/draw')) {
       arr = url.match(/sku=(\d+)/)
     }
@@ -51,9 +56,7 @@ async function all() {
       arr = url.match(/sku=(\d+)&/)
       appType = "jx"
     }
-
     sku = arr.length != 0 ? arr[1] : ''
-
     lk.log(`解析完成:${sku}`)
     const sidebarHorizontal = 'lkJdHelperSidebarHorizontal'
     const jdHelperCallKey = 'lkJdHelperCallKey'
