@@ -11,19 +11,23 @@ jdHelper1 = type=http-response,pattern=^https:\/\/((?!(api|mapi|lbsapi|im\-x|her
 hostname = %APPEND% in.m.jd.com, me-api.jd.com, wqs.jd.com, lite-in.m.jd.com
 */
 
-const lk = new ToolKit(`京东助手`, `JdHelper`)
+const lk = new ToolKit(`京东购物助手`, `JdBuyHelper`)
 let html = lk.getResponseBody()
 try {
   lk.log('开始处理')
   all()
 } catch (e) {
   lk.logErr(e)
-  lk.done({body: html})
+  lk.done({
+    body: html
+  })
 }
 
 async function all() {
   if (html == undefined || !html.includes('</html>')) {
-    lk.done({body: html})
+    lk.done({
+      body: html
+    })
   } else {
     lk.log('开始解析')
     let url = lk.getRequestUrl()
@@ -31,6 +35,21 @@ async function all() {
     let sku
     let appType = "jd"
     let arr = []
+    let jfcookie
+    let cookiesArr = [
+      $.getdata("CookieJD"),
+      $.getdata("CookieJD2"),
+      ...$.toObj($.getdata("CookiesJD") || "[]").map((item) => item.jfcookie)
+    ].filter((item) => !!item);
+    if (!cookiesArr[0]) {
+      $.msg($.name, '【提示】请先获取cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/', {
+        "open-url": "https://bean.m.jd.com/"
+      });
+      lk.done({
+        body: html
+      })
+    }
+    jfcookie = cookiesArr[0];
 
     if (url.includes('lite-in.m.jd.com')) {
       appType = "jsb"
@@ -51,23 +70,16 @@ async function all() {
 
     lk.log(`解析完成:${sku}`)
     const sidebarHorizontal = 'lkJdHelperSidebarHorizontal'
-    const jdCkBoxJsKey = 'lkJdHelperCk'
-    const jdHelperDomain = 'lkJdHelperApiDomain'
     const jdHelperCallKey = 'lkJdHelperCallKey'
     const jdHelperIsNotifyKey = 'lkJdHelperIsNotifyKey'
     const jdHelperIsShowSmzdm = 'jdHelperIsShowSmzdm'
     const jdHelperIsShowJf = 'jdHelperIsShowJf'
     const jdHelperIsShowMmm = 'jdHelperIsShowMmm'
     let rightOrLeft = !lk.getVal(sidebarHorizontal) ? `left` : lk.getVal(sidebarHorizontal)
-    let ck = !lk.getVal(jdCkBoxJsKey) ? `` : lk.getVal(jdCkBoxJsKey)
-    let apiDomain = !lk.getVal(jdHelperDomain) ? `left` : lk.getVal(jdHelperDomain)
-    let apiCallKey = !lk.getVal(jdHelperCallKey) ? `` : lk.getVal(jdHelperCallKey)
     let isNotify = !lk.getVal(jdHelperIsNotifyKey) ? false : JSON.parse(lk.getVal(jdHelperIsNotifyKey))
-
     let isShowSmzdm = !lk.getVal(jdHelperIsShowSmzdm) ? true : JSON.parse(lk.getVal(jdHelperIsShowSmzdm))
     let isShowJf = !lk.getVal(jdHelperIsShowJf) ? true : JSON.parse(lk.getVal(jdHelperIsShowJf))
     let isShowMmm = !lk.getVal(jdHelperIsShowMmm) ? true : JSON.parse(lk.getVal(jdHelperIsShowMmm))
-
     let leftCss = !lk.getVal('lkJdHelperLeftCss') ? '' : lk.getVal('lkJdHelperLeftCss')
     if (leftCss == '') {
       leftCss = `
@@ -124,82 +136,88 @@ async function all() {
     //         <div id="yyb" class="sidebar ${rightOrLeft}" onclick="window.location.href='yybpro://url?${url}'">
     //           <img src="https://tvax3.sinaimg.cn/crop.0.0.828.828.180/006nobRDly8gel4md0kfzj30n00n03z2.jpg" />
     //         </div>
-    let tools = !sku
-        ? ``
-        : `<button id="smzdm" class="sidebar ${rightOrLeft} ${isShowSmzdm ? '' : 'hide'}"></button>
+    let tools = !sku ?
+      `` :
+      `<button id="smzdm" class="sidebar ${rightOrLeft} ${isShowSmzdm ? '' : 'hide'}"></button>
             <button id="jf" class="sidebar ${rightOrLeft} ${isShowJf ? '' : 'hide'}"></button>
             <button id="mmm" class="sidebar ${rightOrLeft} ${isShowMmm ? '' : 'hide'}"></button>`
     lk.log('初始化工具栏完成')
-    if (apiDomain == "" || apiCallKey == "") {
-      lk.msg('', '请订阅boxjs之后进行api的相关配置！')
-      lk.log('请订阅boxjs之后进行api的相关配置！')
-      lk.done({body: html})
-    } else {
-      // 请求接口获取京粉转链之后的url
-      lk.log('准备开始请求jf转链')
-      let jfConvertorResultUrl = `https://item.jd.com/${sku}.html`
-      let options = {
-        url: `${apiDomain}/unidbg/jfConvertor?ck=${ck}&materialInfo=${jfConvertorResultUrl}`,
-        headers: {
-          "callKey": apiCallKey
-        },
-        body: JSON.stringify({
-          "ck": ck,
-          "materialInfo": jfConvertorResultUrl
-        })
+
+    // 直接请求接口获取京粉转链之后的url
+    let jfbody = {
+      funName: 'getSuperClickUrl',
+      param: {
+        materialInfo: `https://item.jd.com/${sku}.html`,
+        ext1: '200|100_3|',
       }
-      //lk.log(JSON.stringify(options))
-      lk.log('构建转链请求完成')
-      await lk.post(options, (error, response, data) => {
-        try {
-          //lk.log(data)
-          lk.log('请求京粉转链完成，准备处理数据')
-          const result = JSON.parse(data)
-          if (result.code == 0) {
-            if (result.data.data.promotionUrl) {
-              jfConvertorResultUrl = result.data.data.promotionUrl
-            }
-            //收集需要通知的信息
-            if (isNotify) {
-              let notifyStr = ""
-              if (result.data.data.wlCommissionShare) {
-                notifyStr = `${notifyStr}💰佣金比例：${result.data.data.wlCommissionShare}% `
-              }
-              if (result.data.data.wlCommission) {
-                notifyStr = `${notifyStr}  预计返利：¥${result.data.data.wlCommission} `
-              }
-              let param = ""
-              switch (appType) {
-                case 'jx':
-                  param = `{"des":"m","url":"${jfConvertorResultUrl}","category":"jump"}`
-                  param = encodeURI(param)
-                  lk.msg(``, notifyStr, `openapp.jdpingou://virtual?params=${param}`)
-                  break
-                case 'jsb':
-                  param = `{"category":"jump","des":"m","url":"${jfConvertorResultUrl}"}`
-                  param = encodeURI(param)
-                  lk.msg(``, notifyStr, `openjdlite://virtual?params=${param}`)
-                  break
-                default:
-                  param = `{"category":"jump","des":"m","sourceValue":"babel-act","sourceType":"babel","url":"${jfConvertorResultUrl}"}`
-                  param = encodeURI(param)
-                  lk.msg(``, notifyStr, `openApp.jdMobile://virtual?params=${param}`)
-                  break
-              }
-            }
-            lk.execStatus = true
+    }
+    let opt = {
+      url: `https://api.m.jd.com/api?functionId=ConvertSuperLink&appid=u&_=${Date.now()}&body=${encodeURIComponent(
+      JSON.stringify(jfbody))}&loginType=2`,
+      headers: {
+        Accept: '*/*',
+        Connection: 'keep-alive',
+        'Content-Type': 'application/json',
+        Host: 'api.m.jd.com',
+        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.4(0x1800042c) NetType/WIFI Language/zh_CN',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Accept-Language': 'zh-cn',
+        Referer: 'https://servicewechat.com/wxf463e50cd384beda/140/page-frame.html',
+        Cookie: jfcookie
+      }
+    }
+    //lk.log(JSON.stringify(options))
+    lk.log('构建转链请求完成')
+    await lk.get(options, (error, response, data) => {
+      try {
+        //lk.log(data)
+        lk.log('请求京粉转链完成，准备处理数据')
+        const result = JSON.parse(data)
+        if (result.data) {
+          if (result.data.promotionUrl) {
+            jfConvertorResultUrl = result.data.promotionUrl
           }
-          lk.log('处理京粉转链数据完成')
-        } catch (e) {
-          lk.logErr(e)
-          //lk.log(`请求京粉api异常：${data}`)
-          lk.msg(``, `🛍该商品暂无佣金转链信息`)
-          lk.execFail()
+          //收集需要通知的信息
+          if (isNotify) {
+            let notifyStr = ""
+            if (result.data.wlCommissionShare) {
+              notifyStr = `${notifyStr}💰佣金比例：${result.data.wlCommissionShare}% `
+            }
+            if (result.data.wlCommission) {
+              notifyStr = `${notifyStr}  预计返利：¥${result.data.wlCommission} `
+            }
+            let param = ""
+            switch (appType) {
+              case 'jx':
+                param = `{"des":"m","url":"${jfConvertorResultUrl}","category":"jump"}`
+                param = encodeURI(param)
+                lk.msg(``, notifyStr, `openapp.jdpingou://virtual?params=${param}`)
+                break
+              case 'jsb':
+                param = `{"category":"jump","des":"m","url":"${jfConvertorResultUrl}"}`
+                param = encodeURI(param)
+                lk.msg(``, notifyStr, `openjdlite://virtual?params=${param}`)
+                break
+              default:
+                param = `{"category":"jump","des":"m","sourceValue":"babel-act","sourceType":"babel","url":"${jfConvertorResultUrl}"}`
+                param = encodeURI(param)
+                lk.msg(``, notifyStr, `openApp.jdMobile://virtual?params=${param}`)
+                break
+            }
+          }
+          lk.execStatus = true
         }
-        lk.log('开始注入html')
-        html =
-            html.replace(/(<\/html>)/g, '') +
-            `
+        lk.log('处理京粉转链数据完成')
+      } catch (e) {
+        lk.logErr(e)
+        //lk.log(`请求京粉api异常：${data}`)
+        lk.msg(``, `🛍该商品暂无佣金转链信息`)
+        lk.execFail()
+      }
+      lk.log('开始注入html')
+      html =
+        html.replace(/(<\/html>)/g, '') +
+        `
                       <style>
                           html, body {
                               -webkit-user-select: auto !important;
@@ -341,10 +359,11 @@ async function all() {
                       </script>
                   </html>
                   `
-        lk.log('注入html完成')
-        lk.done({body: html})
+      lk.log('注入html完成')
+      lk.done({
+        body: html
       })
-    }
+    })
   }
 }
 //ToolKit-start
