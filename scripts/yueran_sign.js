@@ -1,20 +1,47 @@
 /*
 脚本名称：悦然荟签到
 签到规则：每日签到可获得积分
+环境变量：yrh_token、yrh_info_mkey、yrh_sign_mkey（青龙）
+使用说明：添加重写规则进入小程序签到成功即可获取token&mkey，多账号以@隔开
 更新时间：2022-7-13
+====================================================================================================
+配置 (Surge)
+[MITM]
+hostname = wox2019.woxshare.com
+
+[Script]
+获取悦然荟查询mkey = type=http-request,pattern=^https:\/\/wox2019\.woxshare\.com\/clientApi\/userCenterDetail,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/yueran_sign.js
+获取悦然荟签到mkey = type=http-request,pattern=^https:\/\/wox2019\.woxshare\.com\/clientApi\/signInRecordAdd,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/yueran_sign.js
+
+悦然荟签到 = type=cron,cronexp=15 10 * * *,timeout=60,script-path=https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/yueran_sign.js,script-update-interval=0
+----------------------------------------------------------------------------------------------------
+配置 (QuanX)
+[MITM]
+hostname = wox2019.woxshare.com
+
+[rewrite_local]
+^https:\/\/wox2019\.woxshare\.com\/clientApi\/userCenterDetail url script-request-body https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/yueran_sign.js
+^https:\/\/wox2019\.woxshare\.com\/clientApi\/signInRecordAdd url script-request-body https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/yueran_sign.js
+
+[task_local]
+15 10 * * * https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/yueran_sign.js, tag=悦然荟签到, enabled=true
+====================================================================================================
 */
 
 const $ = new Env('悦然荟签到');
 const notify = $.isNode() ? require('./sendNotify') : '';
 const API_HOST = 'https://wox2019.woxshare.com';
 let token = $.getdata('yrh_token') || process.env.yrh_token || "";
-let mkey = $.getdata('yrh_mkey') || process.env.yrh_mkey || "";
+let info_mkey = $.getdata('yrh_info_mkey') || process.env.yrh_info_mkey || "";
+let sign_mkey = $.getdata('yrh_sign_mkey') || process.env.yrh_sign_mkey || "";
 let KEY_yrh_token = 'yrh_token';
-let KEY_yrh_mkey = 'yrh_mkey';
-let userArr = [], Message = "", timestamp = Date.now();
+let KEY_yrh_info_mkey = 'yrh_info_mkey';
+let KEY_yrh_sign_mkey = 'yrh_sign_mkey';
 
-if (isGetCookie = typeof $request !== `undefined`) {
-  GetCookie();
+let tokenArr = [], info_mkeyArr = [], sign_mkeyArr = [], Message = "", timestamp = Date.now();
+
+if (isGetUserInfo = typeof $request !== `undefined`) {
+  GetUserInfo();
   $.done()
 } else {
   !(async () => {
@@ -22,18 +49,27 @@ if (isGetCookie = typeof $request !== `undefined`) {
     Object.keys(token).forEach((item) => {
       tokenArr.push(token[item]);
     })
-    if (!tokenArr[0]) {
-      $.msg($.name, '【提示】请先获取签到Token');
+    info_mkey = info_mkey.split('@')
+    Object.keys(info_mkey).forEach((item) => {
+      info_mkeyArr.push(info_mkey[item]);
+    })
+    sign_mkey = sign_mkey.split('@')
+    Object.keys(sign_mkey).forEach((item) => {
+      sign_mkeyArr.push(sign_mkey[item]);
+    })
+    if (!tokenArr[0] || !sign_mkeyArr[0]) {
+      $.msg($.name, '【提示】请先获取签到Token&mkey。');
       return;
     }
     for (let i = 0; i < tokenArr.length; i++) {
       if (tokenArr[i]) {
         token = tokenArr[i];
+        info_mkey = info_mkeyArr[i];
+        sign_mkey = sign_mkeyArr[i];
         $.index = i + 1;
-        console.log(`账号 ${$.index} 开始签到`);
-        Message += `账 号 ${$.index} ${token}\n`
+        console.log(`账号 ${$.index} 开始签到\n`);
+        await UserInfo();
         await main();
-        // await Amt();
       }
     }
     if (Message) {
@@ -49,11 +85,15 @@ if (isGetCookie = typeof $request !== `undefined`) {
   })
 }
 
-// 获取签到 token 和 mkey
-function GetCookie() {
-  if ($request && $request.headers && $request.body) {
+// 获取 mkey
+function GetUserInfo() {
+  if ($request && $request.url.indexOf("userCenterDetail") > -1 && $request.headers && $request.body) {
     let rest_body = JSON.parse($request.body);
-    if (rest_body) $.setdata(rest_body.token, KEY_yrh_token) && $.setdata(rest_body.mkey, KEY_yrh_mkey)
+    if (rest_body) $.setdata(rest_body.token, KEY_yrh_token) && $.setdata(rest_body.mkey, KEY_yrh_info_mkey)
+    $.msg($.name, `用户 ${rest_body.token}`, `🎉 查询 mkey 获取成功`)
+  } else if ($request && $request.url.indexOf("signInRecordAdd") > -1 && $request.headers && $request.body) {
+    let rest_body = JSON.parse($request.body);
+    if (rest_body) $.setdata(rest_body.mkey, KEY_yrh_sign_mkey)
     $.msg($.name, `用户 ${rest_body.token}`, `🎉 签到 mkey 获取成功`)
   }
 }
@@ -64,7 +104,7 @@ function main() {
     url: `${API_HOST}/clientApi/signInRecordAdd`,
     headers: {
       'content-type' : `application/json`,
-      'mkey' : `${mkey}`,
+      'mkey' : `${sign_mkey}`,
       'Connection' : `keep-alive`,
       'x-gid' : ``,
       'version' : `3.3.27`,
@@ -80,7 +120,7 @@ function main() {
       'Referer' : `https://servicewechat.com/wx8f3e8a4b8e0ebe84/68/page-frame.html`,
       'ts' : `${timestamp}`
       },
-    body: `{"bid":"bhgff","token":"${token}","version":"3.3.27","mkeyUrl":"/clientApi/signInRecordAdd","mkey":"${mkey}"}`
+    body: `{"bid":"bhgff","token":"${token}","version":"3.3.27","mkeyUrl":"/clientApi/signInRecordAdd","mkey":"${sign_mkey}"}`
   }
   return new Promise(resolve => {
     // console.log(opt)
@@ -90,14 +130,70 @@ function main() {
           $.log(err)
         } else {
           if (data) {
-            data = JSON.parse(data);
+            result = JSON.parse(data);
             // console.log(data)
-            if (data.errCode == 0) {
-              console.log(`🎉 签到成功`);
-              Message += `🎉 签到成功`
+            if (result.errCode == 0) {
+              console.log(`🎉 签到成功！`);
+              Message += `🎉 签到成功！`
             } else {
-              console.log(`❌ ${data.errMsg}`);
-              Message += `❌ ${data.errMsg}`
+              console.log(`❌ ${result.errMsg}\n`);
+              Message += `❌ ${result.errMsg}\n\n`
+            }
+          } else {
+            $.log("服务器返回了空数据")
+          }
+        }
+      } catch (error) {
+        $.log(error)
+      } finally {
+        resolve();
+      }
+    })
+  })
+}
+
+// 查询个人信息
+function UserInfo() {
+  let opt = {
+    url: `${API_HOST}/clientApi/userCenterDetail`,
+    headers: {
+      'content-type' : `application/json`,
+      'mkey' : `${info_mkey}`,
+      'Connection' : `keep-alive`,
+      'x-gid' : ``,
+      'version' : `3.3.27`,
+      'bid' : `bhgff`,
+      'x-bid' : `bhgff`,
+      'Accept-Encoding' : `gzip,compress,br,deflate`,
+      'gid' : `0`,
+      'x-ver' : `3.3.27`,
+      'oid' : `1`,
+      'token' : `${token}`,
+      'User-Agent' : `Mozilla/5.0 (iPhone; CPU iPhone OS 15_0_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.25(0x18001924) NetType/4G Language/zh_CN`,
+      'Host' : `wox2019.woxshare.com`,
+      'Referer' : `https://servicewechat.com/wx8f3e8a4b8e0ebe84/68/page-frame.html`,
+      'ts' : `${timestamp}`
+      },
+    body: `{"bid":"bhgff","token":"${token}","version":"3.3.27","mkeyUrl":"/clientApi/userCenterDetail","mkey":"${info_mkey}"}`
+  }
+  return new Promise(resolve => {
+    // console.log(opt)
+    $.post(opt, (err, resp, data) => {
+      try {
+        if (err) {
+          $.log(err)
+        } else {
+          if (data) {
+            result = JSON.parse(data);
+            // console.log(data)
+            if (result.errCode == 0) {
+              NickName = `用户昵称：${result.detail.userInfoDetail.nickName}`
+              Level = `会员等级：${result.detail.userInfoDetail.cardLevelName}`
+              Integral = `当前积分：${result.detail.userInfoDetail.integral}`
+              console.log(`${NickName}\n${Level}\n${Integral}\n`);
+              Message += `\n${NickName}\n${Level}\n${Integral}\n\n`
+            } else {
+              console.log(`❌ 个人信息查询失败\n${result}\n`);
             }
           } else {
             $.log("服务器返回了空数据")
