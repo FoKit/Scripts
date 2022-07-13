@@ -187,7 +187,7 @@ function UserInfo() {
             result = JSON.parse(data);
             // console.log(data)
             if (result.errCode == 0) {
-              NickName = `用户昵称：${result.detail.userInfoDetail.nickName}`
+              NickName = `会员昵称：${result.detail.userInfoDetail.nickName}`
               Level = `会员等级：${result.detail.userInfoDetail.cardLevelName}`
               Integral = `当前积分：${result.detail.userInfoDetail.integral}`
               console.log(`${NickName}\n${Level}\n${Integral}\n`);
