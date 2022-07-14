@@ -31,9 +31,9 @@ hostname = wox2019.woxshare.com
 const $ = new Env('悦然荟签到');
 const notify = $.isNode() ? require('./sendNotify') : '';
 const API_HOST = 'https://wox2019.woxshare.com';
-let token = $.getdata('yrh_token') || "";
-let info_mkey = $.getdata('yrh_info_mkey') || "";
-let sign_mkey = $.getdata('yrh_sign_mkey') || "";
+let token = $.getdata('yrh_token');
+let info_mkey = $.getdata('yrh_info_mkey');
+let sign_mkey = $.getdata('yrh_sign_mkey');
 let KEY_yrh_token = 'yrh_token';
 let KEY_yrh_info_mkey = 'yrh_info_mkey';
 let KEY_yrh_sign_mkey = 'yrh_sign_mkey';
@@ -46,9 +46,9 @@ if (isGetUserInfo = typeof $request !== `undefined`) {
 } else {
   !(async () => {
     if ($.isNode()) {
-      token = process.env.yrh_token;
-      info_mkey = process.env.yrh_info_mkey;
-      sign_mkey = process.env.yrh_sign_mkey;
+      token = process.env.yrh_token || "";
+      info_mkey = process.env.yrh_info_mkey || "";
+      sign_mkey = process.env.yrh_sign_mkey || "";
     }
     token = token.split('@')
     Object.keys(token).forEach((item) => {
@@ -111,18 +111,15 @@ function main() {
       'content-type' : `application/json`,
       'mkey' : `${sign_mkey}`,
       'Connection' : `keep-alive`,
-      'x-gid' : ``,
-      'version' : `4.0.01`,
+      // 'version' : `4.0.01`,
       'bid' : `bhgff`,
-      'x-bid' : `bhgff`,
       'Accept-Encoding' : `gzip,compress,br,deflate`,
       'gid' : `0`,
-      'x-ver' : `4.0.01`,
       'oid' : `1`,
       'token' : `${token}`,
-      'User-Agent' : `Mozilla/5.0 (iPhone; CPU iPhone OS 15_0_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.25(0x18001924) NetType/WIFI Language/zh_CN`,
+      'User-Agent' : `Mozilla/5.0 (iPhone; CPU iPhone OS 15_0_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.25(0x18001925) NetType/4G Language/zh_CN`,
       'Host' : `wox2019.woxshare.com`,
-      'Referer' : `https://servicewechat.com/wx8f3e8a4b8e0ebe84/68/page-frame.html`,
+      'Referer' : `https://servicewechat.com/wx8f3e8a4b8e0ebe84/69/page-frame.html`,
       'ts' : `${timestamp}`
       },
     body: `{"bid":"bhgff","token":"${token}","version":"4.0.01","mkeyUrl":"/clientApi/signInRecordAdd","mkey":"${sign_mkey}"}`
@@ -165,18 +162,15 @@ function UserInfo() {
       'content-type' : `application/json`,
       'mkey' : `${info_mkey}`,
       'Connection' : `keep-alive`,
-      'x-gid' : ``,
-      'version' : `4.0.01`,
+      // 'version' : `4.0.01`,
       'bid' : `bhgff`,
-      'x-bid' : `bhgff`,
       'Accept-Encoding' : `gzip,compress,br,deflate`,
       'gid' : `0`,
-      'x-ver' : `3.3.27`,
       'oid' : `1`,
       'token' : `${token}`,
-      'User-Agent' : `Mozilla/5.0 (iPhone; CPU iPhone OS 15_0_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.25(0x18001924) NetType/4G Language/zh_CN`,
+      'User-Agent' : `Mozilla/5.0 (iPhone; CPU iPhone OS 15_0_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.25(0x18001925) NetType/WIFI Language/zh_CN`,
       'Host' : `wox2019.woxshare.com`,
-      'Referer' : `https://servicewechat.com/wx8f3e8a4b8e0ebe84/68/page-frame.html`,
+      'Referer' : `https://servicewechat.com/wx8f3e8a4b8e0ebe84/69/page-frame.html`,
       'ts' : `${timestamp}`
       },
     body: `{"bid":"bhgff","token":"${token}","version":"4.0.01","mkeyUrl":"/clientApi/userCenterDetail","mkey":"${info_mkey}"}`
