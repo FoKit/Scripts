@@ -7,7 +7,7 @@
 ====================================================================================================
 配置 (Surge)
 [MITM]
-hostname = wox2019.woxshare.com
+hostname = %APPEND% wox2019.woxshare.com
 
 [Script]
 获取悦然荟查询mkey = type=http-request,pattern=^https:\/\/wox2019\.woxshare\.com\/clientApi\/userCenterDetail,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/yueran_sign.js
@@ -31,9 +31,9 @@ hostname = wox2019.woxshare.com
 const $ = new Env('悦然荟签到');
 const notify = $.isNode() ? require('./sendNotify') : '';
 const API_HOST = 'https://wox2019.woxshare.com';
-let token = $.getdata('yrh_token') || process.env.yrh_token || "";
-let info_mkey = $.getdata('yrh_info_mkey') || process.env.yrh_info_mkey || "";
-let sign_mkey = $.getdata('yrh_sign_mkey') || process.env.yrh_sign_mkey || "";
+let token = $.getdata('yrh_token') || "";
+let info_mkey = $.getdata('yrh_info_mkey') || "";
+let sign_mkey = $.getdata('yrh_sign_mkey') || "";
 let KEY_yrh_token = 'yrh_token';
 let KEY_yrh_info_mkey = 'yrh_info_mkey';
 let KEY_yrh_sign_mkey = 'yrh_sign_mkey';
@@ -45,6 +45,11 @@ if (isGetUserInfo = typeof $request !== `undefined`) {
   $.done()
 } else {
   !(async () => {
+    if ($.isNode()) {
+      token = process.env.yrh_token;
+      info_mkey = process.env.yrh_info_mkey;
+      sign_mkey = process.env.yrh_sign_mkey;
+    }
     token = token.split('@')
     Object.keys(token).forEach((item) => {
       tokenArr.push(token[item]);
