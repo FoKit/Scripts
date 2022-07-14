@@ -112,12 +112,12 @@ function main() {
       'mkey' : `${sign_mkey}`,
       'Connection' : `keep-alive`,
       'x-gid' : ``,
-      'version' : `3.3.27`,
+      'version' : `4.0.01`,
       'bid' : `bhgff`,
       'x-bid' : `bhgff`,
       'Accept-Encoding' : `gzip,compress,br,deflate`,
       'gid' : `0`,
-      'x-ver' : `3.3.27`,
+      'x-ver' : `4.0.01`,
       'oid' : `1`,
       'token' : `${token}`,
       'User-Agent' : `Mozilla/5.0 (iPhone; CPU iPhone OS 15_0_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.25(0x18001924) NetType/WIFI Language/zh_CN`,
@@ -125,7 +125,7 @@ function main() {
       'Referer' : `https://servicewechat.com/wx8f3e8a4b8e0ebe84/68/page-frame.html`,
       'ts' : `${timestamp}`
       },
-    body: `{"bid":"bhgff","token":"${token}","version":"3.3.27","mkeyUrl":"/clientApi/signInRecordAdd","mkey":"${sign_mkey}"}`
+    body: `{"bid":"bhgff","token":"${token}","version":"4.0.01","mkeyUrl":"/clientApi/signInRecordAdd","mkey":"${sign_mkey}"}`
   }
   return new Promise(resolve => {
     // console.log(opt)
@@ -166,7 +166,7 @@ function UserInfo() {
       'mkey' : `${info_mkey}`,
       'Connection' : `keep-alive`,
       'x-gid' : ``,
-      'version' : `3.3.27`,
+      'version' : `4.0.01`,
       'bid' : `bhgff`,
       'x-bid' : `bhgff`,
       'Accept-Encoding' : `gzip,compress,br,deflate`,
@@ -179,7 +179,7 @@ function UserInfo() {
       'Referer' : `https://servicewechat.com/wx8f3e8a4b8e0ebe84/68/page-frame.html`,
       'ts' : `${timestamp}`
       },
-    body: `{"bid":"bhgff","token":"${token}","version":"3.3.27","mkeyUrl":"/clientApi/userCenterDetail","mkey":"${info_mkey}"}`
+    body: `{"bid":"bhgff","token":"${token}","version":"4.0.01","mkeyUrl":"/clientApi/userCenterDetail","mkey":"${info_mkey}"}`
   }
   return new Promise(resolve => {
     // console.log(opt)
