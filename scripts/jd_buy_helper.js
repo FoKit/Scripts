@@ -161,10 +161,12 @@ async function all() {
       try {
         //lk.log(data)
         lk.log('请求京粉转链完成，准备处理数据')
+        lk.log(data)
         const result = JSON.parse(data)
         if (result.data) {
           if (result.data.promotionUrl) {
             jfConvertorResultUrl = result.data.promotionUrl
+            lk.log(jfConvertorResultUrl)
           }
           //收集需要通知的信息
           if (isNotify) {
