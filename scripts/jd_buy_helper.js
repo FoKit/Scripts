@@ -59,7 +59,6 @@ async function all() {
     sku = arr.length != 0 ? arr[1] : ''
     lk.log(`解析完成:${sku}`)
     const sidebarHorizontal = 'lkJdHelperSidebarHorizontal'
-    const jdHelperCallKey = 'lkJdHelperCallKey'
     const jdHelperIsNotifyKey = 'lkJdHelperIsNotifyKey'
     const jdHelperIsShowSmzdm = 'jdHelperIsShowSmzdm'
     const jdHelperIsShowJf = 'jdHelperIsShowJf'
@@ -159,7 +158,6 @@ async function all() {
     lk.log('构建转链请求完成')
     await lk.get(options, (error, response, data) => {
       try {
-        //lk.log(data)
         lk.log('请求京粉转链完成，准备处理数据')
         lk.log(data)
         const result = JSON.parse(data)
