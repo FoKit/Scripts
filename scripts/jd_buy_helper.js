@@ -37,6 +37,7 @@ async function all() {
     let arr = []
     let cookieArr = JSON.parse(lk.getVal('CookiesJD'))
     let jfcookie = cookieArr[0].cookie
+    lk.log(`jfcookie:${jfcookie}`)
     if (!jfcookie) {
       lk.msg(``, `‼️京东Cookie读取失败，请检查Boxjs配置`)
       lk.done({
