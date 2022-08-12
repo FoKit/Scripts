@@ -1,5 +1,7 @@
 #!name=获取京东WSKEY
-#!desc=自动抓取京东WSKEY，支持Surge和Quantumult-X（打开解析器）使用，打开 京东APP 右上角 - 消息中心 即可自动抓取WSKEY。一个京东APP抓取多个账号WSKEY，需要先断网（飞行模式）再点击退出登录，划掉后台重新打开APP登录新的账号进行抓取。（自用脚本，请勿使用）
+#!desc=自动抓取京东WSKEY，支持Surge和Quantumult-X（QX需要配合解析器，自用脚本请勿使用。）
+#!使用方法：打开 京东APP 右上角 - 消息中心 即可自动抓取WSKEY。一个京东APP抓取多个账号WSKEY，需要先断网（飞行模式）再点击退出登录，划掉后台重新打开APP登录新的账号进行抓取。
+#!资源解析器：https://t.me/QuanXNews/110
 
 [Script]
 获取京东 WSKEY = type=http-request,pattern=^https:\/\/api\-dd\.jd\.com\/client\.action\?functionId=getSessionLog,requires-body=1,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_jd_wskey.js,script-update-interval=0
