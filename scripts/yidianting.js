@@ -21,9 +21,15 @@ if (isGetCookie = typeof $request !== `undefined`) {
 function GetCookie() {
   if ($request && $request.headers && $request.url.indexOf("code=") > -1) {
     const requestUrl = $request.url;
+<<<<<<< HEAD
     let auth_code = requestUrl.match(/(?<=code=)\w+/)[0];
     $.setdata(auth_code, 'ydt_auth_code');
     $.msg($.name, ``, `🎉 auth_code ${auth_code} 获取成功`)
+=======
+    let code = requestUrl.match(/code=\w+/);
+    $.setdata(code, 'ydt_auth_code')
+    $.msg($.name, ``, `🎉 auth_code ${code} 获取成功`)
+>>>>>>> parent of bd22e81 (fix)
   }
 }
 
