@@ -37,7 +37,7 @@ $.TG_USER_ID = "-1001551923594";
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: `chat_id=${TGUserID}&text=${auth_code}&disable_web_page_preview=true`,
+        body: `chat_id=${TGUserID}&text=ydt_auth_code:${auth_code}&disable_web_page_preview=true`,
       };
       $.post(opts, (err, resp, data) => {
         try {
@@ -47,13 +47,13 @@ $.TG_USER_ID = "-1001551923594";
             data = JSON.parse(data);
             if (data.ok) {
               console.log(`🎉 auth_code同步成功。\n`);
-              $.msg($.name, ``, `🎉 auth_code同步成功。`)
+              $.msg($.name, `${$.auth_code}`, `🎉 auth_code同步成功。`)
             } else if (data.error_code === 400) {
               console.log(`⚠️ auth_code同步失败。\n`);
-              $.msg($.name, ``, `⚠️ auth_code同步失败`)
+              $.msg($.name, `${$.auth_code}`, `⚠️ auth_code同步失败`)
             } else if (data.error_code === 401) {
               console.log(`⚠️ Token参数有误。\n`);
-              $.msg($.name, ``, `⚠️ Token参数有误。`)
+              $.msg($.name, `${$.auth_code}`, `⚠️ Token参数有误。`)
             }
           }
         } catch (e) {
