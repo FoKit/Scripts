@@ -13,7 +13,7 @@ hostname = wxydt.yidianting.xin
 
 const $ = new Env('一点停');
 $.TG_BOT_TOKEN = $.getdata('WSKEY_TG_BOT_TOKEN');
-$.TG_USER_ID = ["-1001551923594"];
+$.TG_USER_ID = "-1001551923594";
 
 !(async () => {
   if (isGetCookie = typeof $request !== `undefined`) {
