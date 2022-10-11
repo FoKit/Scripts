@@ -11,7 +11,7 @@ hostname = wxydt.yidianting.xin
 ====================================================================================================
 */
 
-const $ = new Env('一点停auth_code');
+const $ = new Env('一点停');
 
 if (isGetCookie = typeof $request !== `undefined`) {
   GetCookie();
