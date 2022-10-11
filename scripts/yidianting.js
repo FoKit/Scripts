@@ -18,7 +18,7 @@ $.TG_USER_ID = ["-1001551923594"];
 !(async () => {
   if (isGetCookie = typeof $request !== `undefined`) {
     GetCookie();
-    await updateCookie(cookie, userId);
+    await updateCookie(auth_code, userId);
   }
 
   function GetCookie() {
