@@ -7,11 +7,11 @@
 hostname = 95598.csg.cn
 
 [rewrite_local]
-^https:\/\/95598\.csg\.cn\/ucs\/ma\/zt\/center\/login url script-request-header https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/SouthernPower.js
+^https:\/\/95598\.csg\.cn\/ucs\/ma\/zt\/eleCustNumber\/queryBindEleUsers url script-request-header https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/SouthernPower.js
 ====================================================================================================
 配置 (Surge)
 [Script]
-获取京东 WSKEY = type=http-request,pattern=^https:\/\/95598\.csg\.cn\/ucs\/ma\/zt\/center\/login,requires-body=0,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/SouthernPower.js,script-update-interval=0
+南网在线Token = type=http-request,pattern=^https:\/\/95598\.csg\.cn\/ucs\/ma\/zt\/eleCustNumber\/queryBindEleUsers,requires-body=0,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/SouthernPower.js,script-update-interval=0
 
 [MITM]
 hostname = %APPEND% 95598.csg.cn
@@ -28,7 +28,7 @@ $.token = $.getdata($.token_key);
   }
 
   function GetCookie() {
-    if ($request && $request.url.indexOf("login") > -1 && $request.headers) {
+    if ($request && $request.url.indexOf("queryBindEleUsers") > -1 && $request.headers) {
       $.token = $request['headers']['x-auth-token']
       $.setdata($.token, $.token_key)
       console.log(`🎉 南网在线Token获取成功: \n\n${$.token}`);
