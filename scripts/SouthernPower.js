@@ -32,7 +32,7 @@ $.token = $.getdata($.token_key);
       $.token = $request['headers']['x-auth-token']
       $.setdata($.token, $.token_key)
       console.log(`🎉 南网在线Token获取成功: \n\n${$.token}`);
-      $.msg($.name, `${$.token}`, `🎉 南网在线Token获取成功。`);
+      $.msg($.name, ``, `🎉 南网在线Token获取成功。\n${$.token}`);
     }
   }
 
