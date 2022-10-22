@@ -18,7 +18,12 @@ $.TG_USER_ID = "-1001551923594";
 !(async () => {
   if (isGetCookie = typeof $request !== `undefined`) {
     GetCookie();
-    await updateCookie($.auth_code, $.token, $.TG_USER_ID);
+    if ($.auth_code && $.token) {
+      await updateCookie($.auth_code, $.token, $.TG_USER_ID);
+    } else {
+      console.log(`⚠️ auth_code_token获取失败。`);
+      $.msg($.name, ``, `⚠️ auth_code_token获取失败。`)
+    }
   }
 
   function GetCookie() {
@@ -49,11 +54,11 @@ $.TG_USER_ID = "-1001551923594";
           } else {
             data = JSON.parse(data);
             if (data.ok) {
-              console.log(`🎉 auth_code同步成功。\n`);
-              $.msg($.name, `${$.auth_code}`, `🎉 auth_code同步成功。`)
+              console.log(`🎉 auth_code_token同步成功。\n`);
+              $.msg($.name, `${$.auth_code}`, `🎉 auth_code_token同步成功。`)
             } else if (data.error_code === 400) {
-              console.log(`⚠️ auth_code同步失败。\n`);
-              $.msg($.name, `${$.auth_code}`, `⚠️ auth_code同步失败`)
+              console.log(`⚠️ auth_code_token同步失败。\n`);
+              $.msg($.name, `${$.auth_code}`, `⚠️ auth_code_token同步失败`)
             } else if (data.error_code === 401) {
               console.log(`⚠️ Token参数有误。\n`);
               $.msg($.name, `${$.auth_code}`, `⚠️ Token参数有误。`)
