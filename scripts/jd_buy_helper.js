@@ -160,7 +160,7 @@ async function all() {
     try {
       await lk.get(options, (error, response, data) => {
 
-        lk.log('请求京粉转链完成，准备处理数据')
+        lk.log('京粉转链请求完成，准备处理数据')
         lk.log(data)
         const result = JSON.parse(data)
         if (result.data) {
@@ -197,12 +197,10 @@ async function all() {
             }
           }
           lk.execStatus = true
-        }
-        lk.log('处理京粉转链数据完成')
 
-        lk.log('开始注入html')
-        html = html.replace(/(<\/html>)/g, '') +
-          `
+          lk.log('京粉转链数据处理完成, 开始注入html')
+          html = html.replace(/(<\/html>)/g, '') +
+            `
                       <style>
                           html, body {
                               -webkit-user-select: auto !important;
@@ -344,12 +342,15 @@ async function all() {
                       </script>
                   </html>
                   `
-        lk.log('注入html完成')
-        lk.done({ body: html })
+          lk.log('html注入完成')
+          lk.done({ body: html })
+        } else {
+          lk.msg(``, `🛍该商品暂无佣金转链信息`)
+          lk.done({ body: html })
+        }
       })
     } catch (e) {
       lk.logErr(e)
-      lk.msg(``, `🛍该商品暂无佣金转链信息`)
       lk.done({ body: html })
     }
   }
