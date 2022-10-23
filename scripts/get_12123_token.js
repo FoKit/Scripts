@@ -44,7 +44,7 @@ $.is_debug = $.getdata($.is_debug_key);
   }
 
   function debug(text) {
-    if ($.is_debug) {
+    if ($.is_debug === 'true') {
       console.log(text);
     }
   }
