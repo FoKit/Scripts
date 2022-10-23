@@ -21,6 +21,8 @@ hostname = %APPEND% miniappcsfw.122.gov.cn
 const $ = new Env('交管12123');
 $.token_key = 'token_12123';
 $.token = $.getdata($.token_key);
+$.is_debug_key = 'is_debug';
+$.is_debug = $.getdata($.is_debug_key);
 
 !(async () => {
   if (isGetCookie = typeof $request !== `undefined`) {
@@ -29,12 +31,21 @@ $.token = $.getdata($.token_key);
 
   function GetCookie() {
     if ($request && $request.body) {
+      debug($request.body);
       // rest_body = JSON.parse($request.body);
       $.rest_body = decodeURIComponent(data).replace("params=", "");
+      debug($.rest_body);
       $.token = rest_body.verifyToken;
+      debug($.token);
       $.setdata($.token, $.token_key);
       $.msg($.name, ``, `🎉 12123_Token获取成功。`);
       console.log(`🎉 12123_Token获取成功: \n\n${$.token}`);
+    }
+  }
+
+  function debug(text) {
+    if ($.is_debug) {
+      console.log(text);
     }
   }
 
