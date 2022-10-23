@@ -142,7 +142,7 @@ async function all() {
     }
     let options = {
       url: `https://api.m.jd.com/api?functionId=ConvertSuperLink&appid=u&_=${Date.now()}&body=${encodeURIComponent(
-      JSON.stringify(jfbody))}&loginType=2`,
+        JSON.stringify(jfbody))}&loginType=2`,
       headers: {
         Accept: '*/*',
         Connection: 'keep-alive',
@@ -157,8 +157,9 @@ async function all() {
     }
     //lk.log(JSON.stringify(options))
     lk.log('构建转链请求完成')
-    await lk.get(options, (error, response, data) => {
-      try {
+    try {
+      await lk.get(options, (error, response, data) => {
+
         lk.log('请求京粉转链完成，准备处理数据')
         lk.log(data)
         const result = JSON.parse(data)
@@ -196,21 +197,12 @@ async function all() {
             }
           }
           lk.execStatus = true
-        } else {
-          lk.msg(``, `🛍该商品暂无佣金转链信息`)
-          lk.execFail()
         }
         lk.log('处理京粉转链数据完成')
-      } catch (e) {
-        lk.logErr(e)
-        //lk.log(`请求京粉api异常：${data}`)
-        lk.msg(``, `🛍该商品暂无佣金转链信息`)
-        lk.execFail()
-      }
-      lk.log('开始注入html')
-      html =
-        html.replace(/(<\/html>)/g, '') +
-        `
+
+        lk.log('开始注入html')
+        html = html.replace(/(<\/html>)/g, '') +
+          `
                       <style>
                           html, body {
                               -webkit-user-select: auto !important;
@@ -235,15 +227,15 @@ async function all() {
                               background: #FFF;
                               border-radius: 50px 0 0 50px;
                           }
-                          
+
                           .hide {
                               display: none !important;
                           }
-                          
+
                           #alook {
                               bottom: 250px;
                           }
-                          
+
                           #yyb {
                               bottom: 217px;
                           }
@@ -323,7 +315,7 @@ async function all() {
                               document.body.removeChild(input)
                               window.location.href='manmanbuy://'
                           })
-                          
+
                           const script = document.createElement('script')
                           script.src = "https://cdn.bootcss.com/vConsole/3.2.0/vconsole.min.js"
                           // script.doneState = { loaded: true, complete: true};
@@ -331,7 +323,7 @@ async function all() {
                               init()
                               console.log("初始化成功")
                           }
-                          
+
                           const jqueryScript = document.createElement('script')
                           jqueryScript.type = 'text/javascript'
                           jqueryScript.src = "https://libs.baidu.com/jquery/2.0.0/jquery.min.js"
@@ -339,24 +331,27 @@ async function all() {
                           jqueryScript.onload = function() {
                               console.log("加载jquery完成"+jfConvertorResultUrl)
                           }
-                          
+
                           document.getElementsByTagName('head')[0].appendChild(script);
                           document.getElementsByTagName('head')[0].appendChild(jqueryScript);
-                          
+
                           function init () {
                               window.vConsole = new VConsole()
                               setTimeout(() => {
-                                  console.log(window.location.href)      
+                                  console.log(window.location.href)
                               })
                           }
                       </script>
                   </html>
                   `
-      lk.log('注入html完成')
-      lk.done({
-        body: html
+        lk.log('注入html完成')
+        lk.done({ body: html })
       })
-    })
+    } catch (e) {
+      lk.logErr(e)
+      lk.msg(``, `🛍该商品暂无佣金转链信息`)
+      lk.done({ body: html })
+    }
   }
 }
 //ToolKit-start
