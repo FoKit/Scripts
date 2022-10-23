@@ -21,8 +21,7 @@ hostname = %APPEND% miniappcsfw.122.gov.cn
 const $ = new Env('交管12123');
 $.token_key = 'token_12123';
 $.token = $.getdata($.token_key);
-$.is_debug_key = 'is_debug';
-$.is_debug = $.getdata($.is_debug_key);
+$.is_debug = $.getdata('is_debug');
 
 !(async () => {
   if (isGetCookie = typeof $request !== `undefined`) {
@@ -30,16 +29,21 @@ $.is_debug = $.getdata($.is_debug_key);
   }
 
   function GetCookie() {
-    if ($request && $request.body) {
+    if ($request && $request.body && $request.body.indexOf("verifyToken") > -1) {
       debug($request.body);
       $.rest_body = decodeURIComponent($request.body).replace("params=", "");
       debug($.rest_body);
       $.rest_body = JSON.parse($.rest_body);
-      $.token = $.rest_body.verifyToken;
-      debug($.token);
-      $.setdata($.token, $.token_key);
-      $.msg($.name, ``, `🎉 12123_Token获取成功。`);
-      console.log(`🎉 12123_Token获取成功: \n\n${$.token}`);
+      if ($.rest_body.verifyToken !== $.token) {
+        $.token = $.rest_body.verifyToken;
+        debug($.token);
+        $.setdata($.token, $.token_key);
+        $.msg($.name, ``, `🎉 12123_Token获取成功。`);
+        console.log(`🎉 12123_Token获取成功:\n${$.token}`);
+      } else {
+        console.log(`‼️ Token未变动，跳过更新。\n${$.token}`);
+      }
+
     }
   }
 

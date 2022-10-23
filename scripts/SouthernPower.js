@@ -19,8 +19,9 @@ hostname = %APPEND% 95598.csg.cn
 */
 
 const $ = new Env('南网在线');
-$.token_key = 'token_95598'
+$.token_key = 'token_95598';
 $.token = $.getdata($.token_key);
+$.is_debug = $.getdata('is_debug');
 
 !(async () => {
   if (isGetCookie = typeof $request !== `undefined`) {
@@ -29,10 +30,22 @@ $.token = $.getdata($.token_key);
 
   function GetCookie() {
     if ($request && $request.url.indexOf("queryBindEleUsers") > -1 && $request.headers) {
-      $.token = $request['headers']['x-auth-token']
-      $.setdata($.token, $.token_key)
-      console.log(`🎉 南网在线Token获取成功: \n\n${$.token}`);
-      $.msg($.name, ``, `🎉 南网在线Token获取成功。\n${$.token}`);
+      debug($request.headers);
+      if ($request['headers']['x-auth-token'] !== $.token) {
+        $.token = $request['headers']['x-auth-token'];
+        debug($.token);
+        $.setdata($.token, $.token_key);
+        $.msg($.name, ``, `🎉 南网在线Token获取成功。\n${$.token}`);
+        console.log(`🎉 南网在线Token获取成功: \n${$.token}`);
+      } else {
+        console.log(`‼️ Token未变动，跳过更新。\n${$.token}`);
+      }
+    }
+  }
+
+  function debug(text) {
+    if ($.is_debug === 'true') {
+      console.log(text);
     }
   }
 
