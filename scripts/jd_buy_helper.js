@@ -196,6 +196,9 @@ async function all() {
             }
           }
           lk.execStatus = true
+        } else {
+          lk.msg(``, `🛍该商品暂无佣金转链信息`)
+          lk.execFail()
         }
         lk.log('处理京粉转链数据完成')
       } catch (e) {
