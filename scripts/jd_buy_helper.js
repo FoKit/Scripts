@@ -345,7 +345,8 @@ async function all() {
           lk.log('html注入完成')
           lk.done({ body: html })
         } else {
-          lk.msg(``, `🛍该商品暂无佣金转链信息`)
+          lk.msg(``, `🛍 商品不在推广中`)
+          lk.log('🛍 商品不在推广中')
           lk.done({ body: html })
         }
       })
