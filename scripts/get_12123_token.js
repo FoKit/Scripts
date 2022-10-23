@@ -29,13 +29,12 @@ $.token = $.getdata($.token_key);
 
   function GetCookie() {
     if ($request && $request.body) {
-      let rest_body = JSON.parse($request.body);
-      if (rest_body) {
-        $.token = rest_body.verifyToken;
-        $.setdata($.token, $.token_key);
-        $.msg($.name, ``, `🎉 12123_Token获取成功。`);
-        console.log(`🎉 12123_Token获取成功: \n\n${$.token}`);
-      }
+      // rest_body = JSON.parse($request.body);
+      $.rest_body = decodeURIComponent(data).replace("params=", "");
+      $.token = rest_body.verifyToken;
+      $.setdata($.token, $.token_key);
+      $.msg($.name, ``, `🎉 12123_Token获取成功。`);
+      console.log(`🎉 12123_Token获取成功: \n\n${$.token}`);
     }
   }
 
