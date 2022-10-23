@@ -134,7 +134,7 @@
         "settings": [{
             "id": "is_debug",
             "name": "Debug",
-            "val": "false",
+            "val": false,
             "type": "boolean",
             "desc": ""
         }]
