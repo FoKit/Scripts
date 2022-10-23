@@ -118,6 +118,27 @@
             "type": "text"
         }]
     }, {
+        "id": "debug",
+        "name": "Debug",
+        "author": "@FoKit",
+        "descs_html": [
+            "Debug"
+        ],
+        "icons": [
+            "https://raw.githubusercontent.com/FoKit/Scripts/main/images/debug.png",
+            "https://raw.githubusercontent.com/FoKit/Scripts/main/images/debug.png"
+        ],
+        "keys": [
+            "is_debug"
+        ],
+        "settings": [{
+            "id": "is_debug",
+            "name": "Debug",
+            "val": "false",
+            "type": "boolean",
+            "desc": ""
+        }]
+    }, {
         "id": "jparking",
         "name": "捷停车",
         "author": "@FoKit",
@@ -304,6 +325,48 @@
             "type": "textarea",
             "rows": 5,
             "desc": "示例：replace@text 多条规则以换行分隔"
+        }]
+    }, {
+        "id": "token_95598",
+        "name": "南网在线Token",
+        "author": "@FoKit",
+        "descs_html": [
+            "南网在线Token"
+        ],
+        "icons": [
+            "https://raw.githubusercontent.com/FoKit/Scripts/main/images/95598.png",
+            "https://raw.githubusercontent.com/FoKit/Scripts/main/images/95598.png"
+        ],
+        "keys": [
+            "token_95598"
+        ],
+        "settings": [{
+            "id": "token_95598",
+            "name": "南网在线Token",
+            "val": "",
+            "type": "text",
+            "desc": ""
+        }]
+    }, {
+        "id": "token_12123",
+        "name": "交管12123_Token",
+        "author": "@FoKit",
+        "descs_html": [
+            "交管12123_Token"
+        ],
+        "icons": [
+            "https://raw.githubusercontent.com/FoKit/Scripts/main/images/12123.png",
+            "https://raw.githubusercontent.com/FoKit/Scripts/main/images/12123.png"
+        ],
+        "keys": [
+            "token_12123"
+        ],
+        "settings": [{
+            "id": "token_12123",
+            "name": "交管12123_Token",
+            "val": "",
+            "type": "text",
+            "desc": ""
         }]
     }]
 }
