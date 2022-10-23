@@ -32,9 +32,9 @@ $.is_debug = $.getdata($.is_debug_key);
   function GetCookie() {
     if ($request && $request.body) {
       debug($request.body);
-      // rest_body = JSON.parse($request.body);
       $.rest_body = decodeURIComponent($request.body).replace("params=", "");
       debug($.rest_body);
+      $.rest_body = JSON.parse($.rest_body);
       $.token = $.rest_body.verifyToken;
       debug($.token);
       $.setdata($.token, $.token_key);
