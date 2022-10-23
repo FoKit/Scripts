@@ -35,7 +35,7 @@ $.is_debug = $.getdata($.is_debug_key);
       // rest_body = JSON.parse($request.body);
       $.rest_body = decodeURIComponent($request.body).replace("params=", "");
       debug($.rest_body);
-      $.token = rest_body.verifyToken;
+      $.token = $.rest_body.verifyToken;
       debug($.token);
       $.setdata($.token, $.token_key);
       $.msg($.name, ``, `🎉 12123_Token获取成功。`);
