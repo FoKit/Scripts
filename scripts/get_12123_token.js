@@ -33,7 +33,7 @@ $.is_debug = $.getdata($.is_debug_key);
     if ($request && $request.body) {
       debug($request.body);
       // rest_body = JSON.parse($request.body);
-      $.rest_body = decodeURIComponent(data).replace("params=", "");
+      $.rest_body = decodeURIComponent($request.body).replace("params=", "");
       debug($.rest_body);
       $.token = rest_body.verifyToken;
       debug($.token);
