@@ -14,18 +14,24 @@ hostname = wxydt.yidianting.xin
 const $ = new Env('一点停');
 $.TG_BOT_TOKEN = $.getdata('WSKEY_TG_BOT_TOKEN');
 $.TG_USER_ID = "-1001551923594";
+$.auth_code_boxjs = $.getdata('ydt_auth_code');
 
 !(async () => {
   if (isGetCookie = typeof $request !== `undefined`) {
     GetCookie();
     if ($.auth_code && $.token) {
-      await updateCookie($.auth_code, $.token, $.TG_USER_ID);
+      if ($.token != $.auth_code_boxjs) {
+        await updateCookie($.auth_code, $.token, $.TG_USER_ID);
+      } else {
+        $.msg($.name, ``, `⚠️ 无需更新 auth_code_token。`);
+      }
     } else {
-      console.log(`⚠️ auth_code_token获取失败。`);
-      $.msg($.name, ``, `⚠️ auth_code_token获取失败。`)
+      console.log(`⚠️ auth_code_token 获取失败。`);
+      $.msg($.name, ``, `⚠️ auth_code_token 获取失败。`);
     }
   }
 
+  // 获取 Token
   function GetCookie() {
     if ($request && $request.url.indexOf("auth_code=") > -1 && $request.url.indexOf("token=") > -1) {
       const requestUrl = $request.url;
@@ -38,6 +44,7 @@ $.TG_USER_ID = "-1001551923594";
     }
   }
 
+  // 同步 Token
   function updateCookie(auth_code, token, TGUserID) {
     return new Promise((resolve) => {
       const opts = {
