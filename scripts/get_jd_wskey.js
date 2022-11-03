@@ -68,11 +68,14 @@ $.chat_ids = $.getdata('WSKEY_TG_USER_ID') || [];
     if ($.needUpload) {
         $.chat_ids = JSON.parse($.chat_ids);
         if ($.chat_ids == []) {
+            $.log('Use Cloudflare Worker...\n')
             await updateCookie_1(cookie, chat_id = []);
         } else {
             for (const chat_id of $.chat_ids) {
+                $.log('Use Cloudflare Worker...\n')
                 let update = await updateCookie_1(cookie, chat_id);
                 if ($.bot_token && !update) {
+                    $.log('Use Telegram API...\n')
                     await updateCookie_2(cookie, chat_id);
                 }
             }
