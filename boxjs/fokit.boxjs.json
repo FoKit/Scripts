@@ -1,6 +1,6 @@
 {
     "id": "fokit.app.sub",
-    "name": "FoKit自用订阅",
+    "name": "FoKit 应用订阅",
     "author": "@FoKit",
     "icon": "https://avatars.githubusercontent.com/u/44187836",
     "repo": "https://github.com/FoKit",
@@ -190,7 +190,6 @@
             "https://cdn.jsdelivr.net/gh/Orz-3/mini@master/Alpha/weibo.png",
             "https://cdn.jsdelivr.net/gh/Orz-3/mini@master/Color/weibo.png"
         ],
-        "repo": "https://github.com/FoKit/Scripts/blob/main/scripts/weibo_sign.js",
         "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/weibo_sign.js",
         "keys": [
             "sy_token_wb",
@@ -265,7 +264,7 @@
         "name": "京东WSKEY",
         "author": "@FoKit",
         "descs_html": [
-            "用于自动抓取京东 WsKey"
+            "用于自动抓取京东WSKEY"
         ],
         "icons": [
             "https://raw.githubusercontent.com/FoKit/Scripts/main/images/jdjoy.png",
@@ -278,16 +277,16 @@
         ],
         "settings": [{
             "id": "WSKEY_TG_BOT_TOKEN",
-            "name": "Telegram 机器人 Token",
+            "name": "Telegram机器人Token",
             "val": "",
             "type": "text",
             "desc": "填写 Telegram 机器人的 Token，格式：123456:abcdefgabcdefgabcdefg"
         }, {
             "id": "WSKEY_TG_USER_ID",
-            "name": "Telegram会话ID",
+            "name": "Telegram 会话ID",
             "val": "[\"-1001701121614\"]",
             "type": "text",
-            "desc": "填写 Telegram 会话 ID，以数组形式保存[\"-1001701121614\"]"
+            "desc": "填写 Telegram 会话ID，以数组形式保存[\"-1001701121614\"]"
         }, {
             "id": "wskeyList",
             "name": "京东WSKEY",
@@ -298,10 +297,10 @@
         }]
     }, {
         "id": "text_replace",
-        "name": "文本替换",
+        "name": "字符串替换",
         "author": "@FoKit",
         "descs_html": [
-            "文本替换工具"
+            "字符串替换工具"
         ],
         "icons": [
             "https://raw.githubusercontent.com/FoKit/Scripts/main/images/check.png",
