@@ -66,8 +66,10 @@ $.chat_ids = $.getdata('WSKEY_TG_USER_ID') || [];
     }
     $.setdata(JSON.stringify(cookiesData, null, 2), 'wskeyList');
     if ($.needUpload) {
-        $.chat_ids = JSON.parse($.chat_ids);
-        if ($.chat_ids == []) {
+        if (typeof $.chat_ids != 'object') {
+            $.chat_ids = JSON.parse($.chat_ids);
+        }
+        if ($.chat_ids.length < 1) {
             $.log('Use Cloudflare Worker...\n')
             await updateCookie_1(cookie, chat_id = []);
         } else {
