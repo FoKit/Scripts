@@ -84,7 +84,6 @@ $.chat_ids = $.getdata('WSKEY_TG_USER_ID') || [];
         }
     } else {
         $.msg($.name, '⚠️ 无需更新 WSKEY。', cookie);
-        console.log(`⚠️ 无需更新 WSKEY。\n${cookie}\n`);
     }
     return;
 })().catch((e) => $.logErr(e)).finally(() => $.done());
@@ -110,22 +109,19 @@ function updateCookie_1(wskey, chat_id) {
             try {
                 $.success = true;
                 if (err) {
-                    console.log(`${JSON.stringify(err)}\n`)
+                    $.log(`${JSON.stringify(err)}\n`)
                     $.success = false;
                 } else {
                     data = JSON.parse(data);
                     if (data.ok) {
                         $.subt = '🎉 WSKEY 提交成功。';
                         $.msg($.name, $.subt, wskey);
-                        console.log(`${$.subt}\n${wskey}\n`);
                     } else if (data.error_code === 400) {
                         $.subt = '⚠️ Telegram bot 无发送消息权限。';
                         $.msg($.name, $.subt, wskey);
-                        console.log(`${$.subt}\n${wskey}\n`);
                     } else if (data.error_code === 401) {
                         $.subt = '⚠️ Telegram bot token 填写错误。';
                         $.msg($.name, $.subt, wskey);
-                        console.log(`${$.subt}\n${wskey}\n`);
                     } else {
                         $.success = false;
                     }
@@ -151,20 +147,17 @@ function updateCookie_2(wskey, chat_id) {
         $.post(opts, (err, resp, data) => {
             try {
                 if (err) {
-                    console.log(`${JSON.stringify(err)}\n`);
+                    $.log(`${JSON.stringify(err)}\n`);
                 } else {
                     data = JSON.parse(data);
                     if (data.ok) {
                         $.subt = '🎉 WSKEY 提交成功。';
-                        console.log(`${$.subt}\n${wskey}\n`);
                         $.msg($.name, $.subt, wskey);
                     } else if (data.error_code === 400) {
                         $.subt = '⚠️ Telegram bot 无发送消息权限。';
-                        console.log(`${$.subt}\n${wskey}\n`);
                         $.msg($.name, $.subt, wskey);
                     } else if (data.error_code === 401) {
                         $.subt = '⚠️ Telegram bot token 填写错误。';
-                        console.log(`${$.subt}\n${wskey}\n`);
                         $.msg($.name, $.subt, wskey);
                     }
                 }
