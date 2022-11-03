@@ -89,7 +89,7 @@ $.chat_ids = $.getdata('WSKEY_TG_USER_ID') || [];
 })().catch((e) => $.logErr(e)).finally(() => $.done());
 
 function updateCookie_1(wskey, chat_id) {
-    url = "https://wskey.fokit.workers.dev/msg";
+    url = "https://wskey.fokit.cn/msg";
     if ($.bot_token) {
         url += `?bot_token=${$.bot_token}`;
     };
