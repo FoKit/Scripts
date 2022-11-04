@@ -37,8 +37,7 @@ $.chat_ids = $.getdata('WSKEY_TG_USER_ID') || [];
 
 !(async () => {
     if (!pin || !key) {
-        $.desc = '⚠️ WSKEY 获取失败';
-        $.msg($.name, '', $.desc);
+        $.msg('⚠️ WSKEY 获取失败');
         $.done();
     }
     const cookie = `wskey=${key};pt_pin=${pin};`;
@@ -83,7 +82,7 @@ $.chat_ids = $.getdata('WSKEY_TG_USER_ID') || [];
             }
         }
     } else {
-        $.msg($.name, '⚠️ 无需更新 WSKEY。', cookie);
+        $.msg('⚠️ 无需更新 WSKEY。', cookie);
     }
     return;
 })().catch((e) => $.logErr(e)).finally(() => $.done());
@@ -115,13 +114,13 @@ function updateCookie_1(wskey, chat_id) {
                     data = JSON.parse(data);
                     if (data.ok) {
                         $.subt = '🎉 WSKEY 提交成功。';
-                        $.msg($.name, $.subt, wskey);
+                        $.msg($.subt, wskey);
                     } else if (data.error_code === 400) {
                         $.subt = '⚠️ Telegram bot 无发送消息权限。';
-                        $.msg($.name, $.subt, wskey);
+                        $.msg($.subt, wskey);
                     } else if (data.error_code === 401) {
                         $.subt = '⚠️ Telegram bot token 填写错误。';
-                        $.msg($.name, $.subt, wskey);
+                        $.msg($.subt, wskey);
                     } else {
                         $.success = false;
                     }
@@ -152,13 +151,13 @@ function updateCookie_2(wskey, chat_id) {
                     data = JSON.parse(data);
                     if (data.ok) {
                         $.subt = '🎉 WSKEY 提交成功。';
-                        $.msg($.name, $.subt, wskey);
+                        $.msg($.subt, wskey);
                     } else if (data.error_code === 400) {
                         $.subt = '⚠️ Telegram bot 无发送消息权限。';
-                        $.msg($.name, $.subt, wskey);
+                        $.msg($.subt, wskey);
                     } else if (data.error_code === 401) {
                         $.subt = '⚠️ Telegram bot token 填写错误。';
-                        $.msg($.name, $.subt, wskey);
+                        $.msg($.subt, wskey);
                     }
                 }
             } catch (e) {
