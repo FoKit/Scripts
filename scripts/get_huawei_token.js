@@ -39,13 +39,14 @@ $.is_debug = $.getdata('is_debug');
         $.cookie = $request.headers['Cookie'] || $request.headers['cookie'];
         $.huawei_loginID = $.cookie.match(/loginID=(.+?);/)[1];
         $.huawei_token = $.cookie.match(/token=(.+?);/)[1];
-        debug($.huawei_loginID, $.huawei_token);
+        debug($.huawei_loginID);
+        debug($.huawei_token);
         if ($.huawei_loginID !== $.boxjs_data_1 || $.huawei_token !== $.boxjs_data_2) {
           $.setdata($.huawei_loginID, $.boxjs_key_1);
           $.setdata($.huawei_token, $.boxjs_key_2);
           $.msg(`🎉 华为云服务Token获取成功。`, `${$.huawei_loginID}\n${$.huawei_token}`);
         } else {
-          console.log(`‼️ Token未变动，跳过更新。\n${$.token}`);
+          console.log(`‼️ Token未变动，跳过更新。\n${$.huawei_token}`);
         }
       } else {
         console.log('Token获取失败，未找到Set-Cookie。')
