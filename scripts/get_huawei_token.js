@@ -42,7 +42,7 @@ $.is_debug = $.getdata('is_debug');
         debug($.huawei_loginID, $.huawei_token);
         if ($.huawei_loginID !== $.boxjs_data_1 || $.huawei_token !== $.boxjs_data_2) {
           $.setdata($.huawei_loginID, $.boxjs_key_1);
-          $.setdata($.huawei_token, $.boxjs_key_1);
+          $.setdata($.huawei_token, $.boxjs_key_2);
           $.msg(`🎉 华为云服务Token获取成功。`, `${$.huawei_loginID}\n${$.huawei_token}`);
         } else {
           console.log(`‼️ Token未变动，跳过更新。\n${$.token}`);
@@ -55,7 +55,11 @@ $.is_debug = $.getdata('is_debug');
 
   function debug(text) {
     if ($.is_debug === 'true') {
-      console.log(text);
+      if (typeof text == "string") {
+        console.log(text);
+      } else if (typeof text == "object") {
+        console.log($.toStr(text));
+      }
     }
   }
 
