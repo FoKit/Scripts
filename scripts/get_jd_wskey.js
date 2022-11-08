@@ -14,7 +14,7 @@ hostname = api-dd.jd.com
 
 ====================Surge配置====================
 [Script]
-京东 WSKEY = type=http-request,pattern=^https:\/\/api\-dd\.jd\.com\/client\.action\?functionId=getSessionLog,requires-body=1,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/Fokit/Quantumult-X/main/scripts/jd_wskey_tg.js,script-update-interval=0
+京东 WSKEY = type=http-request,pattern=^https:\/\/api\-dd\.jd\.com\/client\.action\?functionId=getSessionLog,requires-body=1,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jd_wskey_tg.js,script-update-interval=0
 
 [MITM]
 hostname = %APPEND% api-dd.jd.com

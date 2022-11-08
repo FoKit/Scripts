@@ -10,7 +10,7 @@ BoxJs 订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.
 hostname = cloud.huawei.com
 ====================Surge配置====================
 [Script]
-华为云服务Token = type=http-request,pattern=^https:\/\/cloud.huawei.com/wapFindPhone,requires-body=0,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/Fokit/Quantumult-X/main/scripts/get_huawei_token.js,script-update-interval=0
+华为云服务Token = type=http-request,pattern=^https:\/\/cloud.huawei.com/wapFindPhone,requires-body=0,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_huawei_token.js,script-update-interval=0
 [MITM]
 hostname = %APPEND% cloud.huawei.com
 ====================Loon配置=====================

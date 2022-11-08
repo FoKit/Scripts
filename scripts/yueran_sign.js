@@ -10,21 +10,21 @@
 hostname = %APPEND% wox2019.woxshare.com
 
 [Script]
-获取悦然荟查询mkey = type=http-request,pattern=^https:\/\/wox2019\.woxshare\.com\/clientApi\/userCenterDetail,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/yueran_sign.js
-获取悦然荟签到mkey = type=http-request,pattern=^https:\/\/wox2019\.woxshare\.com\/clientApi\/signInRecordAdd,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/yueran_sign.js
+获取悦然荟查询mkey = type=http-request,pattern=^https:\/\/wox2019\.woxshare\.com\/clientApi\/userCenterDetail,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yueran_sign.js
+获取悦然荟签到mkey = type=http-request,pattern=^https:\/\/wox2019\.woxshare\.com\/clientApi\/signInRecordAdd,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yueran_sign.js
 
-悦然荟签到 = type=cron,cronexp=15 10 * * *,timeout=60,script-path=https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/yueran_sign.js,script-update-interval=0
+悦然荟签到 = type=cron,cronexp=15 10 * * *,timeout=60,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yueran_sign.js,script-update-interval=0
 ----------------------------------------------------------------------------------------------------
 配置 (QuanX)
 [MITM]
 hostname = wox2019.woxshare.com
 
 [rewrite_local]
-^https:\/\/wox2019\.woxshare\.com\/clientApi\/userCenterDetail url script-request-body https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/yueran_sign.js
-^https:\/\/wox2019\.woxshare\.com\/clientApi\/signInRecordAdd url script-request-body https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/yueran_sign.js
+^https:\/\/wox2019\.woxshare\.com\/clientApi\/userCenterDetail url script-request-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yueran_sign.js
+^https:\/\/wox2019\.woxshare\.com\/clientApi\/signInRecordAdd url script-request-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yueran_sign.js
 
 [task_local]
-15 10 * * * https://raw.githubusercontent.com/FoKit/Quantumult-X/main/scripts/yueran_sign.js, tag=悦然荟签到, enabled=true
+15 10 * * * https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yueran_sign.js, tag=悦然荟签到, enabled=true
 ====================================================================================================
 */
 
