@@ -2,7 +2,7 @@
 #!desc=自动抓取华为云服务Token
 
 [Script]
-华为云服务Token = type=http-response,pattern=^https:\/\/cloud.huawei.com/wapFindPhone\?timestamp=\d+?&ticket=,requires-body=0,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/Fokit/Quantumult-X/main/scripts/get_huawei_token.js,script-update-interval=0
+华为云服务Token = type=http-response,pattern=^https:\/\/cloud.huawei.com/wapFindPhone,requires-body=0,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/Fokit/Quantumult-X/main/scripts/get_huawei_token.js,script-update-interval=0
 
 [MITM]
 hostname = %APPEND% cloud.huawei.com

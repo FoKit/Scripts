@@ -5,17 +5,17 @@
 BoxJs 订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
 ================Quantumult X配置=================
 [rewrite_local]
-^https:\/\/cloud.huawei.com/wapFindPhone\?timestamp=\d+?&ticket= url script-response-header https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_huawei_token.js
+^https:\/\/cloud.huawei.com/wapFindPhone url script-request-header https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_huawei_token.js
 [MITM]
 hostname = cloud.huawei.com
 ====================Surge配置====================
 [Script]
-华为云服务Token = type=http-response,pattern=^https:\/\/cloud.huawei.com/wapFindPhone\?timestamp=\d+?&ticket=,requires-body=0,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/Fokit/Quantumult-X/main/scripts/get_huawei_token.js,script-update-interval=0
+华为云服务Token = type=http-request,pattern=^https:\/\/cloud.huawei.com/wapFindPhone,requires-body=0,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/Fokit/Quantumult-X/main/scripts/get_huawei_token.js,script-update-interval=0
 [MITM]
 hostname = %APPEND% cloud.huawei.com
 ====================Loon配置=====================
 [Script]
-http-response ^https:\/\/cloud.huawei.com/wapFindPhone\?timestamp=\d+?&ticket= tag=华为云服务Token, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_huawei_token.js,requires-body=1
+http-request ^https:\/\/cloud.huawei.com/wapFindPhone tag=华为云服务Token, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_huawei_token.js,requires-body=1
 [MITM]
 hostname = cloud.huawei.com
 */
@@ -33,12 +33,12 @@ $.is_debug = $.getdata('is_debug');
   }
 
   function GetCookie() {
-    if ($request && $request.url.indexOf("wapFindPhone") > -1 && $response.headers) {
-      debug($response.headers);
-      if ($response['headers']['Set-Cookie']) {
-        $.set_cookie = $response['headers']['Set-Cookie'];
-        $.huawei_loginID = $.set_cookie[0].replace(/;.+/, ';');
-        $.huawei_token = $.set_cookie[1].replace(/;.+/, ';');
+    if ($request && $request.url.indexOf("wapFindPhone") > -1 && $request.headers) {
+      debug($request.headers);
+      if ($request['headers']['Cookie']) {
+        $.cookie = $request.headers['Cookie'] || $request.headers['cookie'];
+        $.huawei_loginID = $.cookie.match(/loginID=(.+?);/)[1];
+        $.huawei_token = $.cookie.match(/token=(.+?);/)[1];
         debug($.huawei_loginID, $.huawei_token);
         if ($.huawei_loginID !== $.boxjs_data_1 || $.huawei_token !== $.boxjs_data_2) {
           $.setdata($.huawei_loginID, $.boxjs_key_1);
