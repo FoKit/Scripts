@@ -28,12 +28,12 @@ $.boxjs_data_2 = $.getdata($.boxjs_key_2);
 $.is_debug = $.getdata('is_debug');
 
 !(async () => {
-  if (isGetCookie = typeof $response !== `undefined`) {
+  if (isGetCookie = typeof $request !== `undefined`) {
     GetCookie();
   }
 
   function GetCookie() {
-    if ($response && $response.url.indexOf("wapFindPhone") > -1 && $response.headers) {
+    if ($request && $request.url.indexOf("wapFindPhone") > -1 && $response.headers) {
       debug($response.headers);
       if ($response['headers']['Set-Cookie']) {
         $.set_cookie = $response['headers']['Set-Cookie'];
