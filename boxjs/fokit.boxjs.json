@@ -367,5 +367,33 @@
             "type": "text",
             "desc": ""
         }]
+    }, {
+        "id": "huawei_cloud",
+        "name": "华为云服务",
+        "author": "@FoKit",
+        "descs_html": [
+            "华为云服务 Token & loginID"
+        ],
+        "icons": [
+            "https://raw.githubusercontent.com/FoKit/Scripts/main/images/huawei.png",
+            "https://raw.githubusercontent.com/FoKit/Scripts/main/images/huawei.png"
+        ],
+        "keys": [
+            "huawei_loginID",
+            "huawei_token"
+        ],
+        "settings": [{
+            "id": "huawei_loginID",
+            "name": "loginID",
+            "val": "",
+            "type": "text",
+            "desc": ""
+        },{
+            "id": "huawei_token",
+            "name": "Token",
+            "val": "",
+            "type": "text",
+            "desc": ""
+        }]
     }]
 }
