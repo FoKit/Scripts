@@ -33,7 +33,7 @@ $.is_debug = $.getdata('is_debug');
       $.setdata($.huawei_cookie, $.boxjs_key);
       await updateCookie($.huawei_cookie, $.tg_chat_id);
     } else {
-      $.msg(`‼️ 无需更新 ${$.name} 。\n${$.huawei_cookie}`);
+      console.log(`‼️ 无需更新 ${$.name} 。\n${$.huawei_cookie}`);
     }
   }
 
