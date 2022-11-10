@@ -372,25 +372,18 @@
         "name": "华为云服务",
         "author": "@FoKit",
         "descs_html": [
-            "华为云服务 Token & loginID"
+            "华为云服务 Cookie"
         ],
         "icons": [
             "https://raw.githubusercontent.com/FoKit/Scripts/main/images/huawei.png",
             "https://raw.githubusercontent.com/FoKit/Scripts/main/images/huawei.png"
         ],
         "keys": [
-            "huawei_loginID",
-            "huawei_token"
+            "huawei_cookie"
         ],
         "settings": [{
-            "id": "huawei_loginID",
-            "name": "loginID",
-            "val": "",
-            "type": "text",
-            "desc": ""
-        },{
-            "id": "huawei_token",
-            "name": "Token",
+            "id": "huawei_cookie",
+            "name": "Cookie",
             "val": "",
             "type": "text",
             "desc": ""

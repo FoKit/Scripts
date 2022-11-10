@@ -1,0 +1,8 @@
+#!name=华为云服务 Cookie
+#!desc=自动抓取华为云服务 Cookie
+
+[Script]
+华为云服务 Cookie = type=http-request,pattern=^https:\/\/cloud.huawei.com/wapFindPhone,requires-body=0,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_huawei_cookie.js,script-update-interval=0
+
+[MITM]
+hostname = %APPEND% cloud.huawei.com
