@@ -43,7 +43,7 @@ $.boxjs_data_2 = $.getdata($.boxjs_key_2);
         $.china_telecom_cookie += $.cookie.match(/(CZSSON=.+?;)/)[1];
         if ($.china_telecom_cookie && $.china_telecom_cookie !== $.boxjs_data_1) {
           $.setdata($.china_telecom_cookie, $.boxjs_key_1);
-          $.msg(`🎉 ${$.name} 更新成功。\n${$.china_telecom_cookie}`);
+          $.msg(`🎉 Cookie 更新成功。\n${$.china_telecom_cookie}`);
         } else {
           console.log(`‼️ 无需更新 Cookie。\n${$.china_telecom_cookie}`);
         }
@@ -54,7 +54,7 @@ $.boxjs_data_2 = $.getdata($.boxjs_key_2);
       $.china_telecom_login_url = $request.url;
       if ($.china_telecom_login_url && $.china_telecom_login_url !== $.boxjs_data_2) {
         $.setdata($.china_telecom_login_url, $.boxjs_key_2);
-        $.msg(`🎉 ${$.name} 更新成功。\n${$.china_telecom_login_url}`);
+        $.msg(`🎉 Login_url 更新成功。\n${$.china_telecom_login_url}`);
       } else {
         console.log(`‼️ 无需更新 Login_url。\n${$.china_telecom_login_url}`);
       }
