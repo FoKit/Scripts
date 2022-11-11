@@ -388,5 +388,33 @@
             "type": "text",
             "desc": ""
         }]
+    }, {
+        "id": "china_telecom",
+        "name": "中国电信",
+        "author": "@FoKit",
+        "descs_html": [
+            "中国电信 Cookie"
+        ],
+        "icons": [
+            "https://raw.githubusercontent.com/FoKit/Scripts/main/images/china_telecom.png",
+            "https://raw.githubusercontent.com/FoKit/Scripts/main/images/china_telecom.png"
+        ],
+        "keys": [
+            "china_telecom_cookie",
+            "china_telecom_login_url"
+        ],
+        "settings": [{
+            "id": "china_telecom_cookie",
+            "name": "Cookie",
+            "val": "",
+            "type": "text",
+            "desc": ""
+        },{
+            "id": "china_telecom_login_url",
+            "name": "Login_url",
+            "val": "",
+            "type": "text",
+            "desc": ""
+        }]
     }]
 }

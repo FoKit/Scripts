@@ -1,0 +1,8 @@
+#!name=中国电信 Cookie
+#!desc=自动抓取中国电信 Cookie，登录入口：http://u3v.cn/5uwtIP
+
+[Script]
+中国电信 Cookie = type=http-request,pattern=^https:\/\/(e\.189\.cn\/store\/user|open\.e\.189\.cn\/api\/logbox\/oauth2\/loginSubmit\.do),requires-body=0,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_10000_cookie.js,script-update-interval=0
+
+[MITM]
+hostname = %APPEND% e.189.cn, open.e.189.cn
