@@ -144,7 +144,7 @@
             "name": "购物助手",
             "val": "left",
             "type": "radios",
-            "desc": "展示位置"
+            "desc": "展示位置",
             "items": [
                 { "key": "左边", "label": "left" },
                 { "key": "右边", "label": "right" }
