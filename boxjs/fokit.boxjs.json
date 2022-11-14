@@ -129,7 +129,8 @@
             "https://raw.githubusercontent.com/FoKit/Scripts/main/images/debug.png"
         ],
         "keys": [
-            "is_debug"
+            "is_debug",
+            "buy_helper_LR"
         ],
         "settings": [{
             "id": "is_debug",
@@ -137,7 +138,19 @@
             "val": false,
             "type": "boolean",
             "desc": ""
-        }]
+        },
+        {
+            "id": "buy_helper_LR",
+            "name": "购物助手",
+            "val": "left",
+            "type": "radios",
+            "desc": "展示位置"
+            "items": [
+                { "key": "左边", "label": "left" },
+                { "key": "右边", "label": "right" }
+            ]
+        }
+        ]
     }, {
         "id": "jparking",
         "name": "捷停车",
