@@ -118,11 +118,11 @@
             "type": "text"
         }]
     }, {
-        "id": "debug",
-        "name": "Debug",
+        "id": "tools",
+        "name": "Tools",
         "author": "@FoKit",
         "descs_html": [
-            "Debug"
+            ""
         ],
         "icons": [
             "https://raw.githubusercontent.com/FoKit/Scripts/main/images/debug.png",
