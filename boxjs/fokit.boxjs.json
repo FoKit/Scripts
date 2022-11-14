@@ -146,8 +146,8 @@
             "type": "radios",
             "desc": "展示位置",
             "items": [
-                { "key": "左边", "label": "left" },
-                { "key": "右边", "label": "right" }
+                { "key": "left", "label": "左边" },
+                { "key": "right", "label": "右边" }
             ]
         }
         ]
