@@ -9,7 +9,7 @@ BoxJs 订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.
 # Surge
 [Script]
 # > 威锋论坛签到+任务
-威锋论坛 = type=cron,script-path=weifeng.js,cronexp=0 8 * * *,wake-system=1,timeout=15
+威锋论坛 = type=cron,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/weifeng.js,cronexp=0 8 * * *,wake-system=1,timeout=15
 
 # Quantumult X
 [task_local]
