@@ -30,8 +30,8 @@ var person = new Person();
   let Task = await task();
   let inform = await infon();
   let text = `ID:${inform.userBaseInfo.userName}  等级:Lv${inform.userBaseInfo.level}  金币:${inform.weTicket}  注册:${inform.joinDays}天  连签:${inform.signInTotalCount}天\n${singIn}，${Task}`;
-  $.msg($.name, text + '\n')
-  if ($.isNode()) await notify.sendNotify($.name, text);
+  $.msg($.name, ``, text)
+  if ($.isNode()) await notify.sendNotify($.name, text + '\n');
 })()
   .catch((e) => {
     $.log(`❌ ${$.name}, 出错了: ${e}`)
