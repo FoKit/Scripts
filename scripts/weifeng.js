@@ -19,8 +19,8 @@ BoxJs 订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.
 
 const $ = new Env('威锋论坛');
 const notify = $.isNode() ? require('./sendNotify') : '';
-const userName = $.getdata('feng_username') || ($.isNode() ? process.env.feng_username : '');
-const password = $.getdata('feng_password') || ($.isNode() ? process.env.feng_password : '');
+const userName = $.getdata('feng_username') || $.isNode() ? process.env.feng_username : '';
+const password = $.getdata('feng_password') || $.isNode() ? process.env.feng_password : '';
 
 //获取请求对象
 var person = new Person();
