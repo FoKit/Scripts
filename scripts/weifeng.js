@@ -125,7 +125,7 @@ async function task() {
     Award.body = `task=share&taskId=${i}`;
     console.log(JSON.parse(await http_post(Award)).status.message);
   }
-  return '所有任务已完成, 详情请查看日志。'
+  return '所有任务已完成，详情请查看日志。'
 }
 
 
