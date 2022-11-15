@@ -19,8 +19,8 @@ BoxJs 订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.
 
 const $ = new Env('威锋论坛');
 const notify = $.isNode() ? require('./sendNotify') : '';
-const userName = $.getdata('feng_username') || $.isNode() ? process.env.feng_username : '';
-const password = $.getdata('feng_password') || $.isNode() ? process.env.feng_password : '';
+const userName = $.getdata('feng_username') || ($.isNode() ? process.env.feng_username : '');
+const password = $.getdata('feng_password') || ($.isNode() ? process.env.feng_password : '');
 
 //获取请求对象
 var person = new Person();
@@ -29,11 +29,9 @@ var person = new Person();
   let singIn = await signin();
   let Task = await task();
   let inform = await infon();
-  let txt, text;
-  txt = `${singIn}，已连续签到${inform.signInTotalCount}天`;
-  text = `ID:${inform.userBaseInfo.userName}   等级:Lv${inform.userBaseInfo.level}   金币:${inform.weTicket}   ${Task}\n今天是你加入威锋的${inform.joinDays}天`
-  $.msg($.name, txt, text)
-  if ($.isNode()) await notify.sendNotify($.name, txt + '\n' + text);
+  let text = `ID:${inform.userBaseInfo.userName}  等级:Lv${inform.userBaseInfo.level}  金币:${inform.weTicket}  注册:${inform.joinDays}天  连签:${inform.signInTotalCount}天\n${singIn}，${Task}`;
+  $.msg($.name, text + '\n')
+  if ($.isNode()) await notify.sendNotify($.name, text);
 })()
   .catch((e) => {
     $.log(`❌ ${$.name}, 出错了: ${e}`)
@@ -67,7 +65,7 @@ function http_get(opt) {
 }
 
 async function ck() {
-  if (!userName) {
+  if (!userName && !password) {
     $.msg($.name, '未配置账号密码，结束运行。')
     if ($.isNode()) await notify.sendNotify($.name, '未配置账号密码环境变量，结束运行。');
     $.done();
