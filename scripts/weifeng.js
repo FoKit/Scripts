@@ -29,7 +29,7 @@ var person = new Person();
   let singIn = await signin();
   let Task = await task();
   let inform = await infon();
-  let text = `ID:${inform.userBaseInfo.userName}  等级:Lv${inform.userBaseInfo.level}  金币:${inform.weTicket}  注册:${inform.joinDays}天  连签:${inform.signInTotalCount}天\n${singIn}，${Task}`;
+  let text = `${singIn}，${Task}\n用户:${inform.userBaseInfo.userName}  等级:Lv${inform.userBaseInfo.level}  金币:${inform.weTicket}  注册:${inform.joinDays}天  连签:${inform.signInTotalCount}天`;
   $.msg($.name, ``, text)
   if ($.isNode()) await notify.sendNotify($.name, text + '\n');
 })()
@@ -125,7 +125,7 @@ async function task() {
     Award.body = `task=share&taskId=${i}`;
     console.log(JSON.parse(await http_post(Award)).status.message);
   }
-  return '✅任务完成, 详情请看日志'
+  return '所有任务已完成, 详情请查看看日志。'
 }
 
 
