@@ -67,6 +67,11 @@ function http_get(opt) {
 }
 
 async function ck() {
+  if (!userName) {
+    $.msg($.name, '未配置账号密码，结束运行。')
+    if ($.isNode()) await notify.sendNotify($.name, '未配置账号密码环境变量，结束运行。');
+    $.done();
+  }
   let k = person.pp('signins')
   let land = JSON.parse(await http_post(k));
   if (land.status.code === 0) {
