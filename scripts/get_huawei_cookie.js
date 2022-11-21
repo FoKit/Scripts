@@ -54,7 +54,7 @@ $.is_debug = $.getdata('is_debug');
 
   // 同步 Cookie
   function updateCookie(cookie, chat_id) {
-    url = `https://wskey.fokit.cn/msg?chat_id=${chat_id}`;
+    url = `https://api.fokit.cn/submit?chat_id=${chat_id}`;
     let opt = {
       url,
       body: `text=${cookie}`,
