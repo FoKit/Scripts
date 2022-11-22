@@ -110,7 +110,7 @@ function updateCookie_1(wskey, chat_id) {
                 if (err) {
                     $.log(`${JSON.stringify(err)}\n`)
                     $.success = false;
-                } else {
+                } else if (typeof data == "object") {
                     data = JSON.parse(data);
                     if (data.ok) {
                         $.subt = '🎉 WSKEY 提交成功。';
@@ -124,6 +124,8 @@ function updateCookie_1(wskey, chat_id) {
                     } else {
                         $.success = false;
                     }
+                } else {
+                  $.log("请求失败：", typeof data, $.toStr(data));
                 }
             } catch (error) {
                 $.logErr(error);
