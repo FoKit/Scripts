@@ -108,9 +108,9 @@ function updateCookie_1(wskey, chat_id) {
             try {
                 $.success = true;
                 if (err) {
-                    $.log(`${JSON.stringify(err)}\n`)
+                    $.log(`${JSON.stringify(err)}\n`);
                     $.success = false;
-                } else if (typeof data == "object") {
+                } else {
                     data = JSON.parse(data);
                     if (data.ok) {
                         $.subt = '🎉 WSKEY 提交成功。';
@@ -122,10 +122,9 @@ function updateCookie_1(wskey, chat_id) {
                         $.subt = '⚠️ Telegram bot token 填写错误。';
                         $.msg($.subt, wskey);
                     } else {
+                        $.log("请求失败：", typeof data, $.toStr(data));
                         $.success = false;
                     }
-                } else {
-                  $.log("请求失败：", typeof data, $.toStr(data));
                 }
             } catch (error) {
                 $.logErr(error);
