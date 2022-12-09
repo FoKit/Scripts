@@ -1,1 +1,3 @@
-自用脚本，请勿使用。
+### 访问量
+
+![](http://profile-counter.glitch.me/FoKit_Scripts/count.svg)
