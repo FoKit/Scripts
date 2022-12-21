@@ -379,7 +379,7 @@
           "name": "规则",
           "val": "",
           "type": "textarea",
-          "rows": 5,
+          "rows": 20,
           "desc": "示例：replace@text 多条规则以换行分隔"
         },
         {
@@ -387,7 +387,7 @@
           "name": "全局规则",
           "val": "",
           "type": "textarea",
-          "rows": 5,
+          "rows": 20,
           "desc": "示例：replace@text 多条规则以换行分隔"
         }
       ]
