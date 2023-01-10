@@ -5,7 +5,7 @@ JD_COOKIE 同步工具，JD2 ---> BOXJS
 
 const $ = new API('ql', true);
 
-const title = '🐉 JD_COOKIE 同步';
+const title = '🐉 JD_COOKIE 同步 (JD2)';
 const cookiesKey = '#CookiesJD';
 
 let jd_cookies = [];
@@ -49,8 +49,9 @@ async function getScriptUrl() {
   if ($.read('mute') !== 'true') {
     return $.notify(
       title,
-      '已同步账号',
-      `${cookies.map((item) => item.userName).join(`\n`)}`,
+      // '已同步账号',
+      // `${cookies.map((item) => item.userName).join(`\n`)}`,
+      `成功获取到 ${cookies.lenght} 个 Cookie`,
     );
   }
 })()
