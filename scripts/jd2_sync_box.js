@@ -51,7 +51,7 @@ async function getScriptUrl() {
       title,
       // '已同步账号',
       // `${cookies.map((item) => item.userName).join(`\n`)}`,
-      `成功获取到 ${saveCookie.lenght} 个 Cookie`,
+      `成功获取到 ${cookies.length} 个 Cookie`,
     );
   }
 })()
