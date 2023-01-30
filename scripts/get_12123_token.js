@@ -1,6 +1,6 @@
 /*
 脚本名称：获取12123_token
-更新时间：2022-10-23
+更新时间：2023-01-30
 ====================================================================================================
 配置 (QuanX)
 [rewrite_local]
@@ -14,13 +14,15 @@ hostname = miniappcsfw.122.gov.cn
 12123_Token = type=http-request,pattern=^https:\/\/miniappcsfw\.122\.gov\.cn:8443\/openapi\/invokeApi\/business\/biz,requires-body=1,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_12123_token.js,script-update-interval=0
 
 [MITM]
-hostname = %APPEND% miniappcsfw.122.gov.cn
+hostname = %APPEND% miniappcsfw.122.gov.cn:8443
 ====================================================================================================
 */
 
 const $ = new Env('交管12123');
 $.token_key = 'token_12123';
+$.referer_key = 'referer_12123';
 $.token = $.getdata($.token_key);
+$.referer = $.getdata($.referer_key);
 $.is_debug = $.getdata('is_debug');
 
 !(async () => {
@@ -44,6 +46,18 @@ $.is_debug = $.getdata('is_debug');
         console.log(`‼️ Token未变动，跳过更新。\n${$.token}`);
       }
 
+      if ($request.headers.Referer.indexOf("appxPageId=") > -1 ) {
+        debug($request.headers);
+        $.new_referer = $request.headers.Referer.match(/appxPageId=.+/)[0];
+        debug($.new_referer);
+        if ($.new_referer !== $.referer) {
+          $.setdata($.new_referer, $.referer_key);
+          $.msg($.name, ``, `🎉 12123_Referer获取成功。`);
+          console.log(`🎉 12123_Referer获取成功:\n${$.new_referer}`);
+        } else {
+          console.log(`‼️ Referer未变动，跳过更新。\n${$.new_referer}`);
+        }
+      }
     }
   }
 

@@ -428,12 +428,20 @@
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/12123.png"
       ],
       "keys": [
-        "token_12123"
+        "token_12123",
+        "referer_12123"
       ],
       "settings": [
         {
           "id": "token_12123",
           "name": "交管12123_Token",
+          "val": "",
+          "type": "text",
+          "desc": ""
+        },
+        {
+          "id": "referer_12123",
+          "name": "交管12123_Referer",
           "val": "",
           "type": "text",
           "desc": ""
