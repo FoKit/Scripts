@@ -35,7 +35,7 @@ const pin = encodeURIComponent(WSKEY.match(/pin=([^=;]+?);/)[1]);
 const key = WSKEY.match(/wskey=([^=;]+?);/)[1];
 $.bot_token = $.getdata('WSKEY_TG_BOT_TOKEN') || '';
 $.chat_ids = $.getdata('WSKEY_TG_USER_ID') || [];
-$.autoUpload = $.getdata('WSKEY_AUTO_UPLOAD') || true;
+$.autoUpload = $.getdata('WSKEY_AUTO_UPLOAD') || '';
 
 !(async () => {
   if (!pin || !key) {
@@ -66,7 +66,7 @@ $.autoUpload = $.getdata('WSKEY_AUTO_UPLOAD') || true;
     $.needUpload = true;
   }
 
-  if ($.autoUpload) {  // 自动上传
+  if ($.autoUpload !== "false") {  // 自动上传
     if ($.needUpload) {
       if (typeof $.chat_ids != 'object') {
         $.chat_ids = JSON.parse($.chat_ids);
