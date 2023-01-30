@@ -46,7 +46,7 @@ $.is_debug = $.getdata('is_debug');
         console.log(`‼️ Token未变动，跳过更新。\n${$.token}`);
       }
 
-      if ($request.headers.Referer.indexOf("appxPageId=2") > -1 ) {
+      if ($request.headers.Referer.indexOf("cumulativePoint") > -1 ) {
         debug($request.headers);
         $.new_referer = $request.headers.Referer.match(/appxPageId=.+/)[0];
         debug($.new_referer);
