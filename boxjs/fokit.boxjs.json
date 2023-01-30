@@ -340,7 +340,7 @@
           "name": "自动提交WSKEY",
           "val": true,
           "type": "boolean",
-          "desc": "启用后，重写抓取WSKEY自动提交到服务器"
+          "desc": "启用后，重写抓取的WSKEY会自动提交（上车）"
         },
         {
           "id": "WSKEY_TG_BOT_TOKEN",
