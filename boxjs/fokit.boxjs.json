@@ -329,11 +329,19 @@
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/jdjoy.png"
       ],
       "keys": [
+        "WSKEY_AUTO_UPLOAD",
         "WSKEY_TG_BOT_TOKEN",
         "WSKEY_TG_USER_ID",
         "wskeyList"
       ],
       "settings": [
+        {
+          "id": "WSKEY_AUTO_UPLOAD",
+          "name": "自动提交WSKEY",
+          "val": true,
+          "type": "boolean",
+          "desc": "启用后，重写抓取WSKEY自动提交到服务器"
+        },
         {
           "id": "WSKEY_TG_BOT_TOKEN",
           "name": "Telegram机器人Token",

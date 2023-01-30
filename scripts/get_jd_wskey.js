@@ -1,7 +1,8 @@
 /*
 脚本名称：京东 WSKEY
-更新时间：2022-11-03
-使用方法：打开 京东App --> 消息中心（右上角）获取京东 WSKEY。（自用脚本，自动上传，请勿使用。）
+更新时间：2023-01-30
+使用方法：打开 京东App --> 消息中心（右上角）获取京东 WSKEY。
+注意事项：脚本抓取的WSKEY默认自动提交到服务器（自动上车），可通过BoxJs设置关闭自动提交功能。
 重写订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/rewrite/get_jd_wskey.sgmodule
 BoxJs 订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
 
@@ -34,6 +35,7 @@ const pin = encodeURIComponent(WSKEY.match(/pin=([^=;]+?);/)[1]);
 const key = WSKEY.match(/wskey=([^=;]+?);/)[1];
 $.bot_token = $.getdata('WSKEY_TG_BOT_TOKEN') || '';
 $.chat_ids = $.getdata('WSKEY_TG_USER_ID') || [];
+$.autoUpload = $.getdata('WSKEY_AUTO_UPLOAD') || true;
 
 !(async () => {
   if (!pin || !key) {
@@ -63,31 +65,37 @@ $.chat_ids = $.getdata('WSKEY_TG_USER_ID') || [];
     cookiesData.push({ userName: decodeName, cookie: cookie, });
     $.needUpload = true;
   }
-  if ($.needUpload) {
-    if (typeof $.chat_ids != 'object') {
-      $.chat_ids = JSON.parse($.chat_ids);
-    }
-    if ($.chat_ids.length < 1) {
-      $.log('Use Cloudflare Worker...\n')
-      await updateCookie_1(cookie, chat_id = []);
-    } else {
-      for (const chat_id of $.chat_ids) {
+
+  if ($.autoUpload) {  // 自动上传
+    if ($.needUpload) {
+      if (typeof $.chat_ids != 'object') {
+        $.chat_ids = JSON.parse($.chat_ids);
+      }
+      if ($.chat_ids.length < 1) {
         $.log('Use Cloudflare Worker...\n')
-        let update = await updateCookie_1(cookie, chat_id);
-        if ($.bot_token && !update) {
-          $.log('Use Telegram API...\n')
-          await updateCookie_2(cookie, chat_id);
+        await updateCookie_1(cookie, chat_id = []);
+      } else {
+        for (const chat_id of $.chat_ids) {
+          $.log('Use Cloudflare Worker...\n')
+          let update = await updateCookie_1(cookie, chat_id);
+          if ($.bot_token && !update) {
+            $.log('Use Telegram API...\n')
+            await updateCookie_2(cookie, chat_id);
+          }
         }
       }
-    }
-    if ($.success) {
-      $.setdata(JSON.stringify(cookiesData, null, 2), 'wskeyList');
+      if ($.success) {
+        $.setdata(JSON.stringify(cookiesData, null, 2), 'wskeyList');
+      } else {
+        $.subt = '⚠️ WSKEY 提交失败。';
+        $.msg($.subt, cookie);
+      }
     } else {
-      $.subt = '⚠️ WSKEY 提交失败。';
-      $.msg($.subt, cookie);
+      $.msg('⚠️ 无需更新 WSKEY。', cookie);
     }
-  } else {
-    $.msg('⚠️ 无需更新 WSKEY。', cookie);
+  } else {  // 本地使用
+    $.subt = '🎉 WSKEY 获取成功。';
+    $.msg($.subt, cookie);
   }
   return;
 })().catch((e) => $.logErr(e)).finally(() => $.done());
