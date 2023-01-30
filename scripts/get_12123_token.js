@@ -40,8 +40,8 @@ $.is_debug = $.getdata('is_debug');
         $.token = $.rest_body.verifyToken;
         debug($.token);
         $.setdata($.token, $.token_key);
-        $.msg($.name, ``, `🎉 12123_Token获取成功。`);
         console.log(`🎉 12123_Token获取成功:\n${$.token}`);
+        $.msg($.name, ``, `🎉 12123_Token获取成功。`);
       } else {
         console.log(`‼️ Token未变动，跳过更新。\n${$.token}`);
       }
@@ -52,8 +52,8 @@ $.is_debug = $.getdata('is_debug');
         debug($.new_referer);
         if ($.new_referer !== $.referer) {
           $.setdata($.new_referer, $.referer_key);
-          $.msg($.name, ``, `🎉 12123_Referer获取成功。`);
           console.log(`🎉 12123_Referer获取成功:\n${$.new_referer}`);
+          $.msg($.name, ``, `🎉 12123_Referer获取成功。`);
         } else {
           console.log(`‼️ Referer未变动，跳过更新。\n${$.new_referer}`);
         }
@@ -63,7 +63,11 @@ $.is_debug = $.getdata('is_debug');
 
   function debug(text) {
     if ($.is_debug === 'true') {
-      console.log(text);
+      if (typeof text == "string") {
+        console.log(text);
+      } else if (typeof text == "object") {
+        console.log($.toStr(text));
+      }
     }
   }
 
