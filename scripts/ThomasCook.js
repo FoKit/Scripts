@@ -54,7 +54,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
       }
     }
     if (message) {
-      $.msg($.name, ' ', message);
+      $.msg($.name, '', message);
       if ($.isNode()) await notify.sendNotify($.name, message);
     }
   })()
@@ -104,12 +104,12 @@ function main() {
             if (data.responseCode === '0') {
               $.mobile = data.data.signInfo.mobile;  // 手机号
               // $.accountId = data.data.signInfo.accountId;  // 用户ID
-              $.signInStatus = data.data.signInfo.signInStatus === 1 ? '签到成功' : "签到失败";  // 签到状态：1=是 0=否
+              $.signInStatus = data.data.signInfo.signInStatus === 1 ? '🎉 签到成功' : "❌ 签到失败";  // 签到状态：1=是 0=否
               $.changeIntegeral = data.data.signInfo.changeIntegeral;  // 积分变动
               $.continousSignDays = data.data.signInfo.continousSignDays;  // 连续签到天数
               $.currentIntegral = data.data.signInfo.currentIntegral;  // 当前积分
 
-              text = `账号 ${$.mobile} ${$.signInStatus}, ${$.changeIntegeral > 0 ? `积分+${$.changeIntegeral}, ` : ''}连续签到 ${$.continousSignDays} 天, 积分余额 ${$.currentIntegral}\n\n`;
+              text = `账号 ${$.mobile}\n${$.signInStatus}, ${$.changeIntegeral > 0 ? `积分+${$.changeIntegeral}, ` : ''}连续签到 ${$.continousSignDays} 天, 积分余额 ${$.currentIntegral}\n\n`;
               message += text;
             } else if (data.responseCode === '402') {
               text = data.message;
