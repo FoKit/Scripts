@@ -10,7 +10,7 @@
 hostname = %APPEND% apis.folidaymall.com
 
 [Script]
-获取托迈酷客Cookie = type=http-request,pattern=^https:\/\/apis\.folidaymall\.com\/online\/capi\/uc\/getCountl,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/ThomasCook.js
+获取托迈酷客Cookie = type=http-request,pattern=^https:\/\/apis\.folidaymall\.com\/online\/capi\/uc\/getCountl,requires-body=0,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/ThomasCook.js
 
 
 托迈酷客 = type=cron,cronexp=15 10 * * *,timeout=60,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/ThomasCook.js,script-update-interval=0
@@ -20,7 +20,7 @@ hostname = %APPEND% apis.folidaymall.com
 hostname = apis.folidaymall.com
 
 [rewrite_local]
-^https:\/\/apis\.folidaymall\.com\/online\/capi\/uc\/getCountl url script-request-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/ThomasCook.js
+^https:\/\/apis\.folidaymall\.com\/online\/capi\/uc\/getCountl url script-request-header https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/ThomasCook.js
 
 [task_local]
 15 10 * * * https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/ThomasCook.js, tag=托迈酷客, enabled=true
