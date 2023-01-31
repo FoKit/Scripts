@@ -352,7 +352,7 @@
         {
           "id": "WSKEY_TG_USER_ID",
           "name": "Telegram 会话ID",
-          "val": "[\"-1001701121614\"]",
+          "val": "",
           "type": "text",
           "desc": "填写 Telegram 会话ID，以数组形式保存[\"-1001701121614\"]"
         },
