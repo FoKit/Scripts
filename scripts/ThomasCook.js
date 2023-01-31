@@ -54,7 +54,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
       }
     }
     if (message) {
-      $.msg($.name, '', message);
+      $.msg($.name, ' ', message);
       if ($.isNode()) await notify.sendNotify($.name, message);
     }
   })()
