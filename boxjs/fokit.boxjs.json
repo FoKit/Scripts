@@ -552,6 +552,31 @@
           "desc": ""
         }
       ]
+    },
+    {
+      "id": "ThomasCook",
+      "name": "托迈酷客",
+      "author": "@FoKit",
+      "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/ThomasCook.js",
+      "descs_html": [
+        ""
+      ],
+      "icons": [
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/ThomasCook.png",
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/ThomasCook.png"
+      ],
+      "keys": [
+        "ThomasCook_Cookie"
+      ],
+      "settings": [
+        {
+          "id": "ThomasCook_Cookie",
+          "name": "托迈酷客Cookie",
+          "val": "",
+          "type": "text",
+          "desc": ""
+        }
+      ]
     }
   ]
 }
