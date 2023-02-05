@@ -8,21 +8,21 @@ BoxJs 订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.
 
 ================Quantumult X配置=================
 [rewrite_local]
-^https:\/\/api\-dd\.jd\.com\/client\.action\?functionId=getSessionLog url script-echo-response https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jd_wskey_tg.js
+^https:\/\/api\-dd\.jd\.com\/client\.action\?functionId=getSessionLog url script-request-header https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_jd_wskey.js
 
 [MITM]
 hostname = api-dd.jd.com
 
 ====================Surge配置====================
 [Script]
-京东 WSKEY = type=http-request,pattern=^https:\/\/api\-dd\.jd\.com\/client\.action\?functionId=getSessionLog,requires-body=1,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jd_wskey_tg.js,script-update-interval=0
+京东 WSKEY = type=http-request,pattern=^https:\/\/api\-dd\.jd\.com\/client\.action\?functionId=getSessionLog,requires-body=0,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_jd_wskey.js,script-update-interval=0
 
 [MITM]
 hostname = %APPEND% api-dd.jd.com
 
 ====================Loon配置=====================
 [Script]
-http-request ^https:\/\/api\-dd\.jd\.com\/client\.action\?functionId=getSessionLog tag=京东 WSKEY, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jd_wskey_tg.js,requires-body=1
+http-request ^https:\/\/api\-dd\.jd\.com\/client\.action\?functionId=getSessionLog tag=京东 WSKEY, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_jd_wskey.js,requires-body=0
 
 [MITM]
 hostname = api-dd.jd.com
