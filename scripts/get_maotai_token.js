@@ -38,7 +38,7 @@ $.MT_TOKENS = $.getdata($.MT_TOKENS_KEY) || '';
         $.setdata(new_Device_ID + ',' + new_MT_Token, $.MT_TOKENS_KEY);
         $.msg($.name, `🎉 Token获取成功。 ${new_Device_ID}`);
       } else {
-        $.log(`无需更新 MT-Token\n`);
+        $.log(`无需更新 MT-Token:\n${new_Device_ID + ',' + new_MT_Token}\n`);
       }
     }
   }
