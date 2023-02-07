@@ -577,6 +577,52 @@
           "desc": ""
         }
       ]
+    },
+    {
+      "id": "iMaoTai",
+      "name": "i茅台",
+      "author": "@FoKit",
+      "script": "",
+      "descs_html": [
+        ""
+      ],
+      "icons": [
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/iMaoTai.png",
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/iMaoTai.png"
+      ],
+      "keys": [
+        "MT_TOKENS",
+        "MT_PROVINCE",
+        "MT_CITY",
+        "MT_DISTRICT"
+      ],
+      "settings": [
+        {
+          "id": "MT_TOKENS",
+          "name": "i茅台Token",
+          "val": "",
+          "type": "text",
+          "desc": ""
+        },{
+          "id": "MT_PROVINCE",
+          "name": "省份",
+          "val": "广东省",
+          "type": "text",
+          "desc": "XX省"
+        },{
+          "id": "MT_CITY",
+          "name": "城市",
+          "val": "广州市",
+          "type": "text",
+          "desc": "XX市"
+        },{
+          "id": "MT_DISTRICT",
+          "name": "区域",
+          "val": "",
+          "type": "text",
+          "desc": "xx区"
+        }
+      ]
     }
   ]
 }
