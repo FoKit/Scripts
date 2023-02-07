@@ -21,7 +21,7 @@ hostname = %APPEND% app.moutai519.com.cn
 
 const $ = new Env('i茅台Token');
 $.MT_TOKENS_KEY = 'MT_TOKENS';
-$.MT_TOKENS = $.getdata($.MT_TOKENS_KEY);
+$.MT_TOKENS = $.getdata($.MT_TOKENS_KEY) || '';
 
 !(async () => {
   if (isGetCookie = typeof $request !== `undefined`) {
