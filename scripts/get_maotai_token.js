@@ -36,6 +36,7 @@ $.MT_TOKENS = $.getdata($.MT_TOKENS_KEY) || '';
       let old_MT_Token = $.MT_TOKENS.split(',') ? $.MT_TOKENS.split(',')[1] : '';
       if (old_MT_Token !== new_MT_Token) {
         $.setdata(new_Device_ID + ',' + new_MT_Token, $.MT_TOKENS_KEY);
+        $.msg($.name, `🎉 Token获取成功。 ${new_Device_ID}`);
       } else {
         $.log(`无需更新 MT-Token\n`);
       }
