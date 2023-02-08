@@ -594,7 +594,8 @@
         "MT_TOKENS",
         "MT_PROVINCE",
         "MT_CITY",
-        "MT_DISTRICT"
+        "MT_DISTRICT",
+        "MT_ITEM_BLACK"
       ],
       "settings": [
         {
@@ -608,19 +609,25 @@
           "name": "省份",
           "val": "广东省",
           "type": "text",
-          "desc": "XX省"
+          "desc": "XX省 / 直辖市"
         },{
           "id": "MT_CITY",
           "name": "城市",
           "val": "广州市",
           "type": "text",
-          "desc": "XX市"
+          "desc": "XX市 / 直辖市"
         },{
           "id": "MT_DISTRICT",
           "name": "区域",
           "val": "",
           "type": "text",
           "desc": "xx区"
+        },{
+          "id": "MT_ITEM_BLACK",
+          "name": "商品黑名单",
+          "val": "2478",
+          "type": "text",
+          "desc": "2478|1234"
         }
       ]
     }
