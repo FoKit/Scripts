@@ -19,9 +19,9 @@ hostname = %APPEND% miniappcsfw.122.gov.cn:8443
 */
 
 const $ = new Env('交管12123');
-$.token_key = 'token_12123';
+$.body_key = 'body_12123';
 $.referer_key = 'referer_12123';
-$.token = $.getdata($.token_key);
+$.body = $.getdata($.body_key);
 $.referer = $.getdata($.referer_key);
 $.is_debug = $.getdata('is_debug');
 
@@ -31,17 +31,14 @@ $.is_debug = $.getdata('is_debug');
   }
 
   function GetCookie() {
-    if ($request && $request.body && $request.body.indexOf("verifyToken") > -1) {
+    if ($request && $request.body && $request.body.indexOf("sign") > -1 && $request.body.indexOf("verifyToken") > -1) {
       debug($request.body);
       $.rest_body = decodeURIComponent($request.body).replace("params=", "");
       debug($.rest_body);
-      $.rest_body = JSON.parse($.rest_body);
-      if ($.rest_body.verifyToken !== $.token) {
-        $.token = $.rest_body.verifyToken;
-        debug($.token);
-        $.setdata($.token, $.token_key);
-        console.log(`🎉 12123_Token获取成功:\n${$.token}`);
-        $.msg($.name, ``, `🎉 12123_Token获取成功。`);
+      if ($.rest_body !== $.body) {
+        $.setdata($.body, $.body_key);
+        console.log(`🎉 12123数据获取成功:\n${$.token}`);
+        $.msg($.name, ``, `🎉 12123数据获取成功。`);
       } else {
         console.log(`‼️ Token未变动，跳过更新。\n${$.token}`);
       }

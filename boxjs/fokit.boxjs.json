@@ -425,26 +425,27 @@
       ]
     },
     {
-      "id": "token_12123",
-      "name": "交管12123_Token",
+      "id": "12123",
+      "name": "交管12123",
       "author": "@FoKit",
       "descs_html": [
-        "交管12123_Token"
+        "交管12123数据"
       ],
       "icons": [
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/12123.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/12123.png"
       ],
       "keys": [
-        "token_12123",
+        "body_12123",
         "referer_12123"
       ],
       "settings": [
         {
-          "id": "token_12123",
-          "name": "交管12123_Token",
+          "id": "body_12123",
+          "name": "交管12123_Body",
           "val": "",
-          "type": "text",
+          "type": "textarea",
+          "rows": 10,
           "desc": ""
         },
         {
