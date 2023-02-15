@@ -40,7 +40,7 @@ $.is_debug = $.getdata('is_debug');
         console.log(`🎉 12123数据获取成功:\n${$.token}`);
         $.msg($.name, ``, `🎉 12123数据获取成功。`);
       } else {
-        console.log(`‼️ Token未变动，跳过更新。\n${$.token}`);
+        console.log(`‼️ 数据未变动，跳过更新。\n${$.token}`);
       }
 
       if ($request.headers.Referer.indexOf("cumulativePoint") > -1 ) {
