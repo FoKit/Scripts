@@ -1,77 +1,77 @@
 /*
 脚本名称：捷停车签到
-签到规则：连签奖励，首日1积分，次日2积分，以此类推，7天封顶后每天可获得14积分
 活动入口：捷停车APP-积分签到
-环境变量：jtc_userId（青龙）
-使用说明：添加重写规则并打开捷停车APP即可获取 userId，多账号userId以@隔开
-更新时间：2022-6-11
-====================================================================================================
-配置 (Surge)
+签到规则：连签奖励，首日1积分、次日2积分，以此类推7天封顶
+活动奖励：积分可用于兑换停车券，比例 1:100
+环境变量：jtc_userId（Node环境，多账号以@隔开）
+使用说明：添加重写规则并打开捷停车APP即可获取userId
+更新时间：2023-02-16
+
+================ Surge 配置 ================
 [MITM]
-jparking.jslife.com.cn
+hostname = %APPEND% jparking.jslife.com.cn
 
 [Script]
-获取捷停车userId = type=http-request,pattern=^https:\/\/jparking\.jslife\.com\.cn\/jparking-service\/pay\/login_to_jsjk,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jparking_sign.js
+获取捷停车userId = type=http-request, pattern=^https:\/\/sytgate\.jslife\.com\.cn\/core-gateway\/order\/carno\/pay\/info, requires-body=1, max-size=0, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jparking_sign.js
 
-捷停车签到 = type=cron,cronexp=15 9 * * *,timeout=60,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jparking_sign.js,script-update-interval=0
-----------------------------------------------------------------------------------------------------
-配置 (QuanX)
+捷停车签到 = type=cron, cronexp=15 9 * * *, timeout=60, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jparking_sign.js, script-update-interval=0
+
+============ Quantumult X 配置 =============
 [MITM]
-jparking.jslife.com.cn
+hostname = sytgate.jslife.com.cn
 
 [rewrite_local]
-^https:\/\/jparking\.jslife\.com\.cn\/jparking-service\/pay\/login_to_jsjk url script-request-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jparking_sign.js
+^https:\/\/sytgate\.jslife\.com\.cn\/core-gateway\/order\/carno\/pay\/info url script-request-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jparking_sign.js
 
 [task_local]
 15 9 * * * https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jparking_sign.js, tag=捷停车签到, enabled=true
-====================================================================================================
+
+================ Boxjs订阅 ================
+订阅地址：https://github.com/FoKit/Scripts/raw/main/boxjs/fokit.boxjs.json
+
 */
 
 const $ = new Env('捷停车签到');
 const notify = $.isNode() ? require('./sendNotify') : '';
-const API_HOST = 'https://jparking.jslife.com.cn';
-let userId = $.getdata('jtc_userId');
+let jtc_userId_key = 'jtc_userId';
+let userId = $.getdata(jtc_userId_key) || '';
 let taskNo = $.getdata('jtc_taskNo') || "T71811221608";
-let mobile = $.getdata('jtc_mobile') || "";
-let KEY_jtc_userId = 'jtc_userId'
-let KEY_jtc_mobile = 'jtc_mobile'
-let userIdArr = [],
-  allMessage = "";
+let userIdArr = [], message = '', msg = '';
+
+if ($.isNode()) {
+  userId = process.env.jtc_userId || '';
+  taskNo = process.env.jtc_taskNo || "T71811221608";
+}
+userIdArr = userId.split('@');
 
 if (isGetCookie = typeof $request !== `undefined`) {
   GetCookie();
   $.done()
 } else {
   !(async () => {
-    if ($.isNode()) {
-      userId = process.env.jtc_userId;
-      taskNo = process.env.jtc_taskNo || "T71811221608";
-    }
-    userId = userId.split('@')
-    Object.keys(userId).forEach((item) => {
-      userIdArr.push(userId[item]);
-    })
     if (!userIdArr[0]) {
       $.msg($.name, '【提示】请先获取捷停车 userId');
       return;
     }
+    console.log(`\n当前共有 ${userIdArr.length} 个账号\n`);
     for (let i = 0; i < userIdArr.length; i++) {
-      if (userIdArr[i]) {
-        userId = userIdArr[i];
-        $.index = i + 1;
-        console.log(`账号 ${$.index} 开始签到`);
-        allMessage += `账 号 ${$.index} ${mobile}\n`
-        await main(1);
-        await main(2);//每天可签到2次
-        await Amt();
-      }
+      // $.result = '';
+      $.mobile = '未知';
+      $.integralValue = 0;
+      $.userId = userIdArr[i];
+      $.index = i + 1;
+      console.log(`账号[${$.index}]开始签到`);
+      await checkIn();
+      await getUserInfo();
+      msg = `账号 ${$.mobile}\n${$.result}  积分余额 ${$.integralValue}  可抵扣 ${$.integralValue / 100} 元\n\n`;
+      message += msg;
+      if (!$.isNode()) $.msg($.name, '', msg);
     }
-    if (allMessage) {
-      $.msg($.name, '', allMessage);
-      if ($.isNode()) await notify.sendNotify($.name, allMessage);
+    if (message) {
+      if ($.isNode()) await notify.sendNotify($.name, message);
     }
   })()
-  .catch((e) => {
+    .catch((e) => {
       $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
     })
     .finally(() => {
@@ -80,17 +80,24 @@ if (isGetCookie = typeof $request !== `undefined`) {
 }
 
 function GetCookie() {
-  if ($request && $request.headers && $request.body) {
-    let rest_body = JSON.parse($request.body);
-    if (rest_body) $.setdata(rest_body.userId, KEY_jtc_userId) && $.setdata(rest_body.mobile, KEY_jtc_mobile)
-    $.msg($.name, `用户 ${rest_body.mobile}`, `userId 获取成功`)
+  if ($request && $request.body) {
+    let body = JSON.parse($request.body);
+    if (body?.userId) {
+      if (!userIdArr.includes(body.userId)) {
+        userId ? userId += `@${body.userId}` : userId += `${body.userId}`;
+        $.setdata(userId, jtc_userId_key);
+        $.msg($.name, ` `, `🎉 userId 写入成功\n${body.userId}`);
+      } else {
+        console.log(`❌ ${body.userId} 已存在\n`);
+      }
+    }
   }
 }
 
-// 签到主函数
-function main(num) {
+// 签到
+function checkIn() {
   let opt = {
-    url: `${API_HOST}/jparking-other-service/coupons/integral/receive`,
+    url: `https://jparking.jslife.com.cn/jparking-other-service/coupons/integral/receive`,
     headers: {
       "Accept": "application/json, text/plain, */*",
       "Accept-Encoding": "gzip, deflate, br",
@@ -101,10 +108,10 @@ function main(num) {
       "Host": "jparking.jslife.com.cn",
       "Origin": "https://www.jslife.com.cn",
       "Referer": "https://www.jslife.com.cn/",
-      "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;JTC_IOS",
+      "User-Agent": `JTC/6.0.4 (iPhone; iOS 16.3; Scale/3.00)`,
       "axiosSrc": "dataService"
     },
-    body: `{"userId":"${userId}","reqSource":"JTC_I","taskNo":"${taskNo}"}`
+    body: `{"userId":"${$.userId}","reqSource":"JTC_I","taskNo":"${taskNo}"}`
   }
   return new Promise(resolve => {
     // console.log(opt)
@@ -114,21 +121,21 @@ function main(num) {
           $.log(err)
         } else {
           if (data) {
+            // console.log(data);
             data = JSON.parse(data);
-            // console.log(data)
             if (data.right) {
-              console.log(`🎉 第${num}次签到${data.message}`);
-              allMessage += `🎉 第${num}次签到${data.message} `
+              $.result = `🎉 签到${data.message}`;
+              console.log($.result);
             } else {
-              console.log(`❌ 第${num}次签到${data.message}`);
-              allMessage += `❌ 第${num}次签到${data.message} `
+              $.result = `❌ 签到${data.message}`;
+              console.log($.result);
             }
           } else {
             $.log("服务器返回了空数据")
           }
         }
       } catch (error) {
-        $.log(error)
+        $.log(error);
       } finally {
         resolve();
       }
@@ -136,24 +143,20 @@ function main(num) {
   })
 }
 
-// 查询当前积分
-function Amt() {
+// 查询用户信息
+function getUserInfo() {
   let opt = {
-    url: `${API_HOST}/jparking-service/account/balance/query`,
+    url: `https://sytgate.jslife.com.cn/base-gateway/member/queryMbrCityBaseInfo`,
     headers: {
-      "Accept": "application/json, text/plain, */*",
-      "Accept-Encoding": "gzip, deflate, br",
-      "Accept-Language": "zh-CN,zh-Hans;q=0.9",
-      "Connection": "keep-alive",
-      "Content-Length": "89",
-      "Content-Type": "application/json;charset=UTF-8",
-      "Host": "jparking.jslife.com.cn",
-      "Origin": "https://www.jslife.com.cn",
-      "Referer": "https://www.jslife.com.cn/",
-      "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;JTC_IOS",
-      "axiosSrc": "dataService"
+      'Accept': `*/*`,
+      'Connection': `keep-alive`,
+      'Content-Type': `application/json;charset=utf-8`,
+      'Accept-Encoding': `gzip, deflate, br`,
+      'Host': `sytgate.jslife.com.cn`,
+      'User-Agent': `JTC/6.0.4 (iPhone; iOS 16.3; Scale/3.00)`,
+      'Accept-Language': `zh-Hans-CN;q=1, zh-Hant-HK;q=0.9, en-CN;q=0.8, de-DE;q=0.7, ja-CN;q=0.6`
     },
-    body: `{"userId": "${userId}","reqSource": "JTC_I"}`
+    body: `{"userId": "${$.userId}","reqSource": "APP_JTC"}`
   }
   return new Promise(resolve => {
     // console.log(opt)
@@ -163,13 +166,14 @@ function Amt() {
           $.log(err)
         } else {
           if (data) {
-            data = JSON.parse(data);
             // console.log(data)
-            if (data.right) {
-              console.log(`当前共有 ${data.obj.accountAmt} 积分\n`);
-              allMessage += `，当前共有 ${data.obj.accountAmt} 积分\n`
+            data = JSON.parse(data);
+            if (data.code == '0') {
+              $.mobile = data.data.mobile;
+              $.integralValue = data.data.integralValue;
+              console.log(`账号 ${$.mobile}  积分余额 ${$.integralValue}\n`);
             } else {
-              console.log(`❌ 积分查询失败\n${data}\n`);
+              console.log(`❌ 用户信息查询失败\n${data}\n`);
             }
           } else {
             $.log("服务器返回了空数据")

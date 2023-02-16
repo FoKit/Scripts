@@ -197,24 +197,16 @@
         }
       ],
       "keys": [
-        "jtc_mobile",
         "jtc_userId",
         "jtc_taskNo"
       ],
       "settings": [
         {
-          "id": "jtc_mobile",
-          "name": "手机号",
-          "val": "",
-          "type": "text",
-          "desc": "捷停车注册手机号"
-        },
-        {
           "id": "jtc_userId",
           "name": "用户ID",
           "val": "",
           "type": "text",
-          "desc": "捷停车用户ID"
+          "desc": "捷停车用户ID，多个ID@隔开"
         },
         {
           "id": "jtc_taskNo",
