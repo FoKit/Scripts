@@ -26,7 +26,7 @@ hostname = sytgate.jslife.com.cn
 [task_local]
 15 9 * * * https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jparking_sign.js, tag=捷停车签到, enabled=true
 
-=============== Loon X 配置 ===============
+================ Loon 配置 ================
 [MITM]
 hostname = sytgate.jslife.com.cn
 
