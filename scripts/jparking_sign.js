@@ -128,7 +128,7 @@ function checkIn() {
               $.result = `🎉 签到${data.message}`;
               console.log($.result);
             } else {
-              $.result = `❌ 签到${data.message}`;
+              $.result = `❌ 重复签到`;
               console.log($.result);
             }
           } else {
