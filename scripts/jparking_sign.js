@@ -27,7 +27,7 @@ hostname = sytgate.jslife.com.cn
 15 9 * * * https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jparking_sign.js, tag=捷停车签到, enabled=true
 
 ================ Boxjs订阅 ================
-订阅地址：https://github.com/FoKit/Scripts/raw/main/boxjs/fokit.boxjs.json
+订阅地址：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
 
 */
 
