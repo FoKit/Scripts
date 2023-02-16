@@ -87,7 +87,7 @@ function GetCookie() {
       if (!userIdArr.includes(body.userId)) {
         userId ? userId += `@${body.userId}` : userId += `${body.userId}`;
         $.setdata(userId, jtc_userId_key);
-        $.msg($.name, ` `, `🎉 userId 写入成功\n${body.userId}`);
+        $.msg($.name, ``, `🎉 userId 写入成功\n${body.userId}`);
       } else {
         console.log(`❌ ${body.userId} 已存在\n`);
       }
