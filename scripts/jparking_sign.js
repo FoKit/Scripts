@@ -9,7 +9,7 @@
 
 ================ Surge 配置 ================
 [MITM]
-hostname = %APPEND% jparking.jslife.com.cn
+hostname = %APPEND% sytgate.jslife.com.cn
 
 [Script]
 获取捷停车userId = type=http-request, pattern=^https:\/\/sytgate\.jslife\.com\.cn\/core-gateway\/order\/carno\/pay\/info, requires-body=1, max-size=0, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jparking_sign.js
@@ -33,7 +33,7 @@ hostname = sytgate.jslife.com.cn
 
 const $ = new Env('捷停车签到');
 const notify = $.isNode() ? require('./sendNotify') : '';
-let jtc_userId_key = 'jtc_userId';
+const jtc_userId_key = 'jtc_userId';
 let userId = $.getdata(jtc_userId_key) || '';
 let taskNo = $.getdata('jtc_taskNo') || "T71811221608";
 let userIdArr = [], message = '', msg = '';
@@ -55,7 +55,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
     }
     console.log(`\n当前共有 ${userIdArr.length} 个账号\n`);
     for (let i = 0; i < userIdArr.length; i++) {
-      // $.result = '';
+      $.result = '';
       $.mobile = '未知';
       $.integralValue = 0;
       $.userId = userIdArr[i];
