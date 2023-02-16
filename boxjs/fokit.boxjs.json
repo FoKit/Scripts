@@ -209,14 +209,15 @@
           "autoGrow": true,
           "rows": 2,
           "placeholder": "userId1@userId2",
-          "desc": "捷停车用户ID，多个ID@隔开"
+          "desc": "多个ID@隔开"
         },
         {
           "id": "jtc_taskNo",
           "name": "任务ID",
           "val": "T71811221608",
           "type": "text",
-          "desc": "签到活动任务ID，默认为 T71811221608"
+          "placeholder": "T71811221608",
+          "desc": "默认 T71811221608 可留空"
         }
       ]
     },
@@ -286,8 +287,6 @@
           "val": "",
           "type": "text",
           "placeholder": "123456:abcdefgabcdefgabcdefg",
-          "autoGrow": true,
-          "rows": 2,
           "desc": "填写 Telegram 机器人的 Token，格式：123456:abcdefgabcdefgabcdefg"
         },
         {
@@ -296,8 +295,6 @@
           "type": "text",
           "val": "-1001589058412",
           "placeholder": "-100xxxxxxxx",
-          "autoGrow": true,
-          "rows": 2,
           "desc": "填写TG群组ID"
         },
         {
@@ -306,8 +303,8 @@
           "type": "textarea",
           "val": "",
           "placeholder": "今天工作不努力，明天努力找工作！",
-          "autoGrow": false,
-          "rows": 4,
+          "autoGrow": true,
+          "rows": 2,
           "desc": "多条数据使用&分隔"
         }
       ]
@@ -356,7 +353,8 @@
           "name": "京东WSKEY",
           "val": "",
           "type": "textarea",
-          "rows": 10,
+          "autoGrow": true,
+          "rows": 2,
           "desc": "京东WSKEY列表"
         }
       ]
@@ -382,7 +380,8 @@
           "name": "规则",
           "val": "",
           "type": "textarea",
-          "rows": 20,
+          "autoGrow": true,
+          "rows": 2,
           "desc": "示例：replace@text 多条规则以换行分隔"
         },
         {
@@ -390,7 +389,8 @@
           "name": "全局规则",
           "val": "",
           "type": "textarea",
-          "rows": 20,
+          "autoGrow": true,
+          "rows": 2,
           "desc": "示例：replace@text 多条规则以换行分隔"
         }
       ]
@@ -440,7 +440,8 @@
           "name": "交管12123_Body",
           "val": "",
           "type": "textarea",
-          "rows": 10,
+          "autoGrow": true,
+          "rows": 2,
           "desc": ""
         },
         {
@@ -599,7 +600,8 @@
           "name": "i茅台Token",
           "val": "",
           "type": "textarea",
-          "rows": 5,
+          "autoGrow": true,
+          "rows": 2,
           "desc": ""
         },{
           "id": "MT_PROVINCE",
