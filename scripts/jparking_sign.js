@@ -66,6 +66,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
       msg = `账号 ${$.mobile}\n${$.result}  积分余额 ${$.integralValue}  可抵扣 ${$.integralValue / 100} 元\n\n`;
       message += msg;
       if (!$.isNode()) $.msg($.name, '', msg);
+      await $.wait(1000 * 3);
     }
     if (message) {
       if ($.isNode()) await notify.sendNotify($.name, message);
