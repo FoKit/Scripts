@@ -207,7 +207,7 @@
           "val": "",
           "type": "textarea",
           "autoGrow": true,
-          "rows": 2,
+          "rows": 1,
           "placeholder": "userId1@userId2",
           "desc": "多个ID@隔开"
         },
@@ -304,7 +304,7 @@
           "val": "",
           "placeholder": "今天工作不努力，明天努力找工作！",
           "autoGrow": true,
-          "rows": 2,
+          "rows": 1,
           "desc": "多条数据使用&分隔"
         }
       ]
@@ -353,8 +353,8 @@
           "name": "京东WSKEY",
           "val": "",
           "type": "textarea",
-          "autoGrow": true,
-          "rows": 2,
+          "autoGrow": false,
+          "rows": 10,
           "desc": "京东WSKEY列表"
         }
       ]
@@ -381,7 +381,7 @@
           "val": "",
           "type": "textarea",
           "autoGrow": true,
-          "rows": 2,
+          "rows": 1,
           "desc": "示例：replace@text 多条规则以换行分隔"
         },
         {
@@ -390,7 +390,7 @@
           "val": "",
           "type": "textarea",
           "autoGrow": true,
-          "rows": 2,
+          "rows": 1,
           "desc": "示例：replace@text 多条规则以换行分隔"
         }
       ]
@@ -441,7 +441,7 @@
           "val": "",
           "type": "textarea",
           "autoGrow": true,
-          "rows": 2,
+          "rows": 1,
           "desc": ""
         },
         {
@@ -601,7 +601,7 @@
           "val": "",
           "type": "textarea",
           "autoGrow": true,
-          "rows": 2,
+          "rows": 1,
           "desc": ""
         },{
           "id": "MT_PROVINCE",
