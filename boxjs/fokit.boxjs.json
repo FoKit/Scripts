@@ -206,7 +206,6 @@
           "name": "用户ID",
           "val": "",
           "type": "textarea",
-          "rows": 5,
           "desc": "捷停车用户ID，多个ID@隔开"
         },
         {
@@ -285,7 +284,6 @@
           "type": "text",
           "placeholder": "123456:abcdefgabcdefgabcdefg",
           "autoGrow": true,
-          "rows": 2,
           "desc": "填写 Telegram 机器人的 Token，格式：123456:abcdefgabcdefgabcdefg"
         },
         {
@@ -295,7 +293,6 @@
           "val": "-1001589058412",
           "placeholder": "-100xxxxxxxx",
           "autoGrow": true,
-          "rows": 2,
           "desc": "填写TG群组ID"
         },
         {
@@ -305,7 +302,6 @@
           "val": "",
           "placeholder": "今天工作不努力，明天努力找工作！",
           "autoGrow": false,
-          "rows": 4,
           "desc": "多条数据使用&分隔"
         }
       ]
@@ -354,7 +350,6 @@
           "name": "京东WSKEY",
           "val": "",
           "type": "textarea",
-          "rows": 10,
           "desc": "京东WSKEY列表"
         }
       ]
@@ -380,7 +375,6 @@
           "name": "规则",
           "val": "",
           "type": "textarea",
-          "rows": 20,
           "desc": "示例：replace@text 多条规则以换行分隔"
         },
         {
@@ -388,7 +382,6 @@
           "name": "全局规则",
           "val": "",
           "type": "textarea",
-          "rows": 20,
           "desc": "示例：replace@text 多条规则以换行分隔"
         }
       ]
@@ -438,7 +431,6 @@
           "name": "交管12123_Body",
           "val": "",
           "type": "textarea",
-          "rows": 10,
           "desc": ""
         },
         {
@@ -597,7 +589,6 @@
           "name": "i茅台Token",
           "val": "",
           "type": "textarea",
-          "rows": 5,
           "desc": ""
         },{
           "id": "MT_PROVINCE",
