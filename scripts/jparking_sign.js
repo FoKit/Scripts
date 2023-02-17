@@ -71,7 +71,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
       console.log(`账号[${$.index}]开始签到`);
       await checkIn();
       await getUserInfo();
-      msg = `账号 ${$.mobile}\n${$.result}  积分余额 ${$.integralValue}  可抵扣 ${$.integralValue / 100} 元`;
+      msg = `账号 ${hideSensitiveData($.mobile, 4, 4)}\n${$.result}  积分余额 ${$.integralValue}  可抵扣 ${$.integralValue / 100} 元`;
       message += msg + "\n\n";
       if (!$.isNode()) $.msg($.name, '', msg);
       await $.wait(1000 * 3);
@@ -95,7 +95,7 @@ function GetCookie() {
       if (!userIdArr.includes(body.userId)) {
         userId ? userId += `@${body.userId}` : userId += `${body.userId}`;
         $.setdata(userId, jtc_userId_key);
-        $.msg($.name, ``, `🎉 userId 写入成功\n${body.userId}`);
+        $.msg($.name, ``, `🎉 userId 写入成功\n${hideSensitiveData(body.userId, 4, 4)}`);
       } else {
         console.log(`❌ ${body.userId} 已存在\n`);
       }
@@ -195,6 +195,16 @@ function getUserInfo() {
       }
     })
   })
+}
+
+
+// 数据脱敏
+function hideSensitiveData(string, head_length = 2, foot_length = 2) {
+  let star = '';
+  for (var i = 0; i < string.length - head_length - foot_length; i++) {
+    star += '*';
+  }
+  return string.substring(0, head_length) + star + string.substring(string.length - foot_length);
 }
 
 // prettier-ignore
