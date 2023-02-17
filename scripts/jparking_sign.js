@@ -71,8 +71,8 @@ if (isGetCookie = typeof $request !== `undefined`) {
       console.log(`账号[${$.index}]开始签到`);
       await checkIn();
       await getUserInfo();
-      msg = `账号 ${$.mobile}\n${$.result}  积分余额 ${$.integralValue}  可抵扣 ${$.integralValue / 100} 元\n\n`;
-      message += msg;
+      msg = `账号 ${$.mobile}\n${$.result}  积分余额 ${$.integralValue}  可抵扣 ${$.integralValue / 100} 元`;
+      message += msg + "\n\n";
       if (!$.isNode()) $.msg($.name, '', msg);
       await $.wait(1000 * 3);
     }
