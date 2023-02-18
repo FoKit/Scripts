@@ -5,7 +5,7 @@
 活动奖励：积分可用于兑换停车券，比例 1:100
 环境变量：jtc_userId（Node环境，多账号以@隔开）
 使用说明：添加重写规则并打开捷停车APP即可获取userId
-更新时间：2023-02-16
+更新时间：2023-02-18
 
 ================ Surge 配置 ================
 [MITM]
@@ -96,6 +96,7 @@ function GetCookie() {
         userId ? userId += `@${body.userId}` : userId += `${body.userId}`;
         $.setdata(userId, jtc_userId_key);
         $.msg($.name, ``, `🎉 userId 写入成功\n${hideSensitiveData(body.userId, 4, 4)}`);
+        console.log(`userId: ${body.userId}`);
       } else {
         console.log(`❌ ${body.userId} 已存在\n`);
       }
