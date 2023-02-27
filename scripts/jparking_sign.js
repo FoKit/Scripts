@@ -70,6 +70,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
       $.index = i + 1;
       console.log(`账号[${$.index}]开始签到`);
       await checkIn();
+      await $.wait(1000 * 1);
       await getUserInfo();
       msg = `账号 ${hideSensitiveData($.mobile, 3, 4)}\n${$.result}  积分余额 ${$.integralValue}  可抵扣 ${$.integralValue / 100} 元`;
       message += msg + "\n\n";
@@ -174,6 +175,7 @@ function getUserInfo() {
       try {
         if (err) {
           $.log(err)
+          console.log(`❌ 用户信息查询失败\n${data ? data + '\n' : ''}`);
         } else {
           if (data) {
             // console.log(data)
