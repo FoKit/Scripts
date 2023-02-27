@@ -142,7 +142,7 @@
       "name": "Tools",
       "author": "@FoKit",
       "descs_html": [
-        ""
+        "自用工具"
       ],
       "icons": [
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/debug.png",
@@ -150,7 +150,8 @@
       ],
       "keys": [
         "is_debug",
-        "buy_helper_LR"
+        "buy_helper_LR",
+        "hb_sessionId"
       ],
       "settings": [
         {
@@ -176,6 +177,15 @@
               "label": "右边"
             }
           ]
+        },
+        {
+          "id": "hb_sessionId",
+          "name": "hb_sessionId",
+          "val": "",
+          "type": "textarea",
+          "autoGrow": true,
+          "rows": 1,
+          "desc": ""
         }
       ]
     },
