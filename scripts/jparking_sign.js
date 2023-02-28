@@ -71,7 +71,11 @@ if (isGetCookie = typeof $request !== `undefined`) {
       console.log(`账号[${$.index}]开始签到`);
       await checkIn();
       await $.wait(1000 * 1);
-      await getUserInfo();
+      let userInfo = await getUserInfo();
+      if ($.integralValue === 0) {
+        console.log(userInfo, `\n⚠️ 积分查询失败，重试一次...\n`);
+        await getUserInfo();
+      }
       msg = `账号 ${hideSensitiveData($.mobile, 3, 4)}\n${$.result}  积分余额 ${$.integralValue}  可抵扣 ${$.integralValue / 100} 元`;
       message += msg + "\n\n";
       if (!$.isNode()) $.msg($.name, '', msg);
@@ -194,7 +198,7 @@ function getUserInfo() {
       } catch (error) {
         $.log(error)
       } finally {
-        resolve();
+        resolve(resp);
       }
     })
   })
