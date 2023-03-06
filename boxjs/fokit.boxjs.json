@@ -639,6 +639,58 @@
           "desc": "2478|10056"
         }
       ]
+    },
+    {
+      "id": "MiSport",
+      "name": "小米运动",
+      "author": "@FoKit",
+      "script": "",
+      "descs_html": [
+        ""
+      ],
+      "icons": [
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/mi_sport.png",
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/mi_sport.png"
+      ],
+      "keys": [
+        "xmUsers",
+        "xmPasswords",
+        "xmMinStep",
+        "xmMaxStep"
+      ],
+      "settings": [
+        {
+          "id": "xmUsers",
+          "name": "账号",
+          "val": "",
+          "placeholder": "13800138000&abc123@qq.con",
+          "type": "textarea",
+          "autoGrow": true,
+          "rows": 1,
+          "desc": "多个账号使用&分隔"
+        },{
+          "id": "xmPasswords",
+          "name": "密码",
+          "val": "",
+          "placeholder": "password1&password2",
+          "type": "textarea",
+          "autoGrow": true,
+          "rows": 1,
+          "desc": "多个密码使用&分隔"
+        },{
+          "id": "xmMinStep",
+          "name": "最小值",
+          "val": "20000",
+          "type": "text",
+          "desc": "随机范围最小值"
+        },{
+          "id": "xmMaxStep",
+          "name": "最大值",
+          "val": "30000",
+          "type": "text",
+          "desc": "随机范围最大值"
+        }
+      ]
     }
   ]
 }
