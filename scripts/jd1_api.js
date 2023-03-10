@@ -1,3 +1,4 @@
+const { isStringObject } = require("util/types");
 
 $.ql = {
   type: 'api',
@@ -56,6 +57,7 @@ $.ql = {
       url: `${$.ql_url}/${this.type}/envs?searchValue=${searchValue}`,
       headers: this.headers,
     };
+    console.log('opt:', JSON.stringify(opt))
     return $.http.get(opt).then((response) => JSON.parse(response.body));
   },
   configs(fileName = 'config.sh') {
