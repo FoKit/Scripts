@@ -64,6 +64,7 @@ $.ql = {
       url: `${$.ql_url}/${this.type}/configs/${fileName}?t=${Date.now()}`,
       headers: this.headers,
     };
+    console.log('opt:', JSON.stringify(opt))
     return $.http.get(opt).then((response) => JSON.parse(response.body));
   },
 };
