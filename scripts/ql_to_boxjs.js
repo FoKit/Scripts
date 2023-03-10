@@ -54,11 +54,10 @@ async function getScriptUrl() {
   });
   $.write(JSON.stringify(saveCookie, null, `\t`), cookiesKey);
   if ($.read('mute') !== 'true') {
+    console.log(`🎉 已获取到 ${cookies.length} 个Cookie。\n\n${cookies.map((item) => item.userName).join(`\n`)}`);
     return $.notify(
       title,
-      // '已同步账号:',
-      // `${cookies.map((item) => item.userName).join(`\n`)}`,
-      `🎉 已获取到 ${cookies.length} 个Cookie`,
+      `🎉 成功获取 ${cookies.length} 个Cookie`,
     );
   }
 })()
