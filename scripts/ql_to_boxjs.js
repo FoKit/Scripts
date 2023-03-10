@@ -38,7 +38,7 @@ async function getScriptUrl() {
   for (const pin of userInfosArr) {
     if (userInfos[pin]?.cookie) {
       cookies.push({
-        "userName": getUsername(pin),
+        "userName": decodeURIComponent(pin),
         "cookie": userInfos[pin]['cookie']
       });
     }
