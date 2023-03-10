@@ -58,6 +58,14 @@ $.ql = {
     };
     return $.http.get(opt).then((response) => JSON.parse(response.body));
   },
+  configs(fileName = 'config.sh') {
+    if (!this.headers.Authorization) return;
+    const opt = {
+      url: `${$.ql_url}/${this.type}/configs/${fileName}?t=${Date.now()}`,
+      headers: this.headers,
+    };
+    return $.http.get(opt).then((response) => JSON.parse(response.body));
+  },
 };
 
 try {
