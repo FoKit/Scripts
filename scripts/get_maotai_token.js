@@ -29,10 +29,10 @@ $.MT_TOKENS = $.getdata($.MT_TOKENS_KEY) || '';
   }
 
   function GetCookie() {
-    if ($request && $request.headers && $request.headers['MT-Token'] && $request.headers['MT-Device-ID']) {
+    if ($request && $request.headers && ($request.headers['MT-Token'] && $request.headers['MT-Device-ID'] || $request.headers['mt-token'] && $request.headers['mt-device-id'])) {
       debug($request.headers);
-      let new_MT_Token = $request.headers['MT-Token'];
-      let new_Device_ID = $request.headers['MT-Device-ID'];
+      let new_MT_Token = $request.headers['MT-Token'] || $request.headers['mt-token'];
+      let new_Device_ID = $request.headers['MT-Device-ID'] || $request.headers['mt-device-id'];
       let old_MT_Token = $.MT_TOKENS.split(',') ? $.MT_TOKENS.split(',')[1] : '';
       if (old_MT_Token !== new_MT_Token) {
         $.setdata(new_Device_ID + ',' + new_MT_Token, $.MT_TOKENS_KEY);
