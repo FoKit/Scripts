@@ -8,30 +8,30 @@ BoxJs 订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.
 
 ================Quantumult X配置=================
 [rewrite_local]
-^https:\/\/api\-dd\.jd\.com\/client\.action\?functionId=getSessionLog url script-request-header https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_jd_wskey.js
+^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=getChatSessionLog url script-request-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_jd_wskey.js
 
 [MITM]
-hostname = api-dd.jd.com
+hostname = api.m.jd.com
 
 ====================Surge配置====================
 [Script]
-京东 WSKEY = type=http-request,pattern=^https:\/\/api\-dd\.jd\.com\/client\.action\?functionId=getSessionLog,requires-body=0,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_jd_wskey.js,script-update-interval=0
+京东 WSKEY = type=http-request,pattern=^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=getChatSessionLog,requires-body=1,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_jd_wskey.js,script-update-interval=0
 
 [MITM]
-hostname = %APPEND% api-dd.jd.com
+hostname = %APPEND% api.m.jd.com
 
 ====================Loon配置=====================
 [Script]
-http-request ^https:\/\/api\-dd\.jd\.com\/client\.action\?functionId=getSessionLog tag=京东 WSKEY, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_jd_wskey.js,requires-body=0
+http-request ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=getChatSessionLog tag=京东 WSKEY, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_jd_wskey.js,requires-body=1
 
 [MITM]
-hostname = api-dd.jd.com
+hostname = api.m.jd.com
 
 */
 
 const $ = new Env('京东 WSKEY');
 const WSKEY = $request.headers['Cookie'] || $request.headers['cookie'];
-const pin = encodeURIComponent(WSKEY.match(/pin=([^=;]+?);/)[1]);
+const pin = encodeURIComponent($request.body.match(/pin%22%3A%22(?:(.+?)%22)/)[1]);
 const key = WSKEY.match(/wskey=([^=;]+?);/)[1];
 $.bot_token = $.getdata('WSKEY_TG_BOT_TOKEN') || '';
 $.chat_ids = $.getdata('WSKEY_TG_USER_ID') || [];
