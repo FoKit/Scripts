@@ -1,28 +1,28 @@
 /*
 脚本名称：京东 WSKEY
-更新时间：2023-01-30
+更新时间：2023-03-20
 使用方法：打开 京东App --> 消息中心（右上角）获取京东 WSKEY。
 注意事项：脚本抓取的WSKEY默认自动提交到服务器（自动上车），可通过BoxJs设置关闭自动提交功能。
 重写订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/rewrite/get_jd_wskey.sgmodule
-BoxJs 订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
+BoxJs订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
 
 ================Quantumult X配置=================
 [rewrite_local]
-^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=getChatSessionLog url script-request-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_jd_wskey.js
+^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=newUserInfo url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_jd_wskey.js
 
 [MITM]
 hostname = api.m.jd.com
 
 ====================Surge配置====================
 [Script]
-京东 WSKEY = type=http-request,pattern=^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=getChatSessionLog,requires-body=1,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_jd_wskey.js,script-update-interval=0
+京东 WSKEY = type=http-response,pattern=^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=newUserInfo,requires-body=1,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_jd_wskey.js,script-update-interval=0
 
 [MITM]
 hostname = %APPEND% api.m.jd.com
 
 ====================Loon配置=====================
 [Script]
-http-request ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=getChatSessionLog tag=京东 WSKEY, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_jd_wskey.js,requires-body=1
+http-response ^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=newUserInfo tag=京东 WSKEY, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_jd_wskey.js,requires-body=1
 
 [MITM]
 hostname = api.m.jd.com
@@ -31,7 +31,7 @@ hostname = api.m.jd.com
 
 const $ = new Env('京东 WSKEY');
 const WSKEY = $request.headers['Cookie'] || $request.headers['cookie'];
-const pin = encodeURIComponent($request.body.match(/pin%22%3A%22(?:(.+?)%22)/)[1]);
+const pin = $.toObj($response.body).userInfoSns.unickName;
 const key = WSKEY.match(/wskey=([^=;]+?);/)[1];
 $.bot_token = $.getdata('WSKEY_TG_BOT_TOKEN') || '';
 $.chat_ids = $.getdata('WSKEY_TG_USER_ID') || [];
