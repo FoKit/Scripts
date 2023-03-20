@@ -1,7 +1,7 @@
 /*
 脚本名称：京东 WSKEY
 更新时间：2023-03-20
-使用方法：打开 京东App --> 消息中心（右上角）获取京东 WSKEY。
+使用方法：划掉后台重新打开 京东APP 即可自动抓取WSKEY。
 注意事项：脚本抓取的WSKEY默认自动提交到服务器（自动上车），可通过BoxJs设置关闭自动提交功能。
 重写订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/rewrite/get_jd_wskey.sgmodule
 BoxJs订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
