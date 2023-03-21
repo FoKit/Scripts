@@ -1,6 +1,6 @@
 /*
 脚本名称：京东 WSKEY
-更新时间：2023-03-20
+更新时间：2023-03-21
 使用方法：划掉后台重新打开 京东APP 即可自动抓取WSKEY。
 注意事项：脚本抓取的WSKEY默认自动提交到服务器（自动上车），可通过BoxJs设置关闭自动提交功能。
 重写订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/rewrite/get_jd_wskey.sgmodule
@@ -31,7 +31,8 @@ hostname = api.m.jd.com
 
 const $ = new Env('京东 WSKEY');
 const WSKEY = $request.headers['Cookie'] || $request.headers['cookie'];
-const pin = $.toObj($response.body).userInfoSns.unickName;
+const respBody = $.toObj($response.body);
+const pin = respBody.userInfoSns.unickName;
 const key = WSKEY.match(/wskey=([^=;]+?);/)[1];
 $.bot_token = $.getdata('WSKEY_TG_BOT_TOKEN') || '';
 $.chat_ids = $.getdata('WSKEY_TG_USER_ID') || [];
@@ -92,6 +93,7 @@ $.autoUpload = $.getdata('WSKEY_AUTO_UPLOAD') || '';
       }
     } else {
       $.msg('⚠️ 无需更新 WSKEY。', cookie);
+      $.subt = `⚠️ 【${respBody?.userInfoSns?.petName || '提示'}】无需更新 WSKEY。`;
     }
   } else {  // 本地使用
     $.subt = '🎉 WSKEY 获取成功。';
@@ -125,7 +127,7 @@ function updateCookie_1(wskey, chat_id) {
         } else {
           data = JSON.parse(data);
           if (data.ok) {
-            $.subt = '🎉 WSKEY 提交成功。';
+            $.subt = `🎉 【${respBody?.userInfoSns?.petName || '京东'}】WSKEY 提交成功。`;
             $.msg($.subt, wskey);
             $.success = true;
           } else if (data.error_code === 400) {
@@ -167,7 +169,7 @@ function updateCookie_2(wskey, chat_id) {
         } else {
           data = JSON.parse(data);
           if (data.ok) {
-            $.subt = '🎉 WSKEY 提交成功。';
+            $.subt = `🎉 【${respBody?.userInfoSns?.petName || '京东'}】WSKEY 提交成功。`;
             $.msg($.subt, wskey);
             $.success = true;
           } else if (data.error_code === 400) {
