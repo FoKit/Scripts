@@ -19,7 +19,7 @@ hostname = %APPEND% app.moutai519.com.cn
 ====================================================================================================
 */
 
-const $ = new Env('i茅台Token');
+const $ = new Env('i茅台');
 $.MT_TOKENS_KEY = 'MT_TOKENS';
 $.MT_TOKENS = $.getdata($.MT_TOKENS_KEY) || '';
 
