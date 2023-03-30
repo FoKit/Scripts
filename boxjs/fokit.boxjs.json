@@ -603,7 +603,9 @@
         "MT_CITY",
         "MT_DISTRICT",
         "MT_ITEM_BLACK",
-        "MT_VERSION"
+        "MT_VERSION",
+        "MT_USERAGENT",
+        "MT_R"
       ],
       "settings": [
         {
