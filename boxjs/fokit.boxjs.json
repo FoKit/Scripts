@@ -617,13 +617,13 @@
         },{
           "id": "MT_PROVINCE",
           "name": "省份",
-          "val": "广东省",
+          "val": "",
           "type": "text",
           "desc": "XX省 / 直辖市"
         },{
           "id": "MT_CITY",
           "name": "城市",
-          "val": "广州市",
+          "val": "",
           "type": "text",
           "desc": "XX市 / 直辖市"
         },{
@@ -635,7 +635,7 @@
         },{
           "id": "MT_ITEM_BLACK",
           "name": "商品黑名单",
-          "val": "2478|10056",
+          "val": "",
           "type": "text",
           "desc": "2478|10056"
         },{
