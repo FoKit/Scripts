@@ -641,9 +641,21 @@
         },{
           "id": "MT_VERSION",
           "name": "APP版本号",
-          "val": "1.3.7",
+          "val": "",
           "type": "text",
           "desc": "x.x.x"
+        },{
+          "id": "MT_USERAGENT",
+          "name": "用户标识",
+          "val": "",
+          "type": "text",
+          "desc": "iOS;16.1.2;Apple;"
+        },{
+          "id": "MT_R",
+          "name": "MT_R",
+          "val": "",
+          "type": "text",
+          "desc": "clips_xxx"
         }
       ]
     },
