@@ -20,6 +20,7 @@ hostname = %APPEND% app.moutai519.com.cn
 */
 
 const $ = new Env('i茅台Token');
+$.MT_VERSION_KEY = 'MT_VERSION';
 $.MT_TOKENS_KEY = 'MT_TOKENS';
 $.MT_TOKENS = $.getdata($.MT_TOKENS_KEY) || '';
 
@@ -39,6 +40,11 @@ $.MT_TOKENS = $.getdata($.MT_TOKENS_KEY) || '';
         $.msg($.name, `🎉 Token获取成功。`, `${new_Device_ID + ',' + new_MT_Token}`);
       } else {
         $.log(`无需更新 MT-Token:\n${new_Device_ID + ',' + new_MT_Token}\n`);
+      }
+      if ($request.headers['MT-APP-Version'] || $request.headers['mt-app-version']) {
+        $.MT_VERSION = $request.headers['MT-APP-Version'] || $request.headers['mt-app-version'];
+        $.setdata($.MT_VERSION, $.MT_VERSION_KEY);
+        $.log(`🎉 MT_VERSION 写入成功:\n${$.MT_VERSION}\n`);
       }
     }
   }
