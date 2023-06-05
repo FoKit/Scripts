@@ -151,7 +151,6 @@
       "keys": [
         "is_debug",
         "buy_helper_LR",
-        "hb_sessionId",
         "jd_unionId"
       ],
       "settings": [
@@ -186,15 +185,6 @@
               "label": "右边"
             }
           ]
-        },
-        {
-          "id": "hb_sessionId",
-          "name": "hb_sessionId",
-          "val": "",
-          "type": "textarea",
-          "autoGrow": true,
-          "rows": 1,
-          "desc": ""
         }
       ]
     },
