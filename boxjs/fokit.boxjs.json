@@ -151,7 +151,8 @@
       "keys": [
         "is_debug",
         "buy_helper_LR",
-        "hb_sessionId"
+        "hb_sessionId",
+        "jd_unionId"
       ],
       "settings": [
         {
@@ -159,6 +160,14 @@
           "name": "Debug",
           "val": false,
           "type": "boolean",
+          "desc": ""
+        },
+        {
+          "id": "jd_unionId",
+          "name": "京东联盟ID",
+          "val": "",
+          "type": "text",
+          "placeholder": "",
           "desc": ""
         },
         {
