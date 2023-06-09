@@ -149,9 +149,7 @@
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/debug.png"
       ],
       "keys": [
-        "is_debug",
-        "buy_helper_LR",
-        "jd_unionId"
+        "is_debug"
       ],
       "settings": [
         {
@@ -160,31 +158,6 @@
           "val": false,
           "type": "boolean",
           "desc": ""
-        },
-        {
-          "id": "jd_unionId",
-          "name": "京东联盟ID",
-          "val": "",
-          "type": "text",
-          "placeholder": "",
-          "desc": ""
-        },
-        {
-          "id": "buy_helper_LR",
-          "name": "购物助手",
-          "val": "left",
-          "type": "radios",
-          "desc": "展示位置",
-          "items": [
-            {
-              "key": "left",
-              "label": "左边"
-            },
-            {
-              "key": "right",
-              "label": "右边"
-            }
-          ]
         }
       ]
     },
@@ -697,7 +670,8 @@
           "autoGrow": true,
           "rows": 1,
           "desc": "多个密码使用&分隔"
-        },{
+        },
+        {
           "id": "xmMinStep",
           "name": "最小值",
           "val": "20000",
@@ -709,6 +683,77 @@
           "val": "30000",
           "type": "text",
           "desc": "随机范围最大值"
+        }
+      ]
+    },
+    {
+      "id": "buy_helper",
+      "name": "购物助手",
+      "author": "@FoKit",
+      "script": "",
+      "descs_html": [
+        ""
+      ],
+      "icons": [
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/jingfen.png",
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/jingfen.png"
+      ],
+      "keys": [
+        "jd_unionId",
+        "jd_positionId",
+        "jtt_appid",
+        "jtt_appkey",
+        "buy_helper_LR"
+      ],
+      "settings": [
+        {
+          "id": "jd_unionId",
+          "name": "京东联盟ID",
+          "val": "",
+          "type": "text",
+          "placeholder": "",
+          "desc": ""
+        },
+        {
+          "id": "jd_positionId",
+          "name": "推广位ID",
+          "val": "",
+          "type": "text",
+          "placeholder": "",
+          "desc": "京东联盟推广位ID"
+        },
+        {
+          "id": "jtt_appid",
+          "name": "京推推AppID",
+          "val": "",
+          "placeholder": "",
+          "type": "text",
+          "desc": ""
+        },
+        {
+          "id": "jtt_appkey",
+          "name": "京推推AppKey",
+          "val": "",
+          "placeholder": "",
+          "type": "text",
+          "desc": ""
+        },
+        {
+          "id": "buy_helper_LR",
+          "name": "悬浮按键",
+          "val": "left",
+          "type": "radios",
+          "desc": "展示位置",
+          "items": [
+            {
+              "key": "left",
+              "label": "左边"
+            },
+            {
+              "key": "right",
+              "label": "右边"
+            }
+          ]
         }
       ]
     }
