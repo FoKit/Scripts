@@ -743,6 +743,23 @@
           "desc": ""
         },
         {
+          "id": "buy_helper_LR",
+          "name": "悬浮按键",
+          "val": "left",
+          "type": "radios",
+          "desc": "值得买、慢慢买、购物党跳转按钮的显示位置",
+          "items": [
+            {
+              "key": "left",
+              "label": "左侧"
+            },
+            {
+              "key": "right",
+              "label": "右侧"
+            }
+          ]
+        },
+        {
           "id": "buy_helper_zdm",
           "name": "值得买",
           "val": true,
@@ -769,23 +786,6 @@
           "val": true,
           "type": "boolean",
           "desc": ""
-        },
-        {
-          "id": "buy_helper_LR",
-          "name": "悬浮按键",
-          "val": "left",
-          "type": "radios",
-          "desc": "值得买、慢慢买、购物党跳转按钮的显示位置",
-          "items": [
-            {
-              "key": "left",
-              "label": "左侧"
-            },
-            {
-              "key": "right",
-              "label": "右侧"
-            }
-          ]
         }
       ]
     }
