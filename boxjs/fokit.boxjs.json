@@ -703,6 +703,10 @@
         "jd_positionId",
         "jtt_appid",
         "jtt_appkey",
+        "buy_helper_zdm",
+        "buy_helper_mmm",
+        "buy_helper_gwd",
+        "buy_helper_jf",
         "buy_helper_LR"
       ],
       "settings": [
@@ -736,6 +740,34 @@
           "val": "",
           "placeholder": "",
           "type": "text",
+          "desc": ""
+        },
+        {
+          "id": "buy_helper_zdm",
+          "name": "值得买",
+          "val": true,
+          "type": "boolean",
+          "desc": ""
+        },
+        {
+          "id": "buy_helper_mmm",
+          "name": "慢慢买",
+          "val": true,
+          "type": "boolean",
+          "desc": ""
+        },
+        {
+          "id": "buy_helper_gwd",
+          "name": "购物党",
+          "val": true,
+          "type": "boolean",
+          "desc": ""
+        },
+        {
+          "id": "buy_helper_jf",
+          "name": "京粉",
+          "val": true,
+          "type": "boolean",
           "desc": ""
         },
         {
