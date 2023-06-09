@@ -708,7 +708,7 @@
       "settings": [
         {
           "id": "jd_unionId",
-          "name": "京东联盟ID",
+          "name": "联盟ID",
           "val": "",
           "type": "text",
           "placeholder": "",
@@ -724,7 +724,7 @@
         },
         {
           "id": "jtt_appid",
-          "name": "京推推AppID",
+          "name": "京推推AppId",
           "val": "",
           "placeholder": "",
           "type": "text",
@@ -743,15 +743,15 @@
           "name": "悬浮按键",
           "val": "left",
           "type": "radios",
-          "desc": "展示位置",
+          "desc": "值得买、慢慢买、购物党跳转按钮的显示位置",
           "items": [
             {
               "key": "left",
-              "label": "左边"
+              "label": "左侧"
             },
             {
               "key": "right",
-              "label": "右边"
+              "label": "右侧"
             }
           ]
         }
