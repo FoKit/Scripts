@@ -703,11 +703,12 @@
         "jd_positionId",
         "jtt_appid",
         "jtt_appkey",
+        "buy_helper_api",
+        "buy_helper_LR",
         "buy_helper_zdm",
         "buy_helper_mmm",
         "buy_helper_gwd",
-        "buy_helper_jf",
-        "buy_helper_LR"
+        "buy_helper_jf"
       ],
       "settings": [
         {
@@ -743,11 +744,28 @@
           "desc": ""
         },
         {
+          "id": "buy_helper_api",
+          "name": "接口选择",
+          "val": "jf",
+          "type": "radios",
+          "desc": "选择需要使用的转链接口",
+          "items": [
+            {
+              "key": "jf",
+              "label": "京粉"
+            },
+            {
+              "key": "jtt",
+              "label": "京推推"
+            }
+          ]
+        },
+        {
           "id": "buy_helper_LR",
           "name": "悬浮按键",
           "val": "left",
           "type": "radios",
-          "desc": "值得买、慢慢买、购物党跳转按钮的显示位置",
+          "desc": "悬浮按键显示位置",
           "items": [
             {
               "key": "left",
