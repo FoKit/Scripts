@@ -497,7 +497,7 @@
       "author": "@FoKit",
       "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/weifeng.js",
       "descs_html": [
-        "用于京东、京喜和京喜特价京粉转链，支持慢慢买、购物党和什么值得买跳转比价。"
+        ""
       ],
       "icons": [
         "https://raw.githubusercontent.com/Orz-3/mini/master/Alpha/feng.png",
@@ -692,7 +692,7 @@
       "author": "@FoKit",
       "script": "",
       "descs_html": [
-        ""
+        "用于京东、京喜和京喜特价京粉转链，支持慢慢买、购物党和什么值得买跳转比价。"
       ],
       "icons": [
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/jingfen.png",
