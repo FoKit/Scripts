@@ -68,10 +68,16 @@ $.ql = {
   },
 };
 
-try {
+if ($.isNode()) {
   $.ql_config = JSON.parse($.read('#ql'));
-} catch (e) {
-  $.ql_config = {};
+} else {
+  $.ql_config = {
+    "ip_jd1": process.env.env_sync_ip,
+    "client_id_jd1": process.env.env_sync_id,
+    "client_secret_jd1": process.env.env_sync_key,
+    "username_jd1": process.env.env_sync_username,
+    "password_jd1": process.env.env_sync_password
+  };
 }
 
 $.ql_url = $.ql_config.ip_jd1;
