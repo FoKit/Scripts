@@ -68,7 +68,7 @@ $.ql = {
   },
 };
 
-if ($.isNode()) {
+if (!$.isNode()) {
   $.ql_config = JSON.parse($.read('#ql'));
 } else {
   $.ql_config = {
