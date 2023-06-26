@@ -1,66 +1,208 @@
 /**
  * 脚本名称：青龙变量同步
- * 脚本说明：用于青龙多容器同步环境变量
- * 环境变量：env_sync_ip / env_sync_id / env_sync_key / env_sync_username / env_sync_password
- * 更新时间：2023/06/25 16:40
+ * 脚本说明：用于青龙多容器同步环境变量，执行后会清空本地所有JD_COOKIE变量，并获取远程容器所有JD_COOKIE变量写入本地
+ * 环境变量：env_sync_ip / env_sync_id / env_sync_key / env_sync_username / env_sync_password / AUTH_CONFIG （账号密码/密钥登录方式二选一）
+ * 更新时间：2023/06/26 17:05
+ * 脚本作者：@Fokit_Orz
  */
 
-const $ = new Env('🐉 青龙变量同步');
+const $ = new Env('青龙变量同步')
+const fs = require('fs')
+const got = require('got')
+const path = require('path')
+const api = got.extend()
+const ql_host = 'http://localhost:5700'
+const authConfig = process.env.AUTH_CONFIG || 'data/config/auth.json'
+const authFile = path.join(path.resolve(__dirname, '/ql/'), authConfig)
 
-// let jd_cookies = [];
-// try {
-//   jd_cookies = JSON.parse($.read(cookiesKey) || '[]');
-// } catch (e) {
-//   console.log(e);
-// }
+const env_sync_ip = process.env.env_sync_ip
+const env_sync_id = process.env.env_sync_id
+const env_sync_key = process.env.env_sync_key
+const env_sync_username = process.env.env_sync_username
+const env_sync_password = process.env.env_sync_password
 
-function getUsername(ck) {
-  if (!ck) return '';
-  return decodeURIComponent(ck.match(/pt_pin=(.+?);/)[1]);
+!(async () => {
+  // 获取Token
+  console.log(`\n获取本地Token...`)
+  const ql_token = await getToken()  // 本地token
+  const remote_token = await get_ql_token() // 远程token
+  if (!$.api_type) console.log(`❌ 结束运行。`) && process.exit(0);
+
+  // 获取本地变量
+  console.log(`\n开始获取本地变量...`)
+  const ql_cookies = await get_ql_JDCookie(ql_host, ql_token)
+  console.log(`本地共有 ${ql_cookies.length}个 JD_COOKIE 环境变量\n`)
+
+  // 清空本地变量
+  const del_arr = ql_cookies.map(cookies => cookies.id)
+  if (del_arr.length > 0) {
+    console.log(`开始清空本地变量...`)
+    await ql_delEnv(ql_token, del_arr)
+    console.log(`已清空本地环境变量\n`)
+  }
+
+  // 获取远程变量
+  console.log(`开始获取远程变量...`)
+  const remote_cookies = await get_ql_JDCookie(env_sync_ip, remote_token, $.api_type)
+  const cookies = remote_cookies.map((item) => {
+    return { name: "JD_COOKIE", value: item.value }
+  })
+  console.log(`成功获取到 ${cookies.length} 个远程环境变量\n`)
+
+  // 写入本地环境变量
+  console.log(`开始写入环境变量...`)
+  await ql_addEnv(ql_token, cookies)
+  console.log(`成功写入 ${cookies.length} 个环境变量。`)
+})().catch((e) => {
+  console.log('', `❌ 失败! 原因: ${e}!`, '')
+})
+
+
+/**
+ * 删除本地环境变量
+ * @param {*} json [123, 456]
+ * @returns {object}
+ */
+async function ql_delEnv(token, json) {
+  try {
+    return await api({
+      method: 'DELETE',
+      url: `${ql_host}/api/envs`,
+      params: { t: Date.now() },
+      body: JSON.stringify(json),
+      headers: {
+        Accept: 'application/json',
+        authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+    }).json()
+  } catch (e) {
+    console.log(e)
+  }
 }
 
-async function getScriptUrl() {
-  const response = await $.http.get({
-    url: 'https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jd1_api.js',
-  })
-  return response.body;
+/**
+ * 获取环境变量
+ * @param {*} searchValue
+ * @returns {object}
+ */
+async function get_ql_JDCookie(host, token, apiType = 'api', searchValue = 'JD_COOKIE') {
+  try {
+    const body = await api({
+      url: `${host}/${apiType}/envs`,
+      searchParams: {
+        searchValue,
+        t: Date.now(),
+      },
+      headers: {
+        Accept: 'application/json',
+        authorization: `Bearer ${token}`,
+      },
+    }).json()
+    return body.data
+  } catch (e) {
+    console.log(e)
+  }
 }
 
-(async () => {
-  const ql_script = (await getScriptUrl()) || '';
-  eval(ql_script);
-  await $.ql.login();
-  const cookiesRes = await $.ql.select();
-  const cookies = cookiesRes.data.map((item) => {
-    const key = getUsername(item.value);
-    return { userName: key, cookie: item.value };
-  });
-  // const saveCookie = jd_cookies.map((item) => {
-  //   const qlCk = cookies.find((ql) => ql.userName === item.userName);
-  //   if (qlCk) return { ...item, ...qlCk };
-  //   return item;
-  // });
-  // const userNames = saveCookie.map((item) => item.userName);
-  // cookies.forEach((ql) => {
-  //   if (userNames.indexOf(ql.userName) === -1) saveCookie.push(ql);
-  // });
-  // $.write(JSON.stringify(saveCookie, null, `\t`), cookiesKey);
-  // if ($.read('mute') !== 'true') {
-  //   return $.notify(
-  //     $.name,
-  //     // '已同步账号:',
-  //     // `${cookies.map((item) => item.userName).join(`\n`)}`,
-  //     `成功获取到 ${cookies.length} 个 Cookie`,
-  //   );
-  // }
-  console.log(typeof (cookies), cookies);
-})()
-  .catch((e) => {
-    $.log(JSON.stringify(e));
-  })
-  .finally(() => {
-    $.done();
-  });
+/**
+ * 新增本地环境变量
+ * @param {*} json
+ * @returns {object}
+ */
+async function ql_addEnv(token, json) {
+  try {
+    return await api({
+      method: 'post',
+      url: `${ql_host}/api/envs`,
+      params: { t: Date.now() },
+      body: JSON.stringify(json),
+      headers: {
+        Accept: 'application/json',
+        authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+    }).json()
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+/**
+ * 获取本地token
+ * @returns {string}
+ */
+async function getToken() {
+  const res = getFileContentByName(authFile)
+  if (res) {
+    const authConfig = JSON.parse(res)
+    console.log(`获取成功\n`)
+    return authConfig.token
+  } else {
+    return ''
+  }
+}
+
+/**
+ * 获取文件内容
+ * @param fileName 文件路径
+ * @returns {string}
+ */
+function getFileContentByName(fileName) {
+  if (fs.existsSync(fileName)) {
+    return fs.readFileSync(fileName, 'utf8')
+  }
+  return ''
+}
+
+/**
+ * 获取远程Token
+ */
+async function get_ql_token() {
+  console.log(`获取远程Token...\n${env_sync_ip}`)
+  if (env_sync_username && env_sync_password) {
+    let response = await api({
+      method: 'post',
+      url: `${env_sync_ip}/api/user/login`,
+      // params: { t: Date.now() },
+      body: `username: ${env_sync_username}, password: ${env_sync_password}`,
+      headers: {
+        Accept: `application/json;charset=UTF-8`,
+      },
+    }).json()
+    // console.log(response)
+    if (response.code === 200) {
+      $.api_type = 'api';
+      // $.remote_token = `Bearer ${response.data.token} `;
+      $.log(`登陆成功：${response.data.lastaddr} `);
+      $.log(`ip:${response.data.lastip} `);
+      return response.data.token
+    } else {
+      $.log(response);
+      $.log(`登陆失败：${response.message} `);
+      return ''
+    }
+  } else if (env_sync_id && env_sync_key) {
+    let response = await api({
+      method: 'get',
+      url: `${env_sync_ip}/open/auth/token?client_id=${env_sync_id}&client_secret=${env_sync_key}`,
+      headers: {
+        Accept: `application/json;charset=UTF-8`,
+      },
+    }).json()
+    // console.log(response)
+    if (response.code === 200) {
+      $.api_type = 'open';
+      // $.remote_token = `Bearer ${ response.data.token } `;
+      $.log(`登陆成功`);
+      return response.data.token
+    } else {
+      $.log(response);
+      $.log(`登陆失败：${response.message} `);
+      return ''
+    }
+  }
+}
 
 
 // prettier-ignore
