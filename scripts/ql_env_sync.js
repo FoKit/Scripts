@@ -31,7 +31,7 @@ const env_sync_password = process.env.env_sync_password
   // 获取本地变量
   console.log(`\n开始获取本地变量...`)
   const ql_cookies = await get_ql_JDCookie(ql_host, ql_token)
-  console.log(`本地共有 ${ql_cookies.length}个 JD_COOKIE 环境变量\n`)
+  console.log(`本地共有 ${ql_cookies.length} 个 JD_COOKIE 环境变量\n`)
 
   // 清空本地变量
   const del_arr = ql_cookies.map(cookies => cookies.id)
