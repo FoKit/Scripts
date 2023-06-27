@@ -2,7 +2,7 @@
  * 脚本名称：青龙变量同步
  * 脚本说明：用于青龙多容器同步环境变量，执行后会清空本地所有JD_COOKIE变量，并获取远程容器所有JD_COOKIE变量写入本地
  * 环境变量：env_sync_ip / env_sync_id / env_sync_key / env_sync_username / env_sync_password / AUTH_CONFIG （账号密码/密钥登录方式二选一）
- * 更新时间：2023/06/26 17:05
+ * 更新时间：2023/06/27 09:54
  * 脚本作者：@Fokit_Orz
  */
 
@@ -45,14 +45,17 @@ const env_sync_password = process.env.env_sync_password
   console.log(`开始获取远程变量...`)
   const remote_cookies = await get_ql_JDCookie(env_sync_ip, remote_token, $.api_type)
   const cookies = remote_cookies.map((item) => {
-    return { name: "JD_COOKIE", value: item.value }
+    if (item.status == 0) {  // 只获取启用变量
+      return { name: "JD_COOKIE", value: item.value }
+    }
   })
-  console.log(`成功获取到 ${cookies.length} 个远程环境变量\n`)
+  const jd_cookies = cookies.filter(Boolean);  // 过滤 undefined
+  console.log(`成功获取到 ${cookies.length} 个 JD_COOKIE 变量，有效 ${jd_cookies.length} 个，无效 ${cookies.length - jd_cookies.length} 个\n`)
 
   // 写入本地环境变量
   console.log(`开始写入环境变量...`)
-  await ql_addEnv(ql_token, cookies)
-  console.log(`成功写入 ${cookies.length} 个环境变量。`)
+  await ql_addEnv(ql_token, jd_cookies)
+  console.log(`成功写入 ${jd_cookies.length} 个环境变量。`)
 })().catch((e) => {
   console.log('', `❌ 失败! 原因: ${e}!`, '')
 })
