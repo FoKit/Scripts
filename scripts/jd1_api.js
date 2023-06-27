@@ -68,19 +68,9 @@ $.ql = {
   },
 };
 
-if (!$.isNode()) {
-  $.ql_config = JSON.parse($.read('#ql'));
-} else {
-  $.ql_config = {
-    "ip_jd1": process.env.env_sync_ip,
-    "client_id_jd1": process.env.env_sync_id,
-    "client_secret_jd1": process.env.env_sync_key,
-    "username_jd1": process.env.env_sync_username,
-    "password_jd1": process.env.env_sync_password
-  };
-}
-
+$.ql_config = JSON.parse($.read('#ql'));
 $.ql_url = $.ql_config.ip_jd1;
+
 if (!$.ql_url.match(/^(http|https)/)) $.ql_url = `http://${$.ql_url}`;
 
 $.application = {
