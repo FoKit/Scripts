@@ -9,9 +9,7 @@
       "id": "ql",
       "name": "数据同步",
       "author": "@FoKit",
-      "descs_html": [
-        "用于JD1/JD2和BoxJS之间的数据同步"
-      ],
+      "descs_html": ["用于JD1/JD2和BoxJS之间的数据同步"],
       "icons": [
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/sync.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/sync.png"
@@ -141,16 +139,12 @@
       "id": "tools",
       "name": "Tools",
       "author": "@FoKit",
-      "descs_html": [
-        "自用工具"
-      ],
+      "descs_html": ["自用工具"],
       "icons": [
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/debug.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/debug.png"
       ],
-      "keys": [
-        "is_debug"
-      ],
+      "keys": ["is_debug"],
       "settings": [
         {
           "id": "is_debug",
@@ -165,9 +159,7 @@
       "id": "jparking",
       "name": "捷停车",
       "author": "@FoKit",
-      "descs_html": [
-        "捷停车签到"
-      ],
+      "descs_html": ["捷停车签到"],
       "icons": [
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/jparking.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/jparking.png"
@@ -178,10 +170,7 @@
           "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jparking_sign.js"
         }
       ],
-      "keys": [
-        "jtc_userId",
-        "jtc_taskNo"
-      ],
+      "keys": ["jtc_userId", "jtc_taskNo"],
       "settings": [
         {
           "id": "jtc_userId",
@@ -217,11 +206,7 @@
         "https://cdn.jsdelivr.net/gh/Orz-3/mini@master/Color/weibo.png"
       ],
       "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/weibo_sign.js",
-      "keys": [
-        "sy_token_wb",
-        "wb_cookie",
-        "wb_nick"
-      ],
+      "keys": ["sy_token_wb", "wb_cookie", "wb_nick"],
       "settings": [
         {
           "id": "sy_token_wb",
@@ -250,18 +235,12 @@
       "id": "Analyzing",
       "name": "活动解析",
       "author": "@FoKit",
-      "descs_html": [
-        "用于解析京东活动数据"
-      ],
+      "descs_html": ["用于解析京东活动数据"],
       "icons": [
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/analyzing.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/analyzing.png"
       ],
-      "keys": [
-        "TG_BOT_TOKEN",
-        "TG_USER_ID",
-        "QUOTATION"
-      ],
+      "keys": ["TG_BOT_TOKEN", "TG_USER_ID", "QUOTATION"],
       "settings": [
         {
           "id": "TG_BOT_TOKEN",
@@ -295,9 +274,7 @@
       "id": "wskey",
       "name": "京东WSKEY",
       "author": "@FoKit",
-      "descs_html": [
-        "用于自动抓取京东WSKEY"
-      ],
+      "descs_html": ["用于自动抓取京东WSKEY"],
       "icons": [
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/jdjoy.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/jdjoy.png"
@@ -342,23 +319,18 @@
       ]
     },
     {
-      "id": "text_replace",
+      "id": "string_replace",
       "name": "字符串替换",
       "author": "@FoKit",
-      "descs_html": [
-        "字符串替换工具"
-      ],
+      "descs_html": ["字符串替换工具"],
       "icons": [
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/check.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/check.png"
       ],
-      "keys": [
-        "text_replace",
-        "text_replace_all"
-      ],
+      "keys": ["string_replace", "string_replace_all"],
       "settings": [
         {
-          "id": "text_replace",
+          "id": "string_replace",
           "name": "规则",
           "val": "",
           "type": "textarea",
@@ -367,7 +339,7 @@
           "desc": "示例：replace@text 多条规则以换行分隔"
         },
         {
-          "id": "text_replace_all",
+          "id": "string_replace_all",
           "name": "全局规则",
           "val": "",
           "type": "textarea",
@@ -381,16 +353,12 @@
       "id": "token_95598",
       "name": "南网在线Token",
       "author": "@FoKit",
-      "descs_html": [
-        "南网在线Token"
-      ],
+      "descs_html": ["南网在线Token"],
       "icons": [
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/95598.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/95598.png"
       ],
-      "keys": [
-        "token_95598"
-      ],
+      "keys": ["token_95598"],
       "settings": [
         {
           "id": "token_95598",
@@ -405,17 +373,12 @@
       "id": "12123",
       "name": "交管12123",
       "author": "@FoKit",
-      "descs_html": [
-        "交管12123数据"
-      ],
+      "descs_html": ["交管12123数据"],
       "icons": [
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/12123.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/12123.png"
       ],
-      "keys": [
-        "body_12123",
-        "referer_12123"
-      ],
+      "keys": ["body_12123", "referer_12123"],
       "settings": [
         {
           "id": "body_12123",
@@ -439,16 +402,12 @@
       "id": "huawei_cloud",
       "name": "华为云服务",
       "author": "@FoKit",
-      "descs_html": [
-        "华为云服务 Cookie"
-      ],
+      "descs_html": ["华为云服务 Cookie"],
       "icons": [
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/huawei.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/huawei.png"
       ],
-      "keys": [
-        "huawei_cookie"
-      ],
+      "keys": ["huawei_cookie"],
       "settings": [
         {
           "id": "huawei_cookie",
@@ -463,17 +422,12 @@
       "id": "china_telecom",
       "name": "中国电信",
       "author": "@FoKit",
-      "descs_html": [
-        "中国电信 Cookie"
-      ],
+      "descs_html": ["中国电信 Cookie"],
       "icons": [
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/china_telecom.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/china_telecom.png"
       ],
-      "keys": [
-        "china_telecom_cookie",
-        "china_telecom_login_url"
-      ],
+      "keys": ["china_telecom_cookie", "china_telecom_login_url"],
       "settings": [
         {
           "id": "china_telecom_cookie",
@@ -496,18 +450,12 @@
       "name": "威锋论坛",
       "author": "@FoKit",
       "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/weifeng.js",
-      "descs_html": [
-        ""
-      ],
+      "descs_html": [""],
       "icons": [
         "https://raw.githubusercontent.com/Orz-3/mini/master/Alpha/feng.png",
         "https://raw.githubusercontent.com/Orz-3/mini/master/Color/feng.png"
       ],
-      "keys": [
-        "feng_username",
-        "feng_password",
-        "feng_token"
-      ],
+      "keys": ["feng_username", "feng_password", "feng_token"],
       "settings": [
         {
           "id": "feng_username",
@@ -537,16 +485,12 @@
       "name": "托迈酷客",
       "author": "@FoKit",
       "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/ThomasCook.js",
-      "descs_html": [
-        ""
-      ],
+      "descs_html": [""],
       "icons": [
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/ThomasCook.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/ThomasCook.png"
       ],
-      "keys": [
-        "ThomasCook_Cookie"
-      ],
+      "keys": ["ThomasCook_Cookie"],
       "settings": [
         {
           "id": "ThomasCook_Cookie",
@@ -562,9 +506,7 @@
       "name": "i茅台",
       "author": "@FoKit",
       "script": "",
-      "descs_html": [
-        ""
-      ],
+      "descs_html": [""],
       "icons": [
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/iMaoTai.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/iMaoTai.png"
@@ -588,43 +530,50 @@
           "autoGrow": true,
           "rows": 1,
           "desc": ""
-        },{
+        },
+        {
           "id": "MT_PROVINCE",
           "name": "省份",
           "val": "",
           "type": "text",
           "desc": "XX省 / 直辖市"
-        },{
+        },
+        {
           "id": "MT_CITY",
           "name": "城市",
           "val": "",
           "type": "text",
           "desc": "XX市 / 直辖市"
-        },{
+        },
+        {
           "id": "MT_DISTRICT",
           "name": "区域",
           "val": "",
           "type": "text",
           "desc": "xx区|xx区"
-        },{
+        },
+        {
           "id": "MT_ITEM_BLACK",
           "name": "商品黑名单",
           "val": "",
           "type": "text",
           "desc": "2478|10056"
-        },{
+        },
+        {
           "id": "MT_VERSION",
           "name": "APP版本号",
           "val": "",
           "type": "text",
           "desc": "x.x.x"
-        },{
+        },
+        {
           "id": "MT_USERAGENT",
           "name": "用户标识",
           "val": "",
           "type": "text",
           "desc": "iOS;16.1.2;Apple;"
-        },{
+        },
+        {
           "id": "MT_R",
           "name": "MT_R",
           "val": "",
@@ -638,19 +587,12 @@
       "name": "小米运动",
       "author": "@FoKit",
       "script": "",
-      "descs_html": [
-        ""
-      ],
+      "descs_html": [""],
       "icons": [
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/mi_sport.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/mi_sport.png"
       ],
-      "keys": [
-        "xmUsers",
-        "xmPasswords",
-        "xmMinStep",
-        "xmMaxStep"
-      ],
+      "keys": ["xmUsers", "xmPasswords", "xmMinStep", "xmMaxStep"],
       "settings": [
         {
           "id": "xmUsers",
@@ -661,7 +603,8 @@
           "autoGrow": true,
           "rows": 1,
           "desc": "多个账号使用&分隔"
-        },{
+        },
+        {
           "id": "xmPasswords",
           "name": "密码",
           "val": "",
@@ -677,7 +620,8 @@
           "val": "20000",
           "type": "text",
           "desc": "随机范围最小值"
-        },{
+        },
+        {
           "id": "xmMaxStep",
           "name": "最大值",
           "val": "30000",
