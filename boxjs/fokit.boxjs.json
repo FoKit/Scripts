@@ -324,8 +324,8 @@
       "author": "@FoKit",
       "descs_html": ["字符串替换工具"],
       "icons": [
-        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/check.png",
-        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/check.png"
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/default.png",
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/default.png"
       ],
       "keys": ["string_replace", "string_replace_all"],
       "settings": [
