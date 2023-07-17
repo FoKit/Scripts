@@ -23,10 +23,15 @@ if ($request.url.indexOf("setGameData") > -1) {
 }
 
 if (str) {
-  str = str.replace(/"curStrength":\d+,/g, `"curStrength":99999,`).replace(/"1":\d+,/g, `"1":99999,`);
-  console.log('修改成功');
-  $done({ body: str });
+  let str2 = str.replace(/"curStrength":\d+,/g, `"curStrength":99999,`).replace(/"1":\d+,/g, `"1":99999,`);
+  if (str != str2) {
+    console.log('修改成功');
+  } else {
+    console.log('修改失败')
+  }
+
+  $done({ body: str2 });
 } else {
-  console.log('body空数据');
+  console.log('空数据');
   $done({});
 }
