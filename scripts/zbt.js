@@ -14,15 +14,19 @@ hostname = api.gzgame99.cn
 
 let str = '';
 
-if ($request.url.indexOf("setGameData")) {
+if ($request.url.indexOf("setGameData") > -1) {
   str = $request.body;
   console.log('上传存档');
-} else if ($request.url.indexOf("getGameData")) {
+} else if ($request.url.indexOf("getGameData") > -1) {
   str = $response.body;
   console.log('下载存档');
 }
 
-str = str.replace(/"curStrength":\d+,/g, `"curStrength":99999,`).replace(/"1":\d+,/g, `"1":99999,`);
-console.log('修改成功');
-
-$done({ body: str });
+if (str) {
+  str = str.replace(/"curStrength":\d+,/g, `"curStrength":99999,`).replace(/"1":\d+,/g, `"1":99999,`);
+  console.log('修改成功');
+  $done({ body: str });
+} else {
+  console.log('body空数据');
+  $done({});
+}
