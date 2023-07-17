@@ -10,4 +10,4 @@
 hostname = api.gzgame99.cn
 */
 
-$done({ body: $request.body.replace(/"curStrength":\d+,/g, `"curStrength":99999`).replace(/"1":\d+/g, `"curStrength":99999`) });
+$done({ body: $request.body.replace(/"curStrength":\d+,/g, `"curStrength":99999`).replace(/"1":\d+,/g, `"1":99999,`) });
