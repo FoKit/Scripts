@@ -758,8 +758,8 @@
       "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh.js",
       "descs_html": [""],
       "icons": [
-        "https://raw.githubusercontent.com/Orz-3/mini/master/Alpha/default.png",
-        "https://raw.githubusercontent.com/Orz-3/mini/master/Color/default.png"
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/default.png",
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/default.png"
       ],
       "keys": ["JHSH_Cookie", "JHSH_Body"],
       "settings": [
