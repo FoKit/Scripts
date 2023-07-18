@@ -104,7 +104,7 @@ function main() {
               message += `🎉 签到成功'\n\n`;
             } else {
               console.log(JSON.stringify(data));
-              message += '❌ 签到失败';
+              message += `❌ 签到失败，${data.errMsg}`;
             }
             console.log(message);
           } else {
