@@ -68,10 +68,10 @@ if (isGetCookie = typeof $request !== `undefined`) {
 }
 
 function GetCookie() {
-  if ($request && $request.url.indexOf("getCount") > -1) {
-    cookie = JSON.stringify($request.headers);
+  if ($request && $request.url.indexOf("getCount") > -1 && $request.headers.Authorization) {
+    cookie = $request.headers.Authorization;
     $.setdata(cookie, ck_key);
-    $.msg($.name, ``, `🎉 建行生活 Cookie 获取成功`);
+    $.msg($.name, ``, `🎉 Cookie 获取成功`);
   }
 }
 
