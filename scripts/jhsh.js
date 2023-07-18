@@ -102,7 +102,7 @@ function main() {
             if (data.errCode == 0) {
               message += `🎉 签到成功'\n\n`;
             } else {
-              console.log(data);
+              console.log(JSON.stringify(data));
               message += '❌ 签到失败';
             }
             console.log(message);
