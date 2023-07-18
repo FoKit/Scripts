@@ -87,11 +87,12 @@ function GetCookie() {
 function main() {
   let opt = {
     url: `https://yunbusiness.ccb.com/clp_coupon/txCtrl?txcode=A3341A040`,
-    headers: JSON.parse(cookie)
+    headers: JSON.parse(cookie),
+    body: $.isNode() ? process.env.JHSH_Cookie : $.getdata(body_key)
   }
   return new Promise(resolve => {
     // console.log(opt);
-    $.get(opt, (err, resp, data) => {
+    $.post(opt, (err, resp, data) => {
       try {
         if (err) {
           $.log(err);
