@@ -1,48 +1,54 @@
+/**
+ * 脚本名称：建行生活
+ * 脚本说明：连续签到领优惠券礼包（打车、外卖优惠券）
+ * 活动入口：建行生活APP -> 首页 -> 会员有礼 -> 签到
+ * 更新时间：2023-07-18
+ */
+
 /*
-脚本名称：托迈酷客
-活动规则：每日签到可获得积分
-环境变量：ThomasCook_Cookie
-使用说明：添加重写规则进入小程序即可获取Cookie
-更新时间：2023-01-31
-====================================================================================================
-配置 (Surge)
+------------------ Surge 配置 -----------------https://yunbusiness.ccb.com/clp_coupon/txCtrl?txcode=A3341A040
+
 [MITM]
 hostname = %APPEND% apis.folidaymall.com
 
 [Script]
-获取托迈酷客Cookie = type=http-request,pattern=^https:\/\/apis\.folidaymall\.com\/online\/capi\/uc\/getCount,requires-body=0,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/ThomasCook.js
+建行生活 = type=http-request,pattern=^https:\/\/yunbusiness\.ccb\.com\/clp_coupon\/txCtrl\?txcode=A3341A040,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh.js
 
+建行生活 = type=cron,cronexp=17 7 * * *,timeout=60,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh.js,script-update-interval=0
 
-托迈酷客 = type=cron,cronexp=15 10 * * *,timeout=60,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/ThomasCook.js,script-update-interval=0
-----------------------------------------------------------------------------------------------------
-配置 (QuanX)
+-------------- Quantumult X 配置 --------------
+
 [MITM]
 hostname = apis.folidaymall.com
 
 [rewrite_local]
-^https:\/\/apis\.folidaymall\.com\/online\/capi\/uc\/getCount url script-request-header https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/ThomasCook.js
+^https:\/\/yunbusiness\.ccb\.com\/clp_coupon\/txCtrl\?txcode=A3341A040 url script-request-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh.js
 
 [task_local]
-15 10 * * * https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/ThomasCook.js, tag=托迈酷客, enabled=true
-====================================================================================================
+17 7 * * * https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh.js, tag=建行生活, enabled=true
+
+----------------------------------------------
 */
 
-const $ = new Env('托迈酷客');
+
+
+const $ = new Env('建行生活');
 const notify = $.isNode() ? require('./sendNotify') : '';
-const ck_key = 'ThomasCook_Cookie';
-let message = '', cookie = '', cookiesArr = [];
+const ck_key = 'JHSH_Cookie';
+const body_key = 'JHSH_Body';
+let message = '', cookie = '', cookiesArr = [], body = '';
 
 if (isGetCookie = typeof $request !== `undefined`) {
   GetCookie();
   $.done();
 } else {
   !(async () => {
-    cookie = ($.isNode() ? process.env.ThomasCook_Cookie : $.getdata(ck_key)).split('@');
+    cookie = [($.isNode() ? process.env.JHSH_Cookie : $.getdata(ck_key))];
     Object.keys(cookie).forEach((item) => {
       cookiesArr.push(cookie[item]);
     });
     if (!cookiesArr[0]) {
-      $.msg($.name, '❌ 请先获取托迈酷客Cookie。');
+      $.msg($.name, '❌ 请先获取建行生活Cookie。');
       return;
     }
     for (let i = 0; i < cookiesArr.length; i++) {
@@ -68,28 +74,20 @@ if (isGetCookie = typeof $request !== `undefined`) {
 }
 
 function GetCookie() {
-  if ($request && $request.url.indexOf("getCount") > -1) {
+  if ($request && $request.url.indexOf("A3341A040") > -1) {
     cookie = JSON.stringify($request.headers);
+    body = $request.body;
     $.setdata(cookie, ck_key);
-    $.msg($.name, ``, `🎉 建行生活 Cookie 获取成功`);
+    $.setdata(body, body_key);
+    $.msg($.name, ``, `🎉 建行生活签到数据获取成功。`);
   }
 }
 
 // 签到主函数
 function main() {
   let opt = {
-    url: `https://apis.folidaymall.com/online/cms-api/sign/userSign`,
-    headers: {
-      'Accept-Encoding': `gzip, deflate, br`,
-      'Origin': `https://hotels.folidaymall.com`,
-      'Connection': `keep-alive`,
-      'Accept': `*/*`,
-      'Referer': `https://hotels.folidaymall.com/`,
-      'Host': `apis.folidaymall.com`,
-      'User-Agent': `Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.32(0x1800202c) NetType/WIFI Language/zh_CN miniProgram/wx1fa4da2889526a37`,
-      'Authorization': cookie,
-      'Accept-Language': `zh-CN,zh-Hans;q=0.9`
-    }
+    url: `https://yunbusiness.ccb.com/clp_coupon/txCtrl?txcode=A3341A040`,
+    headers: JSON.parse(cookie)
   }
   return new Promise(resolve => {
     // console.log(opt);
@@ -99,27 +97,15 @@ function main() {
           $.log(err);
         } else {
           if (data) {
-            let text = '';
             data = JSON.parse(data);
             // console.log(data);
-            if (data.responseCode === '0') {
-              $.mobile = data.data.signInfo.mobile;  // 手机号
-              // $.accountId = data.data.signInfo.accountId;  // 用户ID
-              $.signInStatus = data.data.signInfo.signInStatus === 1 ? '🎉 签到成功' : "❌ 签到失败";  // 签到状态：1=是 0=否
-              $.changeIntegeral = data.data.signInfo.changeIntegeral;  // 积分变动
-              $.continousSignDays = data.data.signInfo.continousSignDays;  // 连续签到天数
-              $.currentIntegral = data.data.signInfo.currentIntegral + $.changeIntegeral;  // 当前积分
-
-              text = `账号 ${$.mobile}\n${$.signInStatus}, ${$.changeIntegeral > 0 ? `积分+${$.changeIntegeral}, ` : ''}连续签到 ${$.continousSignDays} 天, 积分余额 ${$.currentIntegral}\n\n`;
-              message += text;
-            } else if (data.responseCode === '402') {
-              text = data.message;
-              message += text;
+            if (data.errCode == 0) {
+              message += `🎉 签到成功'\n\n`;
             } else {
               console.log(data);
-              message += '❌ 请求出错了~';
+              message += '❌ 签到失败';
             }
-            console.log(text);
+            console.log(message);
           } else {
             $.log("服务器返回了空数据");
           }

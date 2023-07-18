@@ -750,6 +750,38 @@
           "desc": ""
         }
       ]
+    },
+    {
+      "id": "jhsh",
+      "name": "建行生活",
+      "author": "@FoKit",
+      "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh.js",
+      "descs_html": [""],
+      "icons": [
+        "https://raw.githubusercontent.com/Orz-3/mini/master/Alpha/default.png",
+        "https://raw.githubusercontent.com/Orz-3/mini/master/Color/default.png"
+      ],
+      "keys": ["JHSH_Cookie", "JHSH_Body"],
+      "settings": [
+        {
+          "id": "JHSH_Cookie",
+          "name": "请求头",
+          "val": "",
+          "type": "textarea",
+          "autoGrow": true,
+          "rows": 1,
+          "desc": ""
+        },
+        {
+          "id": "JHSH_Body",
+          "name": "请求体",
+          "val": "",
+          "type": "textarea",
+          "autoGrow": true,
+          "rows": 1,
+          "desc": ""
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,8 @@
+#!name=建行生活 Cookie
+#!desc=建行生活APP -> 首页 -> 会员有礼 -> 签到 手动签到一次即可获取 Cookie
+
+[MITM]
+hostname = %APPEND% apis.folidaymall.com
+
+[Script]
+建行生活 = type=http-request,pattern=^https:\/\/yunbusiness\.ccb\.com\/clp_coupon\/txCtrl\?txcode=A3341A040,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh.js
