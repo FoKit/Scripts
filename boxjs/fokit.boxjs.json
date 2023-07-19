@@ -755,7 +755,7 @@
       "id": "jhsh",
       "name": "建行生活",
       "author": "@FoKit",
-      "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh.js",
+      "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js",
       "descs_html": [""],
       "icons": [
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/default.png",
