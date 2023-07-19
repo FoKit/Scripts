@@ -1,12 +1,16 @@
 /**
  * 脚本名称：建行生活
- * 脚本说明：连续签到领优惠券礼包（打车、外卖优惠券）
  * 活动入口：建行生活APP -> 首页 -> 会员有礼 -> 签到
- * 更新时间：2023-07-18
- */
-
+ * 脚本说明：连续签到领优惠券礼包（打车、外卖优惠券），配置重写手动签到一次即可获取签到数据。兼容 Node.js 环境，变量名称 JHSH_BODY，多账号分割符 "|"。
+ * 仓库地址：https://github.com/FoKit/Scripts
+ * 更新时间：2023-07-19
 /*
------------------- Surge 配置 -----------------https://yunbusiness.ccb.com/clp_coupon/txCtrl?txcode=A3341A040
+--------------- BoxJS & 重写模块 --------------
+
+https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
+https://raw.githubusercontent.com/FoKit/Scripts/main/rewrite/get_jhsh_cookie.sgmodule
+
+------------------ Surge 配置 -----------------
 
 [MITM]
 hostname = %APPEND% apis.folidaymall.com
@@ -27,7 +31,6 @@ hostname = apis.folidaymall.com
 [task_local]
 17 7 * * * https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh.js, tag=建行生活, enabled=true
 
-----------------------------------------------
 */
 
 const $ = new Env('建行生活');
