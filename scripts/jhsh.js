@@ -30,32 +30,29 @@ hostname = apis.folidaymall.com
 ----------------------------------------------
 */
 
-
-
 const $ = new Env('建行生活');
+const body_key = 'JHSH_BODY';
 const notify = $.isNode() ? require('./sendNotify') : '';
-const ck_key = 'JHSH_Cookie';
-const body_key = 'JHSH_Body';
-let message = '', cookie = '', cookiesArr = [], body = '';
+let bodyStr = $.isNode() ? process.env.JHSH_BODY : $.getdata(body_key);
+let bodyArr = bodyStr ? bodyStr.split("|") : [];
+let message = '';
 
 if (isGetCookie = typeof $request !== `undefined`) {
   GetCookie();
   $.done();
 } else {
   !(async () => {
-    cookie = [($.isNode() ? process.env.JHSH_Cookie : $.getdata(ck_key))];
-    Object.keys(cookie).forEach((item) => {
-      cookiesArr.push(cookie[item]);
-    });
-    if (!cookiesArr[0]) {
+    if (!bodyArr[0]) {
       $.msg($.name, '❌ 请先获取建行生活Cookie。');
       return;
     }
-    for (let i = 0; i < cookiesArr.length; i++) {
-      if (cookiesArr[i]) {
-        cookie = cookiesArr[i];
+    console.log(`共有 [${bodyArr.length}] 个建行生活账号`);
+    for (let i = 0; i < bodyArr.length; i++) {
+      if (bodyArr[i]) {
+        $.body = bodyArr[i];
         $.index = i + 1;
-        console.log(`账号 ${$.index} 开始签到\n`);
+        $.phone = JSON.parse($.body).USR_TEL;
+        console.log(`账号 [${$.phone || $.index}] 开始签到\n`);
         await main();
       }
     }
@@ -75,11 +72,15 @@ if (isGetCookie = typeof $request !== `undefined`) {
 
 function GetCookie() {
   if ($request && $request.url.indexOf("A3341A040") > -1) {
-    cookie = JSON.stringify($request.headers);
-    body = $request.body;
-    $.setdata(cookie, ck_key);
-    $.setdata(body, body_key);
-    $.msg($.name, ``, `🎉 建行生活签到数据获取成功。`);
+    $.body = $request.body;
+    if (bodyStr.indexOf(JSON.parse($.body).USR_TEL) == -1) {
+      console.log(`开始新增用户数据 ${$.body}`)
+      bodyArr.push($.body);
+      $.setdata(bodyArr.join('|'), body_key);
+      $.msg($.name, ``, `🎉 建行生活签到数据获取成功。`);
+    } else {
+      console.log('数据已存在，不再写入。')
+    }
   }
 }
 
@@ -87,8 +88,14 @@ function GetCookie() {
 function main() {
   let opt = {
     url: `https://yunbusiness.ccb.com/clp_coupon/txCtrl?txcode=A3341A040`,
-    headers: JSON.parse(cookie),
-    body: $.isNode() ? process.env.JHSH_Cookie : $.getdata(body_key)
+    headers: {
+      "MID": "159",
+      "Content-Type": "application/json;charset=utf-8",
+      "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148/CloudMercWebView/UnionPay/1.0 CCBLoongPay",
+      "Accept": "application/json,text/javascript,*/*",
+      "content-type": "application/json"
+    },
+    body: $.body
   }
   return new Promise(resolve => {
     // console.log(opt);
@@ -101,10 +108,10 @@ function main() {
             data = JSON.parse(data);
             // console.log(data);
             if (data.errCode == 0) {
-              message += `🎉 签到成功'\n\n`;
+              message += `🎉 账号 ${$.phone || $.index} 签到成功\n`;
             } else {
               console.log(JSON.stringify(data));
-              message += `❌ 签到失败，${data.errMsg}`;
+              message += `❌ 账号 ${$.phone || $.index} 签到失败，${data.errMsg}\n`;
             }
             console.log(message);
           } else {

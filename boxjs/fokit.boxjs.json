@@ -761,20 +761,11 @@
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/default.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/default.png"
       ],
-      "keys": ["JHSH_Cookie", "JHSH_Body"],
+      "keys": ["JHSH_BODY"],
       "settings": [
         {
-          "id": "JHSH_Cookie",
-          "name": "请求头",
-          "val": "",
-          "type": "textarea",
-          "autoGrow": true,
-          "rows": 1,
-          "desc": ""
-        },
-        {
-          "id": "JHSH_Body",
-          "name": "请求体",
+          "id": "JHSH_BODY",
+          "name": "签到数据",
           "val": "",
           "type": "textarea",
           "autoGrow": true,
