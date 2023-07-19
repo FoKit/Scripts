@@ -109,14 +109,15 @@ function main() {
         } else {
           if (data) {
             data = JSON.parse(data);
-            // console.log(data);
-            if (data.errCode == 0) {
-              message += `🎉 账号 ${$.phone || $.index} 签到成功\n`;
+            let text = '';
+            if (data.errCode == 0) {     
+              text = `🎉 账号 ${$.phone || $.index} 签到成功\n`;
             } else {
               console.log(JSON.stringify(data));
-              message += `❌ 账号 ${$.phone || $.index} 签到失败，${data.errMsg}\n`;
+              text = `❌ 账号 ${$.phone || $.index} 签到失败，${data.errMsg}\n`;
             }
-            console.log(message);
+            message += text;
+            console.log(text);
           } else {
             $.log("服务器返回了空数据");
           }
