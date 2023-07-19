@@ -49,7 +49,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
       $.msg($.name, '❌ 请先获取建行生活Cookie。');
       return;
     }
-    console.log(`共有 [${bodyArr.length}] 个建行生活账号`);
+    console.log(`共有 [${bodyArr.length}] 个建行生活账号\n`);
     for (let i = 0; i < bodyArr.length; i++) {
       if (bodyArr[i]) {
         $.body = bodyArr[i];
