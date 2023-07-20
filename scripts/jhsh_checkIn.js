@@ -42,7 +42,7 @@ let message = '';
 
 if (isGetCookie = typeof $request !== `undefined`) {
   GetCookie();
-  $.done();
+  $.done({ body: $request.body });
 } else {
   !(async () => {
     if (!bodyArr[0]) {
@@ -110,11 +110,11 @@ function main() {
           if (data) {
             data = JSON.parse(data);
             let text = '';
-            if (data.errCode == 0) {     
-              text = `🎉 账号 ${$.phone || $.index} 签到成功\n`;
+            if (data.errCode == 0) {
+              text = `🎉 账号 ${hideSensitiveData($.phone, 3, 4) || $.index} 签到成功\n`;
             } else {
               console.log(JSON.stringify(data));
-              text = `❌ 账号 ${$.phone || $.index} 签到失败，${data.errMsg}\n`;
+              text = `❌ 账号 ${hideSensitiveData($.phone, 3, 4) || $.index} 签到失败，${data.errMsg}\n`;
             }
             message += text;
             console.log(text);
@@ -129,6 +129,15 @@ function main() {
       }
     })
   })
+}
+
+// 数据脱敏
+function hideSensitiveData(string, head_length = 2, foot_length = 2) {
+  let star = '';
+  for (var i = 0; i < string.length - head_length - foot_length; i++) {
+    star += '*';
+  }
+  return string.substring(0, head_length) + star + string.substring(string.length - foot_length);
 }
 
 // prettier-ignore
