@@ -13,7 +13,7 @@ https://raw.githubusercontent.com/FoKit/Scripts/main/rewrite/get_jhsh_cookie.sgm
 ------------------ Surge 配置 -----------------
 
 [MITM]
-hostname = %APPEND% apis.folidaymall.com
+hostname = %APPEND% yunbusiness.ccb.com
 
 [Script]
 建行生活 = type=http-request,pattern=^https:\/\/yunbusiness\.ccb\.com\/clp_coupon\/txCtrl\?txcode=A3341A040,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js
@@ -23,7 +23,7 @@ hostname = %APPEND% apis.folidaymall.com
 -------------- Quantumult X 配置 --------------
 
 [MITM]
-hostname = apis.folidaymall.com
+hostname = yunbusiness.ccb.com
 
 [rewrite_local]
 ^https:\/\/yunbusiness\.ccb\.com\/clp_coupon\/txCtrl\?txcode=A3341A040 url script-request-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js
