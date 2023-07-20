@@ -42,7 +42,7 @@ let message = '';
 
 if (isGetCookie = typeof $request !== `undefined`) {
   GetCookie();
-  $.done({ body: $request.body });
+  $.done();
 } else {
   !(async () => {
     if (!bodyArr[0]) {
