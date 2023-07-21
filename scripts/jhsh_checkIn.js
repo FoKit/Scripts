@@ -36,7 +36,7 @@ hostname = yunbusiness.ccb.com
 const $ = new Env('建行生活');
 const body_key = 'JHSH_BODY';
 const notify = $.isNode() ? require('./sendNotify') : '';
-let bodyStr = $.isNode() ? process.env.JHSH_BODY : $.getdata(body_key);
+let bodyStr = ($.isNode() ? process.env.JHSH_BODY : $.getdata(body_key)) || '';
 let bodyArr = bodyStr ? bodyStr.split("|") : [];
 let message = '';
 
