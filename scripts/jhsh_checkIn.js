@@ -158,6 +158,8 @@ function main(ACT_ID, MEB_ID, USR_TEL, REGION_CODE, chnlType, regionCode) {
                 //   }
                 // });
                 await getGift();
+              } else {
+                console.log(`暂无可领取的奖励`);
               }
             } else {
               console.log(JSON.stringify(data));
