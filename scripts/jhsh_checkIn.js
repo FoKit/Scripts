@@ -120,7 +120,7 @@ function main() {
             data = JSON.parse(data);
             let text = '';
             if (data.errCode == 0) {
-              text = `🎉 账号 ${hideSensitiveData(USR_TEL, 3, 4) || $.index} 签到成功\n`;
+              text = `🎉 账号 ${hideSensitiveData($.info?.USR_TEL, 3, 4) || $.index} 签到成功\n`;
               if (data?.data?.IS_AWARD == 1) {
                 console.log("🎉 可领取签到大礼包:");
                 $.GIFT_BAG = data?.data?.GIFT_BAG;
@@ -163,7 +163,7 @@ function main() {
               }
             } else {
               console.log(JSON.stringify(data));
-              text = `❌ 账号 ${hideSensitiveData(USR_TEL, 3, 4) || $.index} 签到失败，${data.errMsg}\n`;
+              text = `❌ 账号 ${hideSensitiveData($.info?.USR_TEL, 3, 4) || $.index} 签到失败，${data.errMsg}\n`;
             }
             message += text;
             console.log(text);
