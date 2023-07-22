@@ -112,6 +112,9 @@ function main() {
             let text = '';
             if (data.errCode == 0) {
               text = `🎉 账号 ${hideSensitiveData($.phone, 3, 4) || $.index} 签到成功\n`;
+              if (data?.data?.IS_AWARD == 1) {
+              console.log("🎉 可领取连续签到大礼包");
+              }
             } else {
               console.log(JSON.stringify(data));
               text = `❌ 账号 ${hideSensitiveData($.phone, 3, 4) || $.index} 签到失败，${data.errMsg}\n`;
