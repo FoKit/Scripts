@@ -761,7 +761,7 @@
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/default.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/default.png"
       ],
-      "keys": ["JHSH_BODY"],
+      "keys": ["JHSH_BODY", "JHSH_GIFT"],
       "settings": [
         {
           "id": "JHSH_BODY",
@@ -771,6 +771,27 @@
           "autoGrow": true,
           "rows": 1,
           "desc": ""
+        },
+        {
+          "id": "JHSH_GIFT",
+          "name": "奖励类型",
+          "val": "2",
+          "type": "radios",
+          "desc": "选择连续签到奖励类型",
+          "items": [
+            {
+              "key": "1",
+              "label": "打车券"
+            },
+            {
+              "key": "2",
+              "label": "外卖券"
+            },
+            {
+              "key": "3",
+              "label": "外卖券(建行信用卡)"
+            }
+          ]
         }
       ]
     }
