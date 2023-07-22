@@ -97,7 +97,7 @@ function GetCookie() {
 
 
 // 签到主函数
-function main(ACT_ID, MEB_ID, USR_TEL, REGION_CODE, chnlType, regionCode) {
+function main() {
   let opt = {
     url: `https://yunbusiness.ccb.com/clp_coupon/txCtrl?txcode=A3341A040`,
     headers: {
