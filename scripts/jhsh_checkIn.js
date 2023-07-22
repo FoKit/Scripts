@@ -202,10 +202,10 @@ async function getGift() {
             data = JSON.parse(data);
             let text = '';
             if (data.errCode == 0) {
-              text = `签到礼包领取成功，获得${data?.data?.title}（${data?.data?.subTitle}）\n`;
+              text = `获得签到奖励：${data?.data?.title}（${data?.data?.subTitle}）\n`;
             } else {
               console.log(JSON.stringify(data));
-              text = `签到礼包领取失败，${data.errMsg}\n`;
+              text = `签到奖励领取失败，${data.errMsg}\n`;
             }
             message += text;
             console.log(text);
