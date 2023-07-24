@@ -3,7 +3,7 @@
  * 活动入口：建行生活APP -> 首页 -> 会员有礼 -> 签到
  * 脚本说明：连续签到领优惠券礼包（打车、外卖优惠券），配置重写手动签到一次即可获取签到数据，默认领取外卖券，可在 BoxJS 配置奖品。兼容 Node.js 环境，变量名称 JHSH_BODY、JHSH_GIFT，多账号分割符 "|"。
  * 仓库地址：https://github.com/FoKit/Scripts
- * 更新时间：2023-07-23
+ * 更新时间：2023-07-24
 /*
 --------------- BoxJS & 重写模块 --------------
 
@@ -42,8 +42,7 @@ let bodyStr = ($.isNode() ? process.env.JHSH_BODY : $.getdata(body_key)) || '';
 let bodyArr = bodyStr ? bodyStr.split("|") : [], message = '';
 let giftMap = {
   "1": "打车",
-  "2": "外卖",
-  "3": "外卖"  // 建行信用卡
+  "2": "外卖"
 };
 
 if (isGetCookie = typeof $request !== `undefined`) {
@@ -61,7 +60,6 @@ if (isGetCookie = typeof $request !== `undefined`) {
         $.index = i + 1;
         $.info = JSON.parse(bodyArr[i])
         console.log(`账号[${$.info?.USR_TEL || $.index}]开始签到\n`);
-        // if ($.index > 1) message += `\n`;
         await main();
       }
     }
@@ -122,42 +120,32 @@ function main() {
             if (data.errCode == 0) {
               text = `🎉 账号 [${hideSensitiveData($.info?.USR_TEL, 3, 4) || $.index}] 签到成功\n`;
               if (data?.data?.IS_AWARD == 1) {
-                console.log("🎉 可领取签到大礼包:");
+                $.giftList = [];
                 $.GIFT_BAG = data?.data?.GIFT_BAG;
-                try {
-                  $.GIFT_BAG.forEach(item => {
-                    if (new RegExp(`${giftMap[giftType]}`).test(item?.couponName)) {
-                      if (giftType == "3" && !/信用卡/.test(item?.couponName)) return;
-                      $.couponId = item?.couponId;
-                      $.nodeDay = item?.nodeDay;
-                      $.couponType = item?.couponType;
-                      $.dccpBscInfSn = item?.dccpBscInfSn;
-                      console.log(`领取奖励：${item?.title} (${item?.subTitle})`)
-                      throw new Error('跳出循环');
+                $.GIFT_BAG.forEach(item => {
+                  if (new RegExp(`${giftMap[giftType]}`).test(item?.couponName)) {
+                    if (/信用卡/.test(item?.couponName)) {
+                      $.giftList.unshift({ "couponId": item.couponId, "nodeDay": item.nodeDay, "couponType": item.couponType, "dccpBscInfSn": item.dccpBscInfSn });
                     } else {
-                      return;
+                      $.giftList.push({ "couponId": item.couponId, "nodeDay": item.nodeDay, "couponType": item.couponType, "dccpBscInfSn": item.dccpBscInfSn });
                     }
+                  } else {
+                    return;
+                  }
+                })
+                try {
+                  $.isGetGift = false;
+                  $.giftList.forEach(async item => {
+                    if ($.isGetGift) throw new Error('跳出循环');
+                    $.couponId = item?.couponId;
+                    $.nodeDay = item?.nodeDay;
+                    $.couponType = item?.couponType;
+                    $.dccpBscInfSn = item?.dccpBscInfSn;
+                    console.log(`开始领取 [${giftMap[giftType]}] 券，优先尝试领取信用卡券，领取失败将领取借记卡券。`);
+                    await getGift();
+                    console.log($.couponId)
                   })
                 } catch (e) { }
-                // $.GIFT_BAG.forEach(item => {
-                //   if (giftType == "1" && /打车/.test(item?.couponName)) {
-                //     $.couponId = item?.couponId;
-                //     $.nodeDay = item?.nodeDay;
-                //     $.couponType = item?.couponType;
-                //     $.dccpBscInfSn = item?.dccpBscInfSn;
-                //   } else if (giftType == "2" && /外卖/.test(item?.couponName)) {
-                //     $.couponId = item?.couponId;
-                //     $.nodeDay = item?.nodeDay;
-                //     $.couponType = item?.couponType;
-                //     $.dccpBscInfSn = item?.dccpBscInfSn;
-                //   } else if (giftType == "3" && /外卖/.test(item?.couponName) && /信用卡/.test(item?.couponName)) {
-                //     $.couponId = item?.couponId;
-                //     $.nodeDay = item?.nodeDay;
-                //     $.couponType = item?.couponType;
-                //     $.dccpBscInfSn = item?.dccpBscInfSn;
-                //   }
-                // });
-                await getGift();
               } else {
                 console.log(`暂无可领取的奖励`);
               }
@@ -204,6 +192,7 @@ async function getGift() {
             data = JSON.parse(data);
             let text = '';
             if (data.errCode == 0) {
+              $.isGetGift = true;
               text = `获得签到奖励：${data?.data?.title}（${data?.data?.subTitle}）\n`;
             } else {
               console.log(JSON.stringify(data));
