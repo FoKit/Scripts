@@ -59,7 +59,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
       if (bodyArr[i]) {
         $.index = i + 1;
         $.info = JSON.parse(bodyArr[i])
-        console.log(`账号[${$.info?.USR_TEL || $.index}]开始签到\n`);
+        console.log(`===== 账号[${$.info?.USR_TEL || $.index}]开始签到 =====\n`);
         await main();
       }
     }
@@ -141,7 +141,7 @@ function main() {
                     $.nodeDay = item?.nodeDay;
                     $.couponType = item?.couponType;
                     $.dccpBscInfSn = item?.dccpBscInfSn;
-                    console.log(`开始领取 [${giftMap[giftType]}] 券，优先尝试领取信用卡券，领取失败将领取借记卡券。`);
+                    console.log(`尝试领取[${giftMap[giftType]}]券`);
                     await getGift();
                     console.log($.couponId)
                   })
@@ -182,13 +182,14 @@ async function getGift() {
     body: `{"mebId":"${$.info.MEB_ID}","actId":"${$.info.ACT_ID}","nodeDay":${$.nodeDay},"couponType":${$.couponType},"nodeCouponId":"${$.CouponId}","dccpBscInfSn":"${$.dccpBscInfSn}","chnlType":"${$.info.chnlType}","regionCode":"${$.info.regionCode}"}`
   }
   return new Promise(resolve => {
-    // console.log(opt);
+    console.log($.toStr(opt));
     $.post(opt, async (err, resp, data) => {
       try {
         if (err) {
           $.log(err);
         } else {
           if (data) {
+            console.log(data);
             data = JSON.parse(data);
             let text = '';
             if (data.errCode == 0) {
