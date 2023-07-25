@@ -3,7 +3,7 @@
  * 活动入口：建行生活APP -> 首页 -> 会员有礼 -> 签到
  * 脚本说明：连续签到领优惠券礼包（打车、外卖优惠券），配置重写手动签到一次即可获取签到数据，默认领取外卖券，可在 BoxJS 配置奖品。兼容 Node.js 环境，变量名称 JHSH_BODY、JHSH_GIFT，多账号分割符 "|"。
  * 仓库地址：https://github.com/FoKit/Scripts
- * 更新时间：2023-07-24
+ * 更新时间：2023-07-25
 /*
 --------------- BoxJS & 重写模块 --------------
 
@@ -44,6 +44,7 @@ let giftMap = {
   "1": "打车",
   "2": "外卖"
 };
+$.is_debug = ($.isNode() ? process.env.IS_DEDUG: $.getdata('is_debug')) || 'false';
 
 if (isGetCookie = typeof $request !== `undefined`) {
   GetCookie();
@@ -182,14 +183,14 @@ async function getGift() {
     body: `{"mebId":"${$.info.MEB_ID}","actId":"${$.info.ACT_ID}","nodeDay":${$.nodeDay},"couponType":${$.couponType},"nodeCouponId":"${$.couponId}","dccpBscInfSn":"${$.dccpBscInfSn}","chnlType":"${$.info.chnlType}","regionCode":"${$.info.regionCode}"}`
   }
   return new Promise(resolve => {
-    console.log($.toStr(opt));
+    debug(opt);
     $.post(opt, async (err, resp, data) => {
       try {
         if (err) {
           $.log(err);
         } else {
           if (data) {
-            console.log(data);
+            debug(data);
             data = JSON.parse(data);
             let text = '';
             if (data.errCode == 0) {
@@ -221,6 +222,18 @@ function hideSensitiveData(string, head_length = 2, foot_length = 2) {
     star += '*';
   }
   return string.substring(0, head_length) + star + string.substring(string.length - foot_length);
+}
+
+
+// DEBUG
+function debug(text) {
+  if ($.is_debug === 'true') {
+    if (typeof text == "string") {
+      console.log(text);
+    } else if (typeof text == "object") {
+      console.log($.toStr(text));
+    }
+  }
 }
 
 
