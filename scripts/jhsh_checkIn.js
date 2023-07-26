@@ -44,7 +44,7 @@ let giftMap = {
   "1": "打车",
   "2": "外卖"
 };
-$.is_debug = ($.isNode() ? process.env.IS_DEDUG: $.getdata('is_debug')) || 'false';
+$.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false';
 
 if (isGetCookie = typeof $request !== `undefined`) {
   GetCookie();
@@ -120,6 +120,7 @@ function main() {
             let text = '';
             if (data.errCode == 0) {
               text = `🎉 账号 [${hideSensitiveData($.info?.USR_TEL, 3, 4) || $.index}] 签到成功\n`;
+              console.log(text);
               if (data?.data?.IS_AWARD == 1) {
                 $.giftList = [];
                 $.GIFT_BAG = data?.data?.GIFT_BAG;
@@ -144,7 +145,6 @@ function main() {
                     $.dccpBscInfSn = item?.dccpBscInfSn;
                     console.log(`尝试领取[${giftMap[giftType]}]券`);
                     await getGift();
-                    console.log($.couponId)
                   })
                 } catch (e) { }
               } else {
@@ -153,9 +153,9 @@ function main() {
             } else {
               console.log(JSON.stringify(data));
               text = `❌ 账号 [${hideSensitiveData($.info?.USR_TEL, 3, 4) || $.index}] 签到失败，${data.errMsg}\n`;
+              console.log(text);
             }
             message += text;
-            console.log(text);
           } else {
             $.log("服务器返回了空数据");
           }
@@ -183,7 +183,9 @@ async function getGift() {
     body: `{"mebId":"${$.info.MEB_ID}","actId":"${$.info.ACT_ID}","nodeDay":${$.nodeDay},"couponType":${$.couponType},"nodeCouponId":"${$.couponId}","dccpBscInfSn":"${$.dccpBscInfSn}","chnlType":"${$.info.chnlType}","regionCode":"${$.info.regionCode}"}`
   }
   return new Promise(resolve => {
-    debug(opt);
+    debug(opt.url);
+    debug(opt.headers);
+    debug(opt.body);
     $.post(opt, async (err, resp, data) => {
       try {
         if (err) {
