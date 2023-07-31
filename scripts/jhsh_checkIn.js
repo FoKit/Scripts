@@ -3,7 +3,7 @@
  * 活动入口：建行生活APP -> 首页 -> 会员有礼 -> 签到
  * 脚本说明：连续签到领优惠券礼包（打车、外卖优惠券），配置重写手动签到一次即可获取签到数据，默认领取外卖券，可在 BoxJS 配置奖品。兼容 Node.js 环境，变量名称 JHSH_BODY、JHSH_GIFT，多账号分割符 "|"。
  * 仓库地址：https://github.com/FoKit/Scripts
- * 更新时间：2023-07-28
+ * 更新时间：2023-07-31
 /*
 --------------- BoxJS & 重写模块 --------------
 
@@ -60,8 +60,23 @@ if (isGetCookie = typeof $request !== `undefined`) {
       if (bodyArr[i]) {
         $.index = i + 1;
         $.info = JSON.parse(bodyArr[i])
+        $.giftList = [];
+        $.getGiftMsg = "";
+        $.isGetGift = false;
         console.log(`===== 账号[${$.info?.USR_TEL || $.index}]开始签到 =====\n`);
         await main();
+        try {
+          $.giftList.forEach(async item => {
+            if ($.isGetGift) throw new Error('跳出循环');
+            $.couponId = item?.couponId;
+            $.nodeDay = item?.nodeDay;
+            $.couponType = item?.couponType;
+            $.dccpBscInfSn = item?.dccpBscInfSn;
+            console.log(`尝试领取[${giftMap[giftType]}]券`);
+            await getGift();
+          })
+        } catch (e) { }
+        message += $.getGiftMsg;
       }
     }
     if (message) {
@@ -124,7 +139,6 @@ function main() {
               console.log(text);
               message += text;
               if (data?.data?.IS_AWARD == 1) {
-                $.giftList = [];
                 $.GIFT_BAG = data?.data?.GIFT_BAG;
                 $.GIFT_BAG.forEach(item => {
                   if (new RegExp(`${giftMap[giftType]}`).test(item?.couponName)) {
@@ -137,20 +151,6 @@ function main() {
                     return;
                   }
                 })
-                try {
-                  $.getGiftMsg = "";
-                  $.isGetGift = false;
-                  $.giftList.forEach(async item => {
-                    if ($.isGetGift) throw new Error('跳出循环');
-                    $.couponId = item?.couponId;
-                    $.nodeDay = item?.nodeDay;
-                    $.couponType = item?.couponType;
-                    $.dccpBscInfSn = item?.dccpBscInfSn;
-                    console.log(`尝试领取[${giftMap[giftType]}]券`);
-                    await getGift();
-                  })
-                } catch (e) { }
-                message += $.getGiftMsg;
               } else {
                 console.log(`暂无可领取的奖励`);
               }
