@@ -181,8 +181,6 @@ function main() {
                   } else {
                     $.giftList.push(body);
                   }
-                } else {
-                  return;
                 }
               })
             } else {
