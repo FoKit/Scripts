@@ -41,6 +41,28 @@ hostname = yunbusiness.ccb.com
 [task_local]
 17 7 * * * https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js, tag=建行生活, enabled=true
 
+------------------ Stash 配置 -----------------
+
+cron:
+  script:
+    - name: 建行生活
+      cron: '17 7 * * *'
+      timeout: 10
+
+http:
+  mitm:
+    - "yunbusiness.ccb.com"
+  script:
+    - match: ^https:\/\/yunbusiness\.ccb\.com\/clp_coupon\/txCtrl\?txcode=A3341A040
+      name: 建行生活
+      type: request
+      require-body: true
+
+script-providers:
+  建行生活:
+    url: https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js
+    interval: 86400
+
 */
 
 const $ = new Env('建行生活');
