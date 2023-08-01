@@ -175,10 +175,11 @@ function main() {
               $.GIFT_BAG = data?.data?.GIFT_BAG;
               $.GIFT_BAG.forEach(item => {
                 if (new RegExp(`${giftMap[giftType]}`).test(item?.couponName)) {
+                  let body = { "couponId": item.couponId, "nodeDay": item.nodeDay, "couponType": item.couponType, "dccpBscInfSn": item.dccpBscInfSn }
                   if (/信用卡/.test(item?.couponName)) {
-                    $.giftList.unshift({ "couponId": item.couponId, "nodeDay": item.nodeDay, "couponType": item.couponType, "dccpBscInfSn": item.dccpBscInfSn });
+                    $.giftList.unshift(body);
                   } else {
-                    $.giftList.push({ "couponId": item.couponId, "nodeDay": item.nodeDay, "couponType": item.couponType, "dccpBscInfSn": item.dccpBscInfSn });
+                    $.giftList.push(body);
                   }
                 } else {
                   return;
