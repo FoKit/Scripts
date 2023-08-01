@@ -758,8 +758,8 @@
       "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js",
       "descs_html": [""],
       "icons": [
-        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/default.png",
-        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/default.png"
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/jhsh.png",
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/jhsh.png"
       ],
       "keys": ["JHSH_BODY", "JHSH_GIFT"],
       "settings": [
