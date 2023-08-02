@@ -119,7 +119,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
             $.nodeDay = item?.nodeDay;
             $.couponType = item?.couponType;
             $.dccpBscInfSn = item?.dccpBscInfSn;
-            console.log(`尝试领取[${giftMap[giftType]}]券（${j}/${$.giftList.length}）`);
+            console.log(`尝试领取[${giftMap[giftType]}]券（${j + 1}/${$.giftList.length}）`);
             await getGift();
           };
           if (!$.isGetGift) {
