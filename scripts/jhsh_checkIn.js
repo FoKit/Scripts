@@ -127,6 +127,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
           }
           message += "，" + $.getGiftMsg;
         }
+        await $.wait(1000 * 3);
       }
     }
     if (message) {
