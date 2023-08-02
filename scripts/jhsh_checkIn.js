@@ -3,7 +3,7 @@
  * 活动入口：建行生活APP -> 首页 -> 会员有礼 -> 签到
  * 脚本说明：连续签到领优惠券礼包（打车、外卖优惠券），配置重写手动签到一次即可获取签到数据，默认领取外卖券，可在 BoxJS 配置奖品。兼容 Node.js 环境，变量名称 JHSH_BODY、JHSH_GIFT，多账号分割符 "|"。
  * 仓库地址：https://github.com/FoKit/Scripts
- * 更新时间：2023-08-01
+ * 更新时间：2023-08-02
 /*
 --------------- BoxJS & 重写模块 --------------
 
@@ -13,7 +13,7 @@ https://raw.githubusercontent.com/FoKit/Scripts/main/rewrite/get_jhsh_cookie.sgm
 ------------------ Surge 配置 -----------------
 
 [MITM]
-hostname = %APPEND% yunbusiness.ccb.com
+hostname = yunbusiness.ccb.com
 
 [Script]
 建行生活 = type=http-request,pattern=^https:\/\/yunbusiness\.ccb\.com\/clp_coupon\/txCtrl\?txcode=A3341A040,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js
@@ -93,22 +93,40 @@ if (isGetCookie = typeof $request !== `undefined`) {
         $.index = i + 1;
         $.info = JSON.parse(bodyArr[i])
         $.giftList = [];
+        $.giftList2 = [];
         $.getGiftMsg = "";
         $.isGetGift = false;
         console.log(`===== 账号[${$.info?.USR_TEL || $.index}]开始签到 =====\n`);
         await main();
-        try {
-          $.giftList.forEach(async item => {
-            if ($.isGetGift) throw new Error('跳出循环');
+        // try {
+        // $.giftList.forEach(async item => {
+        //   await $.wait(1000 * 5);
+        //   if ($.isGetGift) throw new Error('跳出循环');
+        //   $.couponId = item?.couponId;
+        //   $.nodeDay = item?.nodeDay;
+        //   $.couponType = item?.couponType;
+        //   $.dccpBscInfSn = item?.dccpBscInfSn;
+        //   console.log(`尝试领取[${giftMap[giftType]}]券`);
+        //   await getGift();
+        // })
+        // } catch (e) { }
+        if ($.giftList.length > 0) {
+          for (let j = 0; j < $.giftList.length; j++) {
+            if ($.isGetGift && !$.is_debug) break;
+            await $.wait(1000 * 5);
+            let item = $.giftList[j]
             $.couponId = item?.couponId;
             $.nodeDay = item?.nodeDay;
             $.couponType = item?.couponType;
             $.dccpBscInfSn = item?.dccpBscInfSn;
             console.log(`尝试领取[${giftMap[giftType]}]券`);
             await getGift();
-          })
-        } catch (e) { }
-        message += $.getGiftMsg;
+          };
+          if (!$.isGetGift) {
+            $.getGiftMsg = `请打开app查看优惠券到账情况。\n`;
+          }
+          message += "，" + $.getGiftMsg;
+        }
       }
     }
     if (message) {
@@ -168,21 +186,24 @@ function main() {
           data = JSON.parse(data);
           let text = '';
           if (data.errCode == 0) {
-            text = `🎉 账号 [${hideSensitiveData($.info?.USR_TEL, 3, 4) || $.index}] 签到成功\n`;
+            text = `🎉 账号 [${hideSensitiveData($.info?.USR_TEL, 3, 4) || $.index}] 签到成功`;
             console.log(text);
             message += text;
             if (data?.data?.IS_AWARD == 1) {
               $.GIFT_BAG = data?.data?.GIFT_BAG;
               $.GIFT_BAG.forEach(item => {
+                let body = { "couponId": item.couponId, "nodeDay": item.nodeDay, "couponType": item.couponType, "dccpBscInfSn": item.dccpBscInfSn };
                 if (new RegExp(`${giftMap[giftType]}`).test(item?.couponName)) {
-                  let body = { "couponId": item.couponId, "nodeDay": item.nodeDay, "couponType": item.couponType, "dccpBscInfSn": item.dccpBscInfSn }
                   if (/信用卡/.test(item?.couponName)) {
                     $.giftList.unshift(body);
                   } else {
                     $.giftList.push(body);
                   }
+                } else {
+                  $.giftList2.push(body);
                 }
               })
+              $.giftList = [...$.giftList, ...$.giftList2];
             } else {
               console.log(`暂无可领取的奖励`);
             }
@@ -230,11 +251,10 @@ async function getGift() {
           if (data.errCode == 0) {
             $.isGetGift = true;
             $.getGiftMsg = `获得签到奖励：${data?.data?.title}（${data?.data?.subTitle}）\n`;
+            console.log($.getGiftMsg);
           } else {
             console.log(JSON.stringify(data));
-            $.getGiftMsg = `签到奖励领取失败\n`;
           }
-          console.log($.getGiftMsg);
         } else {
           $.log("服务器返回了空数据");
         }
