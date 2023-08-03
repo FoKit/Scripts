@@ -3,7 +3,7 @@
  * 活动入口：建行生活APP -> 首页 -> 会员有礼 -> 签到
  * 脚本说明：连续签到领优惠券礼包（打车、外卖优惠券），配置重写手动签到一次即可获取签到数据，默认领取外卖券，可在 BoxJS 配置奖品。兼容 Node.js 环境，变量名称 JHSH_BODY、JHSH_GIFT，多账号分割符 "|"。
  * 仓库地址：https://github.com/FoKit/Scripts
- * 更新时间：2023-08-02
+ * 更新时间：2023-08-04
 /*
 --------------- BoxJS & 重写模块 --------------
 
@@ -98,18 +98,6 @@ if (isGetCookie = typeof $request !== `undefined`) {
         $.isGetGift = false;
         console.log(`===== 账号[${$.info?.USR_TEL || $.index}]开始签到 =====\n`);
         await main();
-        // try {
-        // $.giftList.forEach(async item => {
-        //   await $.wait(1000 * 5);
-        //   if ($.isGetGift) throw new Error('跳出循环');
-        //   $.couponId = item?.couponId;
-        //   $.nodeDay = item?.nodeDay;
-        //   $.couponType = item?.couponType;
-        //   $.dccpBscInfSn = item?.dccpBscInfSn;
-        //   console.log(`尝试领取[${giftMap[giftType]}]券`);
-        //   await getGift();
-        // })
-        // } catch (e) { }
         if ($.giftList.length > 0) {
           for (let j = 0; j < $.giftList.length; j++) {
             if ($.isGetGift && !$.is_debug) break;
@@ -119,7 +107,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
             $.nodeDay = item?.nodeDay;
             $.couponType = item?.couponType;
             $.dccpBscInfSn = item?.dccpBscInfSn;
-            console.log(`尝试领取[${giftMap[giftType]}]券（${j + 1}/${$.giftList.length}）`);
+            console.log(`优先领取[${giftMap[giftType]}]券（${j + 1}/${$.giftList.length}）`);
             await getGift();
           };
           if (!$.isGetGift) {
@@ -207,6 +195,7 @@ function main() {
               $.giftList = [...$.giftList, ...$.giftList2];
             } else {
               console.log(`暂无可领取的奖励`);
+              message += "\n";
             }
           } else {
             console.log(JSON.stringify(data));
