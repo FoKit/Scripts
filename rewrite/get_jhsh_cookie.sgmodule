@@ -1,9 +1,6 @@
 #!name=建行生活
 #!desc=建行生活APP -> 首页 -> 会员有礼 -> 签到 手动签到一次即可获取 Cookie
 
-[General]
-skip-proxy = %APPEND% yunbusiness.ccb.com
-
 [MITM]
 hostname = %APPEND% yunbusiness.ccb.com
 
