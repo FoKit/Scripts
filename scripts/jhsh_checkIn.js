@@ -3,7 +3,7 @@
  * 活动入口：建行生活APP -> 首页 -> 会员有礼 -> 签到
  * 脚本说明：连续签到领优惠券礼包（打车、外卖优惠券），配置重写手动签到一次即可获取签到数据，默认领取外卖券，可在 BoxJS 配置奖品。兼容 Node.js 环境，变量名称 JHSH_BODY、JHSH_GIFT，多账号分割符 "|"。
  * 仓库地址：https://github.com/FoKit/Scripts
- * 更新时间：2023-08-04
+ * 更新时间：2023-08-11
 /*
 --------------- BoxJS & 重写模块 --------------
 
@@ -68,9 +68,11 @@ script-providers:
 const $ = new Env('建行生活');
 const gift_key = 'JHSH_GIFT';
 const body_key = 'JHSH_BODY';
+const mid_key = 'JHSH_MID';
 const notify = $.isNode() ? require('./sendNotify') : '';
 let giftType = ($.isNode() ? process.env.JHSH_GIFT : $.getdata(gift_key)) || '2';
 let bodyStr = ($.isNode() ? process.env.JHSH_BODY : $.getdata(body_key)) || '';
+let MID = ($.isNode() ? process.env.JHSH_MID : $.getdata(mid_key)) || '159';
 let bodyArr = bodyStr ? bodyStr.split("|") : [], message = '';
 let giftMap = {
   "1": "打车",
@@ -100,7 +102,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
         await main();
         if ($.giftList.length > 0) {
           for (let j = 0; j < $.giftList.length; j++) {
-            if ($.isGetGift && !$.is_debug) break;
+            if ($.isGetGift) break;
             await $.wait(1000 * 5);
             let item = $.giftList[j]
             $.couponId = item?.couponId;
@@ -157,7 +159,7 @@ function main() {
   let opt = {
     url: `https://yunbusiness.ccb.com/clp_coupon/txCtrl?txcode=A3341A040`,
     headers: {
-      "MID": "159",
+      "MID": MID,
       "Content-Type": "application/json;charset=utf-8",
       "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148/CloudMercWebView/UnionPay/1.0 CCBLoongPay",
       "Accept": "application/json,text/javascript,*/*",
