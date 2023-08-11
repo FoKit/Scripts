@@ -761,16 +761,8 @@
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/jhsh.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/jhsh.png"
       ],
-      "keys": ["JHSH_MID", "JHSH_BODY", "JHSH_GIFT"],
+      "keys": ["JHSH_BODY", "JHSH_GIFT"],
       "settings": [
-        {
-          "id": "JHSH_MID",
-          "name": "签到MID",
-          "val": "",
-          "type": "text",
-          "autoGrow": true,
-          "desc": ""
-        },
         {
           "id": "JHSH_BODY",
           "name": "签到数据",
