@@ -3,7 +3,7 @@
  * 活动入口：建行生活APP -> 首页 -> 会员有礼 -> 签到
  * 脚本说明：连续签到领优惠券礼包（打车、外卖优惠券），配置重写手动签到一次即可获取签到数据，默认领取外卖券，可在 BoxJS 配置奖品。兼容 Node.js 环境，变量名称 JHSH_BODY、JHSH_GIFT，多账号分割符 "|"。
  * 仓库地址：https://github.com/FoKit/Scripts
- * 更新时间：2023-08-11
+ * 更新时间：2023-08-12
 /*
 --------------- BoxJS & 重写模块 --------------
 
@@ -68,11 +68,9 @@ script-providers:
 const $ = new Env('建行生活');
 const gift_key = 'JHSH_GIFT';
 const body_key = 'JHSH_BODY';
-const mid_key = 'JHSH_MID';
 const notify = $.isNode() ? require('./sendNotify') : '';
 let giftType = ($.isNode() ? process.env.JHSH_GIFT : $.getdata(gift_key)) || '2';
 let bodyStr = ($.isNode() ? process.env.JHSH_BODY : $.getdata(body_key)) || '';
-let MID = ($.isNode() ? process.env.JHSH_MID : $.getdata(mid_key)) || '159';
 let bodyArr = bodyStr ? bodyStr.split("|") : [], message = '';
 let giftMap = {
   "1": "打车",
@@ -99,6 +97,10 @@ if (isGetCookie = typeof $request !== `undefined`) {
         $.getGiftMsg = "";
         $.isGetGift = false;
         console.log(`===== 账号[${$.info?.USR_TEL || $.index}]开始签到 =====\n`);
+        if (!$.info?.MID) {
+          message += `🎉 账号 [${hideSensitiveData($.info?.USR_TEL, 3, 4) || $.index}] 缺少MID参数，请重新获取Cookie。\n`;
+          break;
+        }
         await main();
         if ($.giftList.length > 0) {
           for (let j = 0; j < $.giftList.length; j++) {
@@ -141,14 +143,20 @@ if (isGetCookie = typeof $request !== `undefined`) {
 // 获取签到数据
 function GetCookie() {
   if ($request && $request.url.indexOf("A3341A040") > -1) {
-    $.body = $request.body;
+    $.body = JSON.parse($request.body);
+    if (bodyStr.indexOf('MID') == -1) {
+      $.setdata('', body_key);
+      console.log(`用户数据缺失字段，已清空用户数据，请重新获取Cookie。`);
+    }
     if (bodyStr.indexOf(JSON.parse($.body).USR_TEL) == -1) {
-      console.log(`开始新增用户数据 ${$.body}`)
+      $.body['MID'] = $request.headers['MID'] || $request.headers['Mid'];
+      $.body = JSON.stringify($.body);
+      console.log(`开始新增用户数据 ${$.body}`);
       bodyArr.push($.body);
       $.setdata(bodyArr.join('|'), body_key);
       $.msg($.name, ``, `🎉 建行生活签到数据获取成功。`);
     } else {
-      console.log('数据已存在，不再写入。')
+      console.log('数据已存在，不再写入。');
     }
   }
 }
@@ -159,7 +167,7 @@ function main() {
   let opt = {
     url: `https://yunbusiness.ccb.com/clp_coupon/txCtrl?txcode=A3341A040`,
     headers: {
-      "MID": MID,
+      "MID": $.info?.MID,
       "Content-Type": "application/json;charset=utf-8",
       "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148/CloudMercWebView/UnionPay/1.0 CCBLoongPay",
       "Accept": "application/json,text/javascript,*/*",
@@ -223,7 +231,7 @@ async function getGift() {
   let opt = {
     url: `https://yunbusiness.ccb.com/clp_coupon/txCtrl?txcode=A3341C082`,
     headers: {
-      "MID": "150",
+      "MID": $.info?.MID,
       "Content-Type": "application/json;charset=utf-8",
       "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148/CloudMercWebView/UnionPay/1.0 CCBLoongPay",
       "Accept": "application/json,text/javascript,*/*"
