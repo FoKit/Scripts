@@ -99,7 +99,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
         console.log(`===== 账号[${$.info?.USR_TEL || $.index}]开始签到 =====\n`);
         if (!$.info?.MID) {
           message += `🎉 账号 [${hideSensitiveData($.info?.USR_TEL, 3, 4) || $.index}] 缺少MID参数，请重新获取Cookie。\n`;
-          break;
+          continue;
         }
         await main();
         if ($.giftList.length > 0) {
