@@ -149,7 +149,7 @@ function GetCookie() {
       console.log(`用户数据缺失字段，已清空用户数据，请重新获取Cookie。`);
     }
     if (bodyStr.indexOf($.body?.USR_TEL) == -1) {
-      $.body['MID'] = $request.headers['MID'] || $request.headers['Mid'];
+      $.body['MID'] = $request.headers['MID'] || $request.headers['Mid'] || $request.headers['mid'];
       $.body = JSON.stringify($.body);
       console.log(`开始新增用户数据 ${$.body}`);
       bodyArr.push($.body);
