@@ -3,7 +3,7 @@
  * 活动入口：建行生活APP -> 首页 -> 会员有礼 -> 签到
  * 脚本说明：连续签到领优惠券礼包（打车、外卖优惠券），配置重写手动签到一次即可获取签到数据，默认领取外卖券，可在 BoxJS 配置奖品。兼容 Node.js 环境，变量名称 JHSH_BODY、JHSH_GIFT，多账号分割符 "|"。
  * 仓库地址：https://github.com/FoKit/Scripts
- * 更新时间：2023-08-15
+ * 更新时间：2023-08-16
 /*
 --------------- BoxJS & 重写模块 --------------
 
@@ -204,6 +204,10 @@ function main() {
                 }
               })
               $.giftList = [...$.giftList, ...$.giftList2];
+            } else if (data?.data?.NEST_AWARD_DAY >= 1) {
+              text = `继续签到${data.data.NEST_AWARD_DAY}天可领取${giftMap[giftType]}券`;
+              message += `，${text}\n`;
+              console.log(text);
             } else {
               console.log(`暂无可领取的奖励`);
               message += "\n";
