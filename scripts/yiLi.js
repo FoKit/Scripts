@@ -7,7 +7,7 @@
 
 const $ = new Env('伊利乳品');
 $.COOKIES_KEY = 'id77_yiLi_cookies';
-let users = $.getData($.COOKIES_KEY);
+let users = $.getdata($.COOKIES_KEY);
 $.isNode() && (users = process.env.id77_yiLi_cookies);
 $.users = users ? JSON.parse(users) : {};
 $.openIds = Object.keys($.users) || [];
