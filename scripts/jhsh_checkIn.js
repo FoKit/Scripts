@@ -3,7 +3,7 @@
  * 活动入口：建行生活APP -> 首页 -> 会员有礼 -> 签到
  * 脚本说明：连续签到领优惠券礼包（打车、外卖优惠券），配置重写手动签到一次即可获取签到数据，默认领取外卖券，可在 BoxJS 配置奖品。兼容 Node.js 环境，变量名称 JHSH_BODY、JHSH_GIFT，多账号分割符 "|"。
  * 仓库地址：https://github.com/FoKit/Scripts
- * 更新时间：2023-08-12
+ * 更新时间：2023-08-16
 /*
 --------------- BoxJS & 重写模块 --------------
 
@@ -145,11 +145,12 @@ function GetCookie() {
   if ($request && $request.url.indexOf("A3341A040") > -1) {
     $.body = JSON.parse($request.body);
     if (bodyStr.indexOf('MID') == -1) {
-      $.setdata('', body_key);
+      bodyStr = '';
+      $.setdata(bodyStr, body_key);
       console.log(`用户数据缺失字段，已清空用户数据，请重新获取Cookie。`);
     }
     if (bodyStr.indexOf($.body?.USR_TEL) == -1) {
-      $.body['MID'] = $request.headers['MID'] || $request.headers['Mid'];
+      $.body['MID'] = $request.headers['MID'] || $request.headers['Mid'] || $request.headers['mid'];
       $.body = JSON.stringify($.body);
       console.log(`开始新增用户数据 ${$.body}`);
       bodyArr.push($.body);
@@ -203,6 +204,10 @@ function main() {
                 }
               })
               $.giftList = [...$.giftList, ...$.giftList2];
+            } else if (data?.data?.NEST_AWARD_DAY >= 1) {
+              text = `继续签到${data.data.NEST_AWARD_DAY}天可领取${giftMap[giftType]}券`;
+              message += `，${text}\n`;
+              console.log(text);
             } else {
               console.log(`暂无可领取的奖励`);
               message += "\n";
