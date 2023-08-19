@@ -77,7 +77,7 @@ const body = {
       continue;
     } else {
       $.users[$.openId] = $.userInfo;
-      $.setData(JSON.stringify($.users), $.COOKIES_KEY);
+      $.setdata(JSON.stringify($.users), $.COOKIES_KEY);
 
       const { aspnetUserId } = $.userInfo;
       // $.inviteIds = $.inviteIds.filter((item) => item !== aspnetUserId);
