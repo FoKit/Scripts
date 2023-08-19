@@ -5,9 +5,9 @@
 
 const $ = new Env('调试助手');
 let html = $response.body || '';
-let prefix = randomInteger(1000, 10000);
-let clicker_off_zIndex = 10001;
 let clicker_frequency = 10;
+let clicker_off_zIndex = 10001;
+let prefix = randomInteger(1000, 10000);
 
 try {
   let url = $request.url.replace(/&un_area=[\d_]+/g, '');
@@ -23,7 +23,6 @@ try {
     `;
   let copyObject = `
     <script ignore>
-    // 复制一份
     if(window.localStorage) {
       window.localStorageCopy = window.localStorage
     }
@@ -230,11 +229,8 @@ try {
           _Plugin.on('show', scrollTopToCKDom);
           _Plugin.on('showConsole', scrollTopToCKDom);
           _Plugin.on('hideConsole', () => scrollTopToCKDom(true));
-
-
-              _${prefix}_id77_vConsole.addPlugin(_Plugin);
-              _${prefix}_id77_vConsole.showPlugin("id77_plugin");
-
+          _${prefix}_id77_vConsole.addPlugin(_Plugin);
+          _${prefix}_id77_vConsole.showPlugin("id77_plugin");
           _${prefix}_id77_vConsole.showPlugin("default");
 
           function createDom(str) {
