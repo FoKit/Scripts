@@ -3,7 +3,7 @@
  * 活动入口：建行生活APP -> 首页 -> 会员有礼 -> 签到
  * 脚本说明：连续签到领优惠券礼包（打车、外卖优惠券），配置重写手动签到一次即可获取签到数据，默认领取外卖券，可在 BoxJS 配置奖品。兼容 Node.js 环境，变量名称 JHSH_BODY、JHSH_GIFT，多账号分割符 "|"。
  * 仓库地址：https://github.com/FoKit/Scripts
- * 更新时间：2023-08-16
+ * 更新时间：2023-08-20
 /*
 --------------- BoxJS & 重写模块 --------------
 
@@ -105,14 +105,21 @@ if (isGetCookie = typeof $request !== `undefined`) {
         if ($.giftList.length > 0) {
           for (let j = 0; j < $.giftList.length; j++) {
             if ($.isGetGift) break;
-            await $.wait(1000 * 5);
             let item = $.giftList[j]
             $.couponId = item?.couponId;
             $.nodeDay = item?.nodeDay;
             $.couponType = item?.couponType;
             $.dccpBscInfSn = item?.dccpBscInfSn;
-            console.log(`优先领取[${giftMap[giftType]}]券（${j + 1}/${$.giftList.length}）`);
-            await getGift();
+            $.continue = false;
+            console.log(`尝试领取[${giftMap[giftType]}]券`);
+            for (let k = 1; k <= 3; k++) {
+              if (!$.continue) {
+                if (k >= 2) console.log(`领取失败，重试一次`);
+                await $.wait(1000 * 5);
+                await getGift();
+                if ($.isGetGift) break;
+              }
+            }
           };
           if (!$.isGetGift) {
             $.getGiftMsg = `请打开app查看优惠券到账情况。\n`;
@@ -258,6 +265,7 @@ async function getGift() {
             $.getGiftMsg = `获得签到奖励：${data?.data?.title}（${data?.data?.subTitle}）\n`;
             console.log($.getGiftMsg);
           } else {
+            $.continue = true;
             console.log(JSON.stringify(data));
           }
         } else {
