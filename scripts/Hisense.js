@@ -148,12 +148,11 @@ function GetCookie() {
         $.msg($.name, ``, `🎉 签到数据获取成功。`);
       }
     }
-    // Coding
-    console.log("HISENSE_BODY: " + $response.body);
-    // const body = $.toObj($response.body);
-    // if (body?.code) {
-    //   $.setdata(body.code, "HISENSE_CPS_BODY");
-    // }
+    try {
+      console.log("HISENSE_BODY: " + $response.body);
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 
