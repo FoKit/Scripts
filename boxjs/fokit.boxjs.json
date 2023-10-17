@@ -801,7 +801,7 @@
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/hisense.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/hisense.png"
       ],
-      "keys": ["HISENSE_CPS", "HISENSE_SWEIXIN"],
+      "keys": ["HISENSE_CPS", "HISENSE_SWEIXIN", "HISENSE_GAME_SCORE"],
       "settings": [
         {
           "id": "HISENSE_CPS",
@@ -820,6 +820,13 @@
           "autoGrow": true,
           "rows": 1,
           "desc": "多账户用 @ 隔开"
+        },
+        {
+          "id": "HISENSE_GAME_SCORE",
+          "name": "游戏分数",
+          "val": "",
+          "type": "text",
+          "desc": "填写打地鼠随机分数范围，例如 300-600"
         }
       ]
     }
