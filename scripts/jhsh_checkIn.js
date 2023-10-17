@@ -3,7 +3,7 @@
  * 活动入口：建行生活APP -> 首页 -> 会员有礼 -> 签到
  * 脚本说明：连续签到领优惠券礼包（打车、外卖优惠券），配置重写手动签到一次即可获取签到数据，默认领取外卖券，可在 BoxJS 配置奖品。兼容 Node.js 环境，变量名称 JHSH_BODY、JHSH_GIFT，多账号分割符 "|"。
  * 仓库地址：https://github.com/FoKit/Scripts
- * 更新时间：2023-08-16
+ * 更新时间：2023-10-16
 /*
 --------------- BoxJS & 重写模块 --------------
 
@@ -16,7 +16,7 @@ https://raw.githubusercontent.com/FoKit/Scripts/main/rewrite/get_jhsh_cookie.sgm
 hostname = yunbusiness.ccb.com
 
 [Script]
-建行数据 = type=http-request,pattern=^https:\/\/yunbusiness\.ccb\.com\/clp_coupon\/txCtrl\?txcode=A3341A040,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js
+建行数据 = type=http-request,pattern=^https:\/\/yunbusiness\.ccb\.com\/clp_coupon\/txCtrl\?txcode=(A3341A040|A3341A038),requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js
 
 建行生活 = type=cron,cronexp=17 7 * * *,timeout=60,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js,script-update-interval=0
 
@@ -26,7 +26,7 @@ hostname = yunbusiness.ccb.com
 hostname = yunbusiness.ccb.com
 
 [Script]
-http-request ^https:\/\/yunbusiness\.ccb\.com\/clp_coupon\/txCtrl\?txcode=A3341A040 tag=建行数据, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js,requires-body=1
+http-request ^https:\/\/yunbusiness\.ccb\.com\/clp_coupon\/txCtrl\?txcode=(A3341A040|A3341A038) tag=建行数据, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js,requires-body=1
 
 cron "17 7 * * *" script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js,tag = 建行生活,enable=true
 
@@ -36,7 +36,7 @@ cron "17 7 * * *" script-path=https://raw.githubusercontent.com/FoKit/Scripts/ma
 hostname = yunbusiness.ccb.com
 
 [rewrite_local]
-^https:\/\/yunbusiness\.ccb\.com\/clp_coupon\/txCtrl\?txcode=A3341A040 url script-request-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js
+^https:\/\/yunbusiness\.ccb\.com\/clp_coupon\/txCtrl\?txcode=(A3341A040|A3341A038) url script-request-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js
 
 [task_local]
 17 7 * * * https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js, tag=建行生活, enabled=true
@@ -53,7 +53,7 @@ http:
   mitm:
     - "yunbusiness.ccb.com"
   script:
-    - match: ^https:\/\/yunbusiness\.ccb\.com\/clp_coupon\/txCtrl\?txcode=A3341A040
+    - match: ^https:\/\/yunbusiness\.ccb\.com\/clp_coupon\/txCtrl\?txcode=(A3341A040|A3341A038)
       name: 建行生活
       type: request
       require-body: true
@@ -105,14 +105,21 @@ if (isGetCookie = typeof $request !== `undefined`) {
         if ($.giftList.length > 0) {
           for (let j = 0; j < $.giftList.length; j++) {
             if ($.isGetGift) break;
-            await $.wait(1000 * 5);
             let item = $.giftList[j]
             $.couponId = item?.couponId;
             $.nodeDay = item?.nodeDay;
             $.couponType = item?.couponType;
             $.dccpBscInfSn = item?.dccpBscInfSn;
-            console.log(`优先领取[${giftMap[giftType]}]券（${j + 1}/${$.giftList.length}）`);
-            await getGift();
+            $.continue = false;
+            console.log(`尝试领取[${giftMap[giftType]}]券`);
+            for (let k = 1; k <= 3; k++) {
+              if (!$.continue) {
+                if (k >= 2) console.log(`领取失败，重试一次`);
+                await $.wait(1000 * 5);
+                await getGift();
+                if ($.isGetGift) break;
+              }
+            }
           };
           if (!$.isGetGift) {
             $.getGiftMsg = `请打开app查看优惠券到账情况。\n`;
@@ -142,7 +149,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
 
 // 获取签到数据
 function GetCookie() {
-  if ($request && $request.url.indexOf("A3341A040") > -1) {
+  if ($request && /A3341A040|A3341A038/.test($request.url)) {
     $.body = JSON.parse($request.body);
     if (bodyStr.indexOf('MID') == -1) {
       bodyStr = '';
@@ -258,6 +265,7 @@ async function getGift() {
             $.getGiftMsg = `获得签到奖励：${data?.data?.title}（${data?.data?.subTitle}）\n`;
             console.log($.getGiftMsg);
           } else {
+            $.continue = true;
             console.log(JSON.stringify(data));
           }
         } else {
@@ -275,10 +283,15 @@ async function getGift() {
 // 数据脱敏
 function hideSensitiveData(string, head_length = 2, foot_length = 2) {
   let star = '';
-  for (var i = 0; i < string.length - head_length - foot_length; i++) {
-    star += '*';
+  try {
+    for (var i = 0; i < string.length - head_length - foot_length; i++) {
+      star += '*';
+    }
+    return string.substring(0, head_length) + star + string.substring(string.length - foot_length);
+  } catch (e) {
+    console.log(e);
+    return string;
   }
-  return string.substring(0, head_length) + star + string.substring(string.length - foot_length);
 }
 
 
