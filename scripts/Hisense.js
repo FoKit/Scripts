@@ -181,7 +181,7 @@ function main() {
           $.message = '';
           data = JSON.parse(data);
           if (data?.isSuccess && data?.resultCode == "00000") {
-            $.message += `签到成功，获得 ${data.obtainScore} 积分 🎉`;
+            $.message += `签到成功，获得 ${data.data.obtainScore} 积分 🎉`;
           } else if (data?.resultCode == "A0202") {
             $.message += `重复签到 ❌`;
           } else {
