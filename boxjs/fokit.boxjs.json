@@ -790,6 +790,38 @@
           ]
         }
       ]
+    },
+    {
+      "id": "Hisense",
+      "name": "海信爱家",
+      "author": "@FoKit",
+      "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/Hisense.js",
+      "descs_html": [""],
+      "icons": [
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/hisense.png",
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/hisense.png"
+      ],
+      "keys": ["HISENSE_CPS", "HISENSE_SWEIXIN"],
+      "settings": [
+        {
+          "id": "HISENSE_CPS",
+          "name": "签到数据",
+          "val": "",
+          "type": "textarea",
+          "autoGrow": true,
+          "rows": 1,
+          "desc": "多账户用 @ 隔开"
+        },
+        {
+          "id": "HISENSE_SWEIXIN",
+          "name": "用户数据",
+          "val": "",
+          "type": "textarea",
+          "autoGrow": true,
+          "rows": 1,
+          "desc": "多账户用 @ 隔开"
+        }
+      ]
     }
   ]
 }
