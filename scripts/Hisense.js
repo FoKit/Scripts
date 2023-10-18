@@ -2,7 +2,7 @@
  * 脚本名称：海信爱家
  * 活动入口：海信爱家（公众号） -> 个人中心 -> 会员中心 -> 玩转积分 -> 签到
  * 活动说明：每日签到送10积分；连续签到7天、第7天额外赠送20积分；连续签到20天，第20天额外赠送50积分；连续签到50天，第50天额外赠送100积分。
- * 脚本说明：配置重写并手动签到一次即可获取签到数据。兼容 Node.js 环境，变量名称 HISENSE_CPS、HISENSE_SWEIXIN、HISENSE_GAME_SCORE，多账号分割符 "@"。
+ * 脚本说明：配置重写并手动签到一次即可获取签到数据。兼容 Node.js 环境，变量名称 HISENSE_CPS、HISENSE_SWEIXIN，多账号分割符 "@"。
  * 仓库地址：https://github.com/FoKit/Scripts
  * 更新时间：2023-10-18
 /*
@@ -20,7 +20,7 @@ hostname = sweixin.hisense.com, cps.hisense.com
 海信数据 = type=http-request,pattern=^https:\/\/sweixin\.hisense\.com\/ecrp\/member\/initMember,requires-body=0,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/Hisense.js
 海信签到 = type=http-request,pattern=^https:\/\/cps\.hisense\.com\/customerAth\/activity-manage\/activityUser\/participate,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/Hisense.js
 
-海信爱家 = type=cron,cronexp=52 7 * * *,timeout=1000,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/Hisense.js,script-update-interval=0
+海信爱家 = type=cron,cronexp=52 7 * * *,timeout=500,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/Hisense.js,script-update-interval=0
 
 ------------------ Loon 配置 ------------------
 
@@ -51,7 +51,7 @@ cron:
   script:
     - name: 海信爱家
       cron: '52 7 * * *'
-      timeout: 1000
+      timeout: 500
 
 http:
   mitm:
@@ -78,9 +78,11 @@ const notify = $.isNode() ? require('./sendNotify') : '';
 const HISENSE_CPS_KEY = 'HISENSE_CPS';
 const HISENSE_SWEIXIN_KEY = 'HISENSE_SWEIXIN';
 const HISENSE_GAME_SCORE_KEY = 'HISENSE_GAME_SCORE';
+const HISENSE_PARTY_EXCHANGE_KEY = 'HISENSE_PARTY_EXCHANGE';
 let HISENSE_CPS = ($.isNode() ? process.env.HISENSE_CPS : $.getdata(HISENSE_CPS_KEY)) || '';
 let HISENSE_SWEIXIN = ($.isNode() ? process.env.HISENSE_SWEIXIN : $.getdata(HISENSE_SWEIXIN_KEY)) || '';
 let HISENSE_GAME_SCORE = ($.isNode() ? process.env.HISENSE_GAME_SCORE : $.getdata(HISENSE_GAME_SCORE_KEY)) || '15-20';
+let HISENSE_PARTY_EXCHANGE = ($.isNode() ? process.env.HISENSE_PARTY_EXCHANGE : $.getdata(HISENSE_PARTY_EXCHANGE_KEY)) || 'false';
 $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false';
 let message = '';
 
@@ -102,14 +104,28 @@ if (isGetCookie = typeof $request !== `undefined`) {
         $.CPS_CK = HISENSE_CPS_ARR[i];
         $.index = i + 1;
         $.gameScores = 0;
-        let randomInt = Math.floor(Math.random() * 300);
+        $.userRemainingCount = 0;
+        let randomInt = Math.floor(Math.random() * 30);
         console.log(`\n随机等待 ${randomInt} 秒\n`);
         await $.wait(randomInt * 1000);
         console.log(`===== 账号[${$.index}]开始执行 =====\n`);
         await main();  // 每日签到
-        for (let k = 1; k <= 2; k++) {
-          await gameStart(k);  // 开始游戏
+        await gameStart();  // 开始游戏
+        for (let k = 1; k <= $.userRemainingCount.length; k++) {
+          await gameStart();  // 开始游戏{
+          console.log(`开始第 ${k} 次[打地鼠]游戏...`);
+          await $.wait(1000 * 30);  // 等待 30 秒
           await submitScore();  // 提交分数
+        }
+        if (HISENSE_PARTY_EXCHANGE == "true") {
+          for (let j = 1; j <= 2; j++) {
+            await partyExchange();
+            await gameStart();  // 开始游戏{
+            console.log(`开始第 ${2 + j} 次[打地鼠]游戏...`);
+            await $.wait(1000 * 30);  // 等待 30 秒
+            await submitScore();  // 提交分数
+            await $.wait(1000 * 3);
+          } 
         }
         await getInfo();  // 用户信息
       }
@@ -260,7 +276,7 @@ async function getInfo() {
 
 
 // 开始游戏
-async function gameStart(k) {
+async function gameStart() {
   let opt = {
     url: `https://cps.hisense.com/customerAth/activity-manage/activityUser/getActivityInfo?code=a55ca53d96bd43be81c0df7ced7ef2b0`,
     headers: {
@@ -278,9 +294,7 @@ async function gameStart(k) {
           $.gameCode = '';
           let result = JSON.parse(data);
           $.gameCode = result.data.code;
-          console.log(`开始第 ${k} 次[打地鼠]游戏...`);
-          await $.wait(1000 * 30);  // 等待 30 秒
-          console.log(`游戏结束, 提交分数`);
+          $.userRemainingCount = result.data.userRemainingCount;
         } else {
           $.log("服务器返回了空数据");
         }
@@ -296,6 +310,7 @@ async function gameStart(k) {
 
 // 提交分数
 async function submitScore() {
+  console.log(`游戏结束, 提交分数`);
   let ScoreArr = HISENSE_GAME_SCORE.split('-');
   $.gameScore = randomNumber(parseInt(ScoreArr[0]), parseInt(ScoreArr[1])) * 20;
   console.log(`提交分数: ${$.gameScore} 分`);
@@ -322,6 +337,43 @@ async function submitScore() {
           } else {
             // $.message += `${result.resultMsg} ❌`;
             console.log(JSON.stringify($.message));
+          }
+        } else {
+          $.log("服务器返回了空数据");
+        }
+      } catch (error) {
+        $.log(error);
+      } finally {
+        resolve();
+      }
+    })
+  })
+}
+
+
+// 兑换次数
+async function partyExchange() {
+  let opt = {
+    url: `https://cps.hisense.com/customerAth/activity-manage/activityUser/partyExchange`,
+    headers: {
+      'Cookie': $.CPS_CK,
+      'Content-Type': `application/json`,
+      'User-Agent': `Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.33(0x18002129) NetType/4G Language/zh_CN`,
+    },
+    body: `{"code":"${$.gameCode}"}`
+  }
+  debug(opt);
+  return new Promise(resolve => {
+    $.post(opt, async (err, resp, data) => {
+      try {
+        err && $.log(err);
+        debug(data);
+        let result = JSON.parse(data);
+        if (result) {
+          if (result?.isSuccess && result?.resultCode == "00000") {
+            console.log(`游戏机会兑换成功`);
+          } else {
+            console.log(data);
           }
         } else {
           $.log("服务器返回了空数据");
