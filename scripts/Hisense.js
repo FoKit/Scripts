@@ -111,7 +111,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
         console.log(`===== 账号[${$.index}]开始执行 =====\n`);
         await main();  // 每日签到
         await gameStart();  // 开始游戏
-        for (let k = 1; k <= $.userRemainingCount.length; k++) {
+        for (let k = 1; k <= $.userRemainingCount; k++) {
           await gameStart();  // 开始游戏{
           console.log(`开始第 ${k} 次[打地鼠]游戏...`);
           await $.wait(1000 * 30);  // 等待 30 秒
