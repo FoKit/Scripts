@@ -20,7 +20,7 @@ hostname = sweixin.hisense.com, cps.hisense.com
 海信数据 = type=http-request,pattern=^https:\/\/sweixin\.hisense\.com\/ecrp\/member\/initMember,requires-body=0,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/Hisense.js
 海信签到 = type=http-request,pattern=^https:\/\/cps\.hisense\.com\/customerAth\/activity-manage\/activityUser\/participate,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/Hisense.js
 
-海信爱家 = type=cron,cronexp=52 7 * * *,timeout=60,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/Hisense.js,script-update-interval=0
+海信爱家 = type=cron,cronexp=52 7 * * *,timeout=1000,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/Hisense.js,script-update-interval=0
 
 ------------------ Loon 配置 ------------------
 
@@ -51,7 +51,7 @@ cron:
   script:
     - name: 海信爱家
       cron: '52 7 * * *'
-      timeout: 60
+      timeout: 1000
 
 http:
   mitm:
@@ -102,7 +102,10 @@ if (isGetCookie = typeof $request !== `undefined`) {
         $.CPS_CK = HISENSE_CPS_ARR[i];
         $.index = i + 1;
         $.gameScores = 0;
-        console.log(`===== 账号[${$.index}]开始签到 =====\n`);
+        let randomInt = Math.floor(Math.random() * 300);
+        console.log(`\n随机等待 ${randomInt} 秒\n`);
+        await $.wait(randomInt * 1000);
+        console.log(`===== 账号[${$.index}]开始执行 =====\n`);
         await main();  // 每日签到
         for (let k = 1; k <= 2; k++) {
           await gameStart(k);  // 开始游戏
@@ -240,7 +243,7 @@ async function getInfo() {
             console.log(JSON.stringify(data));
             text += `❌ 用户信息获取失败\n`;
           }
-          console.log(text);
+          console.log("\n" + text);
           message += text;
           $.message = '';
         } else {
