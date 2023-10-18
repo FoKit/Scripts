@@ -80,7 +80,7 @@ const HISENSE_SWEIXIN_KEY = 'HISENSE_SWEIXIN';
 const HISENSE_GAME_SCORE_KEY = 'HISENSE_GAME_SCORE';
 let HISENSE_CPS = ($.isNode() ? process.env.HISENSE_CPS : $.getdata(HISENSE_CPS_KEY)) || '';
 let HISENSE_SWEIXIN = ($.isNode() ? process.env.HISENSE_SWEIXIN : $.getdata(HISENSE_SWEIXIN_KEY)) || '';
-let HISENSE_GAME_SCORE = ($.isNode() ? process.env.HISENSE_GAME_SCORE : $.getdata(HISENSE_GAME_SCORE_KEY)) || '20-30';
+let HISENSE_GAME_SCORE = ($.isNode() ? process.env.HISENSE_GAME_SCORE : $.getdata(HISENSE_GAME_SCORE_KEY)) || '15-20';
 $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false';
 let message = '';
 

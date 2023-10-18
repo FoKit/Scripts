@@ -801,7 +801,7 @@
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/hisense.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/hisense.png"
       ],
-      "keys": ["HISENSE_CPS", "HISENSE_SWEIXIN", "HISENSE_GAME_SCORE"],
+      "keys": ["HISENSE_CPS", "HISENSE_SWEIXIN"],
       "settings": [
         {
           "id": "HISENSE_CPS",
