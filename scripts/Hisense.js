@@ -336,7 +336,7 @@ async function submitScore() {
             $.gameScores += result.data.obtainScore;
           } else {
             // $.message += `${result.resultMsg} ❌`;
-            console.log(JSON.stringify(result);
+            console.log(data);
           }
         } else {
           $.log("服务器返回了空数据");
