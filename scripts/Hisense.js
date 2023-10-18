@@ -121,7 +121,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
           for (let j = 1; j <= 2; j++) {
             await partyExchange();
             await gameStart();  // 开始游戏{
-            console.log(`开始第 ${2 + j} 次[打地鼠]游戏...`);
+            console.log(`开始[打地鼠]游戏...`);
             await $.wait(1000 * 30);  // 等待 30 秒
             await submitScore();  // 提交分数
             await $.wait(1000 * 3);
@@ -336,7 +336,7 @@ async function submitScore() {
             $.gameScores += result.data.obtainScore;
           } else {
             // $.message += `${result.resultMsg} ❌`;
-            console.log(JSON.stringify($.message));
+            console.log(JSON.stringify(result);
           }
         } else {
           $.log("服务器返回了空数据");
