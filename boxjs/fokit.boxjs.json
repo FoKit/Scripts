@@ -820,13 +820,6 @@
           "autoGrow": true,
           "rows": 1,
           "desc": "多账户用 @ 隔开"
-        },
-        {
-          "id": "HISENSE_GAME_SCORE",
-          "name": "游戏分数",
-          "val": "",
-          "type": "text",
-          "desc": "打地鼠随机积分范围，格式 20-30"
         }
       ]
     }
