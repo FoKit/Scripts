@@ -4,7 +4,7 @@
  * 活动说明：每日签到送10积分；连续签到7天、第7天额外赠送20积分；连续签到20天，第20天额外赠送50积分；连续签到50天，第50天额外赠送100积分。
  * 脚本说明：配置重写并手动签到一次即可获取签到数据。兼容 Node.js 环境，变量名称 HISENSE_CPS、HISENSE_SWEIXIN，多账号分割符 "@"。
  * 仓库地址：https://github.com/FoKit/Scripts
- * 更新时间：2023-10-18
+ * 更新时间：2023-10-19
 /*
 --------------- BoxJS & 重写模块 --------------
 
@@ -103,6 +103,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
         $.SWEIXIN_CK = HISENSE_SWEIXIN_ARR[i];
         $.CPS_CK = HISENSE_CPS_ARR[i];
         $.index = i + 1;
+        $.isLogin = true;
         $.gameScores = 0;
         $.userRemainingCount = 0;
         let randomInt = Math.floor(Math.random() * 30);
@@ -110,8 +111,15 @@ if (isGetCookie = typeof $request !== `undefined`) {
         await $.wait(randomInt * 1000);
         console.log(`===== 账号[${$.index}]开始执行 =====\n`);
         await main();  // 每日签到
+        if (!$.isLogin) {
+          let msg = `Cookie 已失效，请重新获取。\n`;
+          message += msg;
+          console.log(msg);
+          break;
+        }  
         await gameStart();  // 开始游戏
         for (let k = 1; k <= $.userRemainingCount; k++) {
+          await $.wait(1000 * 3);
           await gameStart();  // 开始游戏{
           console.log(`开始第 ${k} 次[打地鼠]游戏...`);
           await $.wait(1000 * 30);  // 等待 30 秒
@@ -119,12 +127,12 @@ if (isGetCookie = typeof $request !== `undefined`) {
         }
         if (HISENSE_PARTY_EXCHANGE == "true") {
           for (let j = 1; j <= 2; j++) {
+            await $.wait(1000 * 3);
             await partyExchange();
             await gameStart();  // 开始游戏{
             console.log(`开始[打地鼠]游戏...`);
             await $.wait(1000 * 30);  // 等待 30 秒
             await submitScore();  // 提交分数
-            await $.wait(1000 * 3);
           } 
         }
         await getInfo();  // 用户信息
@@ -206,10 +214,12 @@ function main() {
           $.message = '';
           let result = JSON.parse(data);
           if (result?.isSuccess && result?.resultCode == "00000") {
-            $.message += `签到成功，获得 ${result.data.obtainScore} 积分 🎉`;
+            $.signScores = result.data.obtainScore;
+            $.message += `签到成功，获得 ${$.signScores} 积分 🎉`;
           } else if (result?.resultCode == "A0202") {
             $.message += `重复签到 ❌`;
           } else {
+            $.isLogin = false;
             $.message += `${result.resultMsg} ❌`;
             console.log(JSON.stringify($.message));
           }
@@ -254,10 +264,11 @@ async function getInfo() {
           if (result?.data?.memberDetail) {
             let memberDetail = result.data.memberDetail;
             const { gradeName, score, customerName, memberCard, kdOpenId, grade, grouthValue, thdCusmobile, nextGrouthValue } = memberDetail;
-            text += `账号[${hideSensitiveData(thdCusmobile, 3, 4)}] ${$.message}\n参与打地鼠活动共获得 ${$.gameScores} 积分 🎉\n当前积分:${score}, 会员等级:${gradeName}, 成长值:${grouthValue}/${grouthValue + nextGrouthValue}\n`
+            text += `账号[${hideSensitiveData(thdCusmobile, 3, 4)}] ${$.message}\n参与打地鼠活动共获得 ${$.gameScores} 积分 🎉\n当前积分:${score}, 会员等级:${gradeName}, 成长值:${grouthValue}/${grouthValue + nextGrouthValue}\n`;
           } else {
             console.log(JSON.stringify(data));
-            text += `❌ 用户信息获取失败\n`;
+            // text += `❌ 用户信息获取失败\n`;
+            text += `${$.message}\n参与打地鼠活动共获得 ${$.gameScores} 积分 🎉\n`;
           }
           console.log("\n" + text);
           message += text;
