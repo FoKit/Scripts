@@ -340,20 +340,34 @@ async function getGift() {
 
 // 获取最新版本
 async function getLatestVersion() {
-  data = await http_get(`https://itunes.apple.com/cn/lookup?id=${AppId}`);
-  if (data) {
-    try {
-      let result = JSON.parse(data);
-      const { trackName, bundleId, releaseDate, version } = result.results[0];
-      AppVersion = version;
-      !$.isNode() ? $.setdata(AppVersion, 'JHSH_VERSION') : '';  // 数据持久化
-      console.log(`版本信息: ${trackName} [${bundleId}] ${version}\n${releaseDate}`);
-    } catch (e) {
-      $.log(e);
-    };
-  } else {
-    console.log(`版本信息获取失败\n`);
+  let opt = {
+    url: `https://itunes.apple.com/cn/lookup?id=${AppId}`,
+    headers: { "Content-Type": "application/x-www-form-urlencoded" }
   }
+  return new Promise(resolve => {
+    $.get(opt, async (err, resp, data) => {
+      try {
+        err && $.log(err);
+        if (data) {
+          try {
+            let result = JSON.parse(data);
+            const { trackName, bundleId, releaseDate, version } = result.results[0];
+            AppVersion = version;
+            !$.isNode() ? $.setdata(AppVersion, 'JHSH_VERSION') : '';  // 数据持久化
+            console.log(`版本信息: ${trackName} [${bundleId}] ${version}\n${releaseDate}`);
+          } catch (e) {
+            $.log(e);
+          };
+        } else {
+          console.log(`版本信息获取失败\n`);
+        }
+      } catch (error) {
+        $.log(error);
+      } finally {
+        resolve();
+      }
+    })
+  })
 }
 
 
