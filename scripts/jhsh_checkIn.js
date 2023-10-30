@@ -389,7 +389,7 @@ function hideSensitiveData(string, head_length = 2, foot_length = 2) {
 
 // DEBUG
 function debug(content) {
-  let text = '\n-----debug-----\n';
+  let text = '\n----- debug -----\n';
   if ($.is_debug === 'true') {
     if (typeof content == "string") {
       console.log(text + content + text);
