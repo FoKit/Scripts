@@ -2,9 +2,9 @@
  * 脚本名称：海信爱家
  * 活动入口：海信爱家（公众号） -> 个人中心 -> 会员中心 -> 玩转积分 -> 签到
  * 活动说明：每日签到送10积分；连续签到7天、第7天额外赠送20积分；连续签到20天，第20天额外赠送50积分；连续签到50天，第50天额外赠送100积分。
- * 脚本说明：配置重写并手动签到一次或进入打地鼠活动页面即可获取签到数据。兼容 Node.js 环境，变量名称 HISENSE_CPS、HISENSE_SWEIXIN，多账号分割符 "@"。
+ * 脚本说明：配置重写并手动签到一次或进入打地鼠活动页面即可获取签到数据。兼容 Node.js 环境，变量名称 HISENSE_CPS，多账号分割符 "@"。
  * 仓库地址：https://github.com/FoKit/Scripts
- * 更新时间：2023-10-21
+ * 更新时间：2023-10-30
 /*
 --------------- BoxJS & 重写模块 --------------
 
@@ -93,7 +93,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
   !(async () => {
     let HISENSE_CPS_ARR = HISENSE_CPS.split('@');
     let HISENSE_SWEIXIN_ARR = HISENSE_SWEIXIN.split('@');
-    if (!HISENSE_CPS_ARR[0] && !HISENSE_SWEIXIN_ARR[0]) {
+    if (!HISENSE_CPS_ARR[0]) {
       $.msg($.name, '❌ 请先获取海信爱家签到数据。');
       return;
     }
@@ -116,12 +116,13 @@ if (isGetCookie = typeof $request !== `undefined`) {
           message += msg;
           console.log(msg);
           break;
-        }  
+        }
         await gameStart();  // 开始游戏
-        for (let k = 1; k <= $.userRemainingCount; k++) {
+        while ($.userRemainingCount >= 1) {
           await $.wait(1000 * 3);
           await gameStart();  // 开始游戏{
-          console.log(`开始第 ${k} 次[打地鼠]游戏...`);
+          if (!$.userRemainingCount) break;
+          console.log(`开始[打地鼠]游戏...`);
           await $.wait(1000 * 30);  // 等待 30 秒
           await submitScore();  // 提交分数
         }
@@ -130,12 +131,17 @@ if (isGetCookie = typeof $request !== `undefined`) {
             await $.wait(1000 * 3);
             await partyExchange();
             await gameStart();  // 开始游戏{
+            if (!$.userRemainingCount) break;
             console.log(`开始[打地鼠]游戏...`);
             await $.wait(1000 * 30);  // 等待 30 秒
             await submitScore();  // 提交分数
-          } 
+          }
         }
-        await getInfo();  // 用户信息
+        if ($.SWEIXIN_CK) {
+          await getInfo();  // 用户信息
+        } else {
+          message += `${$.message}\n参与打地鼠活动共获得 ${$.gameScores} 积分 🎉\n`;
+        }
       }
     }
     if (message) {
@@ -272,7 +278,6 @@ async function getInfo() {
           }
           console.log("\n" + text);
           message += text;
-          $.message = '';
         } else {
           $.log("服务器返回了空数据");
         }
@@ -345,6 +350,7 @@ async function submitScore() {
           if (result?.isSuccess && result?.resultCode == "00000" && result?.data?.obtainScore) {
             // message += `打地鼠获得 ${result.data.obtainScore} 积分 🎉\n`;
             $.gameScores += result.data.obtainScore;
+            $.userRemainingCount -= 1;
           } else {
             // $.message += `${result.resultMsg} ❌`;
             console.log(data);
@@ -383,6 +389,8 @@ async function partyExchange() {
         if (result) {
           if (result?.isSuccess && result?.resultCode == "00000") {
             console.log(`游戏机会兑换成功`);
+          } else if (result?.resultCode == "A0211") {
+            console.log("游戏机会兑换失败, " + result.resultMsg);
           } else {
             console.log(data);
           }
