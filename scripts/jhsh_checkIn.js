@@ -89,7 +89,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
     for (let i = 0; i < bodyArr.length; i++) {
       if (bodyArr[i]) {
         $.index = i + 1;
-        $.token = '';
+        // $.token = '';
         $.info = JSON.parse(bodyArr[i]);
         $.info2 = JSON.parse(bodyArr2[i]);
         $.giftList = [];
@@ -101,7 +101,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
         $.ALBody = $.info2['Body'];
         console.log(`\n===== 账号[${$.info?.USR_TEL || $.index}]开始签到 =====\n`);
         if (!$.info?.MID || !$.DeviceId || !$.MBCUserAgent || !$.ALBody) {
-          message += `🎉 账号 [${hideSensitiveData($.info?.USR_TEL, 3, 4) || $.index}] 缺少MID参数，请重新获取Cookie。\n`;
+          message += `🎉 账号 [${hideSensitiveData($.info?.USR_TEL, 3, 4) || $.index}] 缺少参数，请重新获取Cookie。\n`;
           continue;
         }
         await autoLogin();  // 刷新 session
@@ -312,9 +312,6 @@ async function getGift() {
   }
   debug(opt);
   return new Promise(resolve => {
-    debug(opt.url);
-    debug(opt.headers);
-    debug(opt.body);
     $.post(opt, async (err, resp, data) => {
       try {
         err && $.log(err);
