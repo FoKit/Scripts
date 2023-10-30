@@ -80,7 +80,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
   $.done();
 } else {
   !(async () => {
-    if (!bodyArr[0] || !bodyArr2[0]) {
+    if (!autoLoginInfo || !bodyStr) {
       $.msg($.name, '❌ 请先获取建行生活Cookie。');
       return;
     }
@@ -211,13 +211,13 @@ async function autoLogin() {
         // 如果数据未加密，则 session 未过期
         if (result?.errCode) {
           // {"newErrMsg":"未能处理您的请求。如有疑问，请咨询在线客服或致电95533","data":"","reqFlowNo":"","errCode":"0","errMsg":"session未失效,勿重复登录"}
-          $.token = $.getdata('JHSH_TOKEN');
+          // $.token = $.getdata('JHSH_TOKEN');
           console.log(`${result?.errMsg}`);
         } else {
-          $.token = response.headers[`set-cookie`] || response.headers[`Set-cookie`] || response.headers[`Set-Cookie`];
-          !$.isNode() ? $.setdata($.token, 'JHSH_TOKEN') : '';  // 数据持久化
+          // $.token = response.headers[`set-cookie`] || response.headers[`Set-cookie`] || response.headers[`Set-Cookie`];
+          // !$.isNode() ? $.setdata($.token, 'JHSH_TOKEN') : '';  // 数据持久化
           console.log(`✅ 刷新 session 成功!`);
-          debug($.token);
+          // debug($.token);
         }
       } catch (error) {
         $.log(error);
@@ -239,7 +239,7 @@ async function main() {
       "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148/CloudMercWebView/UnionPay/1.0 CCBLoongPay",
       "Accept": "application/json,text/javascript,*/*",
       "content-type": "application/json",
-      "Cookie": $.token
+      // "Cookie": $.token
     },
     body: `{"ACT_ID":"${$.info.ACT_ID}","MEB_ID":"${$.info.MEB_ID}","USR_TEL":"${$.info.USR_TEL}","REGION_CODE":"${$.info.REGION_CODE}","chnlType":"${$.info.chnlType}","regionCode":"${$.info.regionCode}"}`
   }
