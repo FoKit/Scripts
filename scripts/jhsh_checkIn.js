@@ -3,7 +3,7 @@
  * 活动入口：建行生活APP -> 首页 -> 会员有礼 -> 签到
  * 脚本说明：连续签到领优惠券礼包（打车、外卖优惠券），配置重写手动签到一次即可获取签到数据，默认领取外卖券，可在 BoxJS 配置奖品。兼容 Node.js 环境，变量名称 JHSH_BODY、JHSH_GIFT、JHSH_LOGIN_INFO，多账号分割符 "|"。
  * 仓库地址：https://github.com/FoKit/Scripts
- * 更新时间：2023-10-30  修复 Cokie 失效问题，增加骑行券类型参数，感谢 Sliverkiss、𝘠𝘶𝘩𝘦𝘯𝘨、苍井灰灰 大佬提供帮助。
+ * 更新时间：2023-10-31  修复 Cokie 失效问题，增加骑行券类型参数，感谢 Sliverkiss、𝘠𝘶𝘩𝘦𝘯𝘨、苍井灰灰 大佬提供帮助。
 /*
 
 https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
@@ -101,7 +101,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
         $.ALBody = $.info2['Body'];
         console.log(`\n===== 账号[${$.info?.USR_TEL || $.index}]开始签到 =====\n`);
         if (!$.info?.MID || !$.DeviceId || !$.MBCUserAgent || !$.ALBody) {
-          message += `🎉 账号 [${hideSensitiveData($.info?.USR_TEL, 3, 4) || $.index}] 缺少参数，请重新获取Cookie。\n`;
+          message += `🎉 账号 [${$.info?.USR_TEL ? hideSensitiveData($.info?.USR_TEL, 3, 4) : $.index}] 缺少参数，请重新获取Cookie。\n`;
           continue;
         }
         await autoLogin();  // 刷新 session
@@ -241,7 +241,8 @@ async function main() {
       "content-type": "application/json",
       // "Cookie": $.token
     },
-    body: `{"ACT_ID":"${$.info.ACT_ID}","MEB_ID":"${$.info.MEB_ID}","USR_TEL":"${$.info.USR_TEL}","REGION_CODE":"${$.info.REGION_CODE}","chnlType":"${$.info.chnlType}","regionCode":"${$.info.regionCode}"}`
+    // body: `{"ACT_ID":"${$.info.ACT_ID}","MEB_ID":"${$.info.MEB_ID}","USR_TEL":"${$.info.USR_TEL}","REGION_CODE":"${$.info.REGION_CODE}","chnlType":"${$.info.chnlType}","regionCode":"${$.info.regionCode}"}`,
+    body: `{"ACT_ID":"${$.info.ACT_ID}","REGION_CODE":"${$.info.REGION_CODE}","chnlType":"${$.info.chnlType}","regionCode":"${$.info.regionCode}"}`
   }
   debug(opt)
   return new Promise(resolve => {
@@ -253,7 +254,7 @@ async function main() {
           data = JSON.parse(data);
           let text = '';
           if (data.errCode == 0) {
-            text = `🎉 账号 [${hideSensitiveData($.info?.USR_TEL, 3, 4) || $.index}] 签到成功`;
+            text = `🎉 账号 [${$.info?.USR_TEL ? hideSensitiveData($.info?.USR_TEL, 3, 4) : $.index}] 签到成功`;
             console.log(text);
             message += text;
             if (data?.data?.IS_AWARD == 1) {
@@ -281,7 +282,7 @@ async function main() {
             }
           } else {
             console.log(JSON.stringify(data));
-            text = `❌ 账号 [${hideSensitiveData($.info?.USR_TEL, 3, 4) || $.index}] 签到失败，${data.errMsg}\n`;
+            text = `❌ 账号 [${$.info?.USR_TEL ? hideSensitiveData($.info?.USR_TEL, 3, 4) : $.index}] 签到失败，${data.errMsg}\n`;
             console.log(text);
             message += text;
           }
