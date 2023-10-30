@@ -169,10 +169,10 @@ function GetCookie() {
       console.log(`开始新增用户数据 ${$.body}`);
       bodyArr.push($.body);
       $.setdata(bodyArr.join('|'), 'JHSH_BODY');
-      $.msg($.name, ``, `🎉 建行生活签到数据获取成功。`);
     } else {
       console.log('数据已存在，不再写入。');
     }
+    $.msg($.name, ``, `🎉 建行生活签到数据获取成功。`);
   } else if (/autoLogin/.test($request.url)) {
     $.DeviceId = $request.headers['DeviceId'] || $request.headers['Deviceid'] || $request.headers['deviceid'];
     $.MBCUserAgent = $request.headers['MBC-User-Agent'] || $request.headers['Mbc-user-agent'] || $request.headers['mbc-user-agent'];
