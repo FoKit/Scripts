@@ -85,6 +85,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
       return;
     }
     console.log(`共有[${bodyArr.length}]个建行生活账号\n`);
+    await getLatestVersion();  // 获取版本信息
     for (let i = 0; i < bodyArr.length; i++) {
       if (bodyArr[i]) {
         $.index = i + 1;
@@ -98,12 +99,11 @@ if (isGetCookie = typeof $request !== `undefined`) {
         $.DeviceId = $.info2['DeviceId'];
         $.MBCUserAgent = $.info2['MBCUserAgent'];
         $.ALBody = $.info2['Body'];
-        console.log(`===== 账号[${$.info?.USR_TEL || $.index}]开始签到 =====\n`);
+        console.log(`\n===== 账号[${$.info?.USR_TEL || $.index}]开始签到 =====\n`);
         if (!$.info?.MID || !$.DeviceId || !$.MBCUserAgent || !$.ALBody) {
           message += `🎉 账号 [${hideSensitiveData($.info?.USR_TEL, 3, 4) || $.index}] 缺少MID参数，请重新获取Cookie。\n`;
           continue;
         }
-        await getLatestVersion();  // 获取版本信息
         await autoLogin();  // 刷新 session
         if (!$.token) continue;
         await main();  // 签到主函数
@@ -192,7 +192,7 @@ function GetCookie() {
 
 // 刷新 session
 async function autoLogin() {
-  let options = {
+  let opt = {
     url: `https://yunbusiness.ccb.com/clp_service/txCtrl?txcode=autoLogin`,
     headers: {
       'AppVersion': AppVersion,
@@ -203,18 +203,21 @@ async function autoLogin() {
     },
     body: $.ALBody
   }
+  debug(opt)
   return new Promise(resolve => {
-    $.post(options, async (error, response, data) => {
+    $.post(opt, async (error, response, data) => {
       try {
         let result = $.toObj(data) || response.body;
         // 如果数据未加密，则 session 未过期
         if (result?.errCode) {
           // {"newErrMsg":"未能处理您的请求。如有疑问，请咨询在线客服或致电95533","data":"","reqFlowNo":"","errCode":"0","errMsg":"session未失效,勿重复登录"}
+          $.token = $.getdata('JHSH_TOKEN');
           console.log(`${result?.errMsg}`);
         } else {
           $.token = response.headers[`set-cookie`] || response.headers[`Set-cookie`] || response.headers[`Set-Cookie`];
+          !$.isNode() ? $.setdata($.token, 'JHSH_TOKEN') : '';  // 数据持久化
           console.log(`✅ 刷新 session 成功!`);
-          debug(`${result}`);
+          debug($.token);
         }
       } catch (error) {
         $.log(error);
@@ -240,8 +243,8 @@ async function main() {
     },
     body: `{"ACT_ID":"${$.info.ACT_ID}","MEB_ID":"${$.info.MEB_ID}","USR_TEL":"${$.info.USR_TEL}","REGION_CODE":"${$.info.REGION_CODE}","chnlType":"${$.info.chnlType}","regionCode":"${$.info.regionCode}"}`
   }
+  debug(opt)
   return new Promise(resolve => {
-    // console.log(opt);
     $.post(opt, async (err, resp, data) => {
       try {
         err && $.log(err);
@@ -307,6 +310,7 @@ async function getGift() {
     },
     body: `{"mebId":"${$.info.MEB_ID}","actId":"${$.info.ACT_ID}","nodeDay":${$.nodeDay},"couponType":${$.couponType},"nodeCouponId":"${$.couponId}","dccpBscInfSn":"${$.dccpBscInfSn}","chnlType":"${$.info.chnlType}","regionCode":"${$.info.regionCode}"}`
   }
+  debug(opt);
   return new Promise(resolve => {
     debug(opt.url);
     debug(opt.headers);
@@ -351,10 +355,10 @@ async function getLatestVersion() {
         if (data) {
           try {
             let result = JSON.parse(data);
-            const { trackName, bundleId, releaseDate, version } = result.results[0];
+            const { trackName, bundleId, version, currentVersionReleaseDate, } = result.results[0];
             AppVersion = version;
             !$.isNode() ? $.setdata(AppVersion, 'JHSH_VERSION') : '';  // 数据持久化
-            console.log(`版本信息: ${trackName} [${bundleId}] ${version}\n${releaseDate}`);
+            console.log(`版本信息: ${trackName} ${version}\nBundleId: ${bundleId} \n更新时间: ${currentVersionReleaseDate}`);
           } catch (e) {
             $.log(e);
           };
@@ -387,12 +391,13 @@ function hideSensitiveData(string, head_length = 2, foot_length = 2) {
 
 
 // DEBUG
-function debug(text) {
+function debug(content) {
+  let text = '\n-----debug-----\n';
   if ($.is_debug === 'true') {
-    if (typeof text == "string") {
-      console.log(text);
-    } else if (typeof text == "object") {
-      console.log($.toStr(text));
+    if (typeof content == "string") {
+      console.log(text + content + text);
+    } else if (typeof content == "object") {
+      console.log(text + $.toStr(content) + text);
     }
   }
 }
