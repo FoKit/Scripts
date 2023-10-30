@@ -105,7 +105,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
           continue;
         }
         await autoLogin();  // 刷新 session
-        if (!$.token) continue;
+        // if (!$.token) continue;
         await main();  // 签到主函数
         if ($.giftList.length > 0) {
           for (let j = 0; j < $.giftList.length; j++) {
