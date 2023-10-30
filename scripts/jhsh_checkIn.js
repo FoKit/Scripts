@@ -1,11 +1,10 @@
 /**
  * 脚本名称：建行生活
  * 活动入口：建行生活APP -> 首页 -> 会员有礼 -> 签到
- * 脚本说明：连续签到领优惠券礼包（打车、外卖优惠券），配置重写手动签到一次即可获取签到数据，默认领取外卖券，可在 BoxJS 配置奖品。兼容 Node.js 环境，变量名称 JHSH_BODY、JHSH_GIFT，多账号分割符 "|"。
+ * 脚本说明：连续签到领优惠券礼包（打车、外卖优惠券），配置重写手动签到一次即可获取签到数据，默认领取外卖券，可在 BoxJS 配置奖品。兼容 Node.js 环境，变量名称 JHSH_BODY、JHSH_GIFT、JHSH_LOGIN_INFO，多账号分割符 "|"。
  * 仓库地址：https://github.com/FoKit/Scripts
- * 更新时间：2023-10-16
+ * 更新时间：2023-10-30  修复 Cokie 失效问题，增加骑行券类型参数，感谢 Sliverkiss、𝘠𝘶𝘩𝘦𝘯𝘨、苍井灰灰 大佬提供帮助。
 /*
---------------- BoxJS & 重写模块 --------------
 
 https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
 https://raw.githubusercontent.com/FoKit/Scripts/main/rewrite/get_jhsh_cookie.sgmodule
@@ -16,7 +15,7 @@ https://raw.githubusercontent.com/FoKit/Scripts/main/rewrite/get_jhsh_cookie.sgm
 hostname = yunbusiness.ccb.com
 
 [Script]
-建行数据 = type=http-request,pattern=^https:\/\/yunbusiness\.ccb\.com\/clp_coupon\/txCtrl\?txcode=(A3341A040|A3341A038),requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js
+建行数据 = type=http-request,pattern=^https:\/\/yunbusiness\.ccb\.com\/(clp_coupon|clp_service)\/txCtrl\?txcode=(A3341A038|autoLogin),requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js
 
 建行生活 = type=cron,cronexp=17 7 * * *,timeout=60,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js,script-update-interval=0
 
@@ -26,7 +25,7 @@ hostname = yunbusiness.ccb.com
 hostname = yunbusiness.ccb.com
 
 [Script]
-http-request ^https:\/\/yunbusiness\.ccb\.com\/clp_coupon\/txCtrl\?txcode=(A3341A040|A3341A038) tag=建行数据, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js,requires-body=1
+http-request ^https:\/\/yunbusiness\.ccb\.com\/(clp_coupon|clp_service)\/txCtrl\?txcode=(A3341A038|autoLogin) tag=建行数据, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js,requires-body=1
 
 cron "17 7 * * *" script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js,tag = 建行生活,enable=true
 
@@ -36,7 +35,7 @@ cron "17 7 * * *" script-path=https://raw.githubusercontent.com/FoKit/Scripts/ma
 hostname = yunbusiness.ccb.com
 
 [rewrite_local]
-^https:\/\/yunbusiness\.ccb\.com\/clp_coupon\/txCtrl\?txcode=(A3341A040|A3341A038) url script-request-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js
+^https:\/\/yunbusiness\.ccb\.com\/(clp_coupon|clp_service)\/txCtrl\?txcode=(A3341A038|autoLogin) url script-request-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js
 
 [task_local]
 17 7 * * * https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js, tag=建行生活, enabled=true
@@ -53,7 +52,7 @@ http:
   mitm:
     - "yunbusiness.ccb.com"
   script:
-    - match: ^https:\/\/yunbusiness\.ccb\.com\/clp_coupon\/txCtrl\?txcode=(A3341A040|A3341A038)
+    - match: ^https:\/\/yunbusiness\.ccb\.com\/(clp_coupon|clp_service)\/txCtrl\?txcode=(A3341A038|autoLogin)
       name: 建行生活
       type: request
       require-body: true
@@ -66,16 +65,14 @@ script-providers:
 */
 
 const $ = new Env('建行生活');
-const gift_key = 'JHSH_GIFT';
-const body_key = 'JHSH_BODY';
 const notify = $.isNode() ? require('./sendNotify') : '';
-let giftType = ($.isNode() ? process.env.JHSH_GIFT : $.getdata(gift_key)) || '2';
-let bodyStr = ($.isNode() ? process.env.JHSH_BODY : $.getdata(body_key)) || '';
-let bodyArr = bodyStr ? bodyStr.split("|") : [], message = '';
-let giftMap = {
-  "1": "打车",
-  "2": "外卖"
-};
+let AppId = '1472477795', giftMap = { "1": "打车", "2": "外卖", "3": "骑行" }, message = '';
+let giftType = ($.isNode() ? process.env.JHSH_GIFT : $.getdata('JHSH_GIFT')) || '2';  // 奖励类型，默认领取'外卖'券
+let bodyStr = ($.isNode() ? process.env.JHSH_BODY : $.getdata('JHSH_BODY')) || '';  // 签到所需的 body
+let autoLoginInfo = ($.isNode() ? process.env.JHSH_LOGIN_INFO : $.getdata('JHSH_LOGIN_INFO')) || '';  // 刷新 session 所需的数据
+let AppVersion = ($.isNode() ? process.env.JHSH_VERSION : $.getdata('JHSH_VERSION')) || '2.1.5.002';  // 最新版本号，获取失败时使用
+let bodyArr = bodyStr ? bodyStr.split("|") : [];
+let bodyArr2 = autoLoginInfo ? autoLoginInfo.split("|") : [];
 $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false';
 
 if (isGetCookie = typeof $request !== `undefined`) {
@@ -83,7 +80,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
   $.done();
 } else {
   !(async () => {
-    if (!bodyArr[0]) {
+    if (!bodyArr[0] || !bodyArr2[0]) {
       $.msg($.name, '❌ 请先获取建行生活Cookie。');
       return;
     }
@@ -91,17 +88,25 @@ if (isGetCookie = typeof $request !== `undefined`) {
     for (let i = 0; i < bodyArr.length; i++) {
       if (bodyArr[i]) {
         $.index = i + 1;
-        $.info = JSON.parse(bodyArr[i])
+        $.token = '';
+        $.info = JSON.parse(bodyArr[i]);
+        $.info2 = JSON.parse(bodyArr2[i]);
         $.giftList = [];
         $.giftList2 = [];
         $.getGiftMsg = "";
         $.isGetGift = false;
+        $.DeviceId = $.info2['DeviceId'];
+        $.MBCUserAgent = $.info2['MBCUserAgent'];
+        $.ALBody = $.info2['Body'];
         console.log(`===== 账号[${$.info?.USR_TEL || $.index}]开始签到 =====\n`);
-        if (!$.info?.MID) {
+        if (!$.info?.MID || !$.DeviceId || !$.MBCUserAgent || !$.ALBody) {
           message += `🎉 账号 [${hideSensitiveData($.info?.USR_TEL, 3, 4) || $.index}] 缺少MID参数，请重新获取Cookie。\n`;
           continue;
         }
-        await main();
+        await getLatestVersion();  // 获取版本信息
+        await autoLogin();  // 刷新 session
+        if (!$.token) continue;
+        await main();  // 签到主函数
         if ($.giftList.length > 0) {
           for (let j = 0; j < $.giftList.length; j++) {
             if ($.isGetGift) break;
@@ -116,7 +121,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
               if (!$.continue) {
                 if (k >= 2) console.log(`领取失败，重试一次`);
                 await $.wait(1000 * 5);
-                await getGift();
+                await getGift();  // 领取奖励
                 if ($.isGetGift) break;
               }
             }
@@ -149,37 +154,89 @@ if (isGetCookie = typeof $request !== `undefined`) {
 
 // 获取签到数据
 function GetCookie() {
-  if ($request && /A3341A040|A3341A038/.test($request.url)) {
+  debug($request.headers);
+  debug($request.body);
+  if (/A3341A038/.test($request.url)) {
     $.body = JSON.parse($request.body);
-    if (bodyStr.indexOf('MID') == -1) {
-      bodyStr = '';
-      $.setdata(bodyStr, body_key);
-      console.log(`用户数据缺失字段，已清空用户数据，请重新获取Cookie。`);
-    }
-    if (bodyStr.indexOf($.body?.USR_TEL) == -1) {
+    // if (bodyStr.indexOf('MID') == -1) {
+    //   bodyStr = '';
+    //   $.setdata(bodyStr, 'JHSH_BODY');
+    //   console.log(`用户数据缺失字段，已清空用户数据，请重新获取Cookie。`);
+    // }
+    if (bodyStr.indexOf($.body?.MEB_ID) == -1) {
       $.body['MID'] = $request.headers['MID'] || $request.headers['Mid'] || $request.headers['mid'];
       $.body = JSON.stringify($.body);
       console.log(`开始新增用户数据 ${$.body}`);
       bodyArr.push($.body);
-      $.setdata(bodyArr.join('|'), body_key);
+      $.setdata(bodyArr.join('|'), 'JHSH_BODY');
       $.msg($.name, ``, `🎉 建行生活签到数据获取成功。`);
     } else {
       console.log('数据已存在，不再写入。');
+    }
+  } else if (/autoLogin/.test($request.url)) {
+    $.DeviceId = $request.headers['DeviceId'] || $request.headers['Deviceid'] || $request.headers['deviceid'];
+    $.MBCUserAgent = $request.headers['MBC-User-Agent'] || $request.headers['Mbc-user-agent'] || $request.headers['mbc-user-agent'];
+
+    if ($.DeviceId && $.MBCUserAgent && $request.body) {
+      autoLoginInfo = {
+        "DeviceId": $.DeviceId,
+        "MBCUserAgent": $.MBCUserAgent,
+        "Body": $request.body
+      }
+      $.setdata(JSON.stringify(autoLoginInfo), 'JHSH_LOGIN_INFO');
+      console.log(JSON.stringify(autoLoginInfo) + "写入成功");
     }
   }
 }
 
 
+// 刷新 session
+async function autoLogin() {
+  let options = {
+    url: `https://yunbusiness.ccb.com/clp_service/txCtrl?txcode=autoLogin`,
+    headers: {
+      'AppVersion': AppVersion,
+      'Content-Type': `application/json`,
+      'DeviceId': $.DeviceId,
+      'Accept': `application/json`,
+      'MBC-User-Agent': $.MBCUserAgent,
+    },
+    body: $.ALBody
+  }
+  return new Promise(resolve => {
+    $.post(options, async (error, response, data) => {
+      try {
+        let result = $.toObj(data) || response.body;
+        // 如果数据未加密，则 session 未过期
+        if (result?.errCode) {
+          // {"newErrMsg":"未能处理您的请求。如有疑问，请咨询在线客服或致电95533","data":"","reqFlowNo":"","errCode":"0","errMsg":"session未失效,勿重复登录"}
+          console.log(`${result?.errMsg}`);
+        } else {
+          $.token = response.headers[`set-cookie`] || response.headers[`Set-cookie`] || response.headers[`Set-Cookie`];
+          console.log(`✅ 刷新 session 成功!`);
+          debug(`${result}`);
+        }
+      } catch (error) {
+        $.log(error);
+      } finally {
+        resolve()
+      }
+    });
+  })
+}
+
+
 // 签到主函数
-function main() {
+async function main() {
   let opt = {
-    url: `https://yunbusiness.ccb.com/clp_coupon/txCtrl?txcode=A3341A040`,
+    url: `https://yunbusiness.ccb.com/clp_coupon/txCtrl?txcode=A3341A115`,
     headers: {
       "MID": $.info?.MID,
       "Content-Type": "application/json;charset=utf-8",
       "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148/CloudMercWebView/UnionPay/1.0 CCBLoongPay",
       "Accept": "application/json,text/javascript,*/*",
-      "content-type": "application/json"
+      "content-type": "application/json",
+      "Cookie": $.token
     },
     body: `{"ACT_ID":"${$.info.ACT_ID}","MEB_ID":"${$.info.MEB_ID}","USR_TEL":"${$.info.USR_TEL}","REGION_CODE":"${$.info.REGION_CODE}","chnlType":"${$.info.chnlType}","regionCode":"${$.info.regionCode}"}`
   }
@@ -279,6 +336,26 @@ async function getGift() {
     })
   })
 }
+
+
+// 获取最新版本
+async function getLatestVersion() {
+  data = await http_get(`https://itunes.apple.com/cn/lookup?id=${AppId}`);
+  if (data) {
+    try {
+      let result = JSON.parse(data);
+      const { trackName, bundleId, releaseDate, version } = result.results[0];
+      AppVersion = version;
+      !$.isNode() ? $.setdata(AppVersion, 'JHSH_VERSION') : '';  // 数据持久化
+      console.log(`版本信息: ${trackName} [${bundleId}] ${version}\n${releaseDate}`);
+    } catch (e) {
+      $.log(e);
+    };
+  } else {
+    console.log(`版本信息获取失败\n`);
+  }
+}
+
 
 // 数据脱敏
 function hideSensitiveData(string, head_length = 2, foot_length = 2) {

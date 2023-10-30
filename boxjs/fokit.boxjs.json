@@ -761,17 +761,8 @@
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/jhsh.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/jhsh.png"
       ],
-      "keys": ["JHSH_BODY", "JHSH_GIFT"],
+      "keys": ["JHSH_GIFT", "JHSH_BODY", "JHSH_LOGIN_INFO", "JHSH_VERSION"],
       "settings": [
-        {
-          "id": "JHSH_BODY",
-          "name": "签到数据",
-          "val": "",
-          "type": "textarea",
-          "autoGrow": true,
-          "rows": 1,
-          "desc": ""
-        },
         {
           "id": "JHSH_GIFT",
           "name": "奖励类型",
@@ -786,8 +777,37 @@
             {
               "key": "2",
               "label": "外卖券"
+            },
+            {
+              "key": "3",
+              "label": "骑行券"
             }
           ]
+        },
+        {
+          "id": "JHSH_BODY",
+          "name": "签到数据",
+          "val": "",
+          "type": "textarea",
+          "autoGrow": true,
+          "rows": 1,
+          "desc": ""
+        },
+        {
+          "id": "JHSH_LOGIN_INFO",
+          "name": "登录数据",
+          "val": "",
+          "type": "textarea",
+          "autoGrow": true,
+          "rows": 1,
+          "desc": ""
+        },
+        {
+          "id": "JHSH_VERSION",
+          "name": "版本号",
+          "val": "",
+          "type": "text",
+          "desc": ""
         }
       ]
     },
