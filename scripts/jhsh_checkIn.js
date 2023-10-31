@@ -216,9 +216,9 @@ async function autoLogin() {
           // $.token = $.getdata('JHSH_TOKEN');
           console.log(`${result?.errMsg}`);
         } else {
-          const set_cookie = response.headers[`set-cookie`] || response.headers[`Set-cookie`] || response.headers[`Set-Cookie`];
+          const set_cookie = response.headers['set-cookie'] || response.headers['Set-cookie'] || response.headers['Set-Cookie'];
           // !$.isNode() ? $.setdata($.token, 'JHSH_TOKEN') : '';  // 数据持久化
-          let new_cookie = set_cookie.match(/SESSION=([a-f0-9-]+);/);
+          let new_cookie = $.toStr(set_cookie).match(/SESSION=([a-f0-9-]+);/);
           if (new_cookie) {
             $.token = new_cookie[0];
             console.log(`✅ 刷新 session 成功!`);
