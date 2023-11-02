@@ -4,7 +4,7 @@
  * 活动说明：每日签到送10积分；连续签到7天、第7天额外赠送20积分；连续签到20天，第20天额外赠送50积分；连续签到50天，第50天额外赠送100积分。
  * 脚本说明：配置重写并手动签到一次或进入打地鼠活动页面即可获取签到数据。兼容 Node.js 环境，变量名称 HISENSE_CPS，多账号分割符 "@"。
  * 仓库地址：https://github.com/FoKit/Scripts
- * 更新时间：2023-10-30
+ * 更新时间：2023-11-03  优化 Cookie 获取流程，进入个人中心即可获取 Cookie
 /*
 --------------- BoxJS & 重写模块 --------------
 
@@ -14,33 +14,30 @@ https://raw.githubusercontent.com/FoKit/Scripts/main/rewrite/get_hisense_cookie.
 ------------------ Surge 配置 -----------------
 
 [MITM]
-hostname = sweixin.hisense.com, cps.hisense.com
+hostname = sweixin.hisense.com
 
 [Script]
-海信数据 = type=http-request,pattern=^https:\/\/sweixin\.hisense\.com\/ecrp\/member\/initMember,requires-body=0,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/Hisense.js
-海信签到 = type=http-request,pattern=^https:\/\/cps\.hisense\.com\/customerAth\/activity-manage\/activityUser\/(participate|noLoginCheck),requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/Hisense.js
+海信数据 = type=http-response,pattern=^https:\/\/sweixin\.hisense\.com\/ecrp\/member\/initMember,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/Hisense.js
 
 海信爱家 = type=cron,cronexp=52 7 * * *,timeout=500,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/Hisense.js,script-update-interval=0
 
 ------------------ Loon 配置 ------------------
 
 [MITM]
-hostname = sweixin.hisense.com, cps.hisense.com
+hostname = sweixin.hisense.com
 
 [Script]
-http-request ^https:\/\/sweixin\.hisense\.com\/ecrp\/member\/initMember tag=海信数据, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/Hisense.js,requires-body=0
-http-request ^https:\/\/cps\.hisense\.com\/customerAth\/activity-manage\/activityUser\/(participate|noLoginCheck) tag=海信签到, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/Hisense.js,requires-body=1
+http-response ^https:\/\/sweixin\.hisense\.com\/ecrp\/member\/initMember tag=海信数据, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/Hisense.js,requires-body=1
 
 cron "52 7 * * *" script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/Hisense.js,tag = 海信爱家,enable=true
 
 -------------- Quantumult X 配置 --------------
 
 [MITM]
-hostname = sweixin.hisense.com, cps.hisense.com
+hostname = sweixin.hisense.com
 
 [rewrite_local]
-^https:\/\/sweixin\.hisense\.com\/ecrp\/member\/initMember url script-request-header https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/Hisense.js
-^https:\/\/cps\.hisense\.com\/customerAth\/activity-manage\/activityUser\/(participate|noLoginCheck) url script-request-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/Hisense.js
+^https:\/\/sweixin\.hisense\.com\/ecrp\/member\/initMember url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/Hisense.js
 
 [task_local]
 52 7 * * * https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/Hisense.js, tag=海信爱家, img-url=https://github.com/FoKit/Scripts/blob/main/images/hisense.png?raw=true, enabled=true
@@ -55,15 +52,11 @@ cron:
 
 http:
   mitm:
-    - "sweixin.hisense.com, cps.hisense.com"
+    - "sweixin.hisense.com"
   script:
     - match: ^https:\/\/sweixin\.hisense\.com\/ecrp\/member\/initMember
       name: 海信数据
-      type: request
-      require-body: false
-    - match: ^https:\/\/cps\.hisense\.com\/customerAth\/activity-manage\/activityUser\/(participate|noLoginCheck)
-      name: 海信签到
-      type: request
+      type: response
       require-body: true
 
 script-providers:
@@ -97,7 +90,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
       $.msg($.name, '❌ 请先获取海信爱家签到数据。');
       return;
     }
-    console.log(`共有[${HISENSE_CPS_ARR.length}]个海信爱家账号\n`);
+    console.log(`\n共有[${HISENSE_CPS_ARR.length}]个海信爱家账号`);
     for (let i = 0; i < HISENSE_CPS_ARR.length; i++) {
       if (HISENSE_CPS_ARR[i]) {
         $.SWEIXIN_CK = HISENSE_SWEIXIN_ARR[i];
@@ -112,7 +105,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
         console.log(`===== 账号[${$.index}]开始执行 =====\n`);
         await main();  // 每日签到
         if (!$.isLogin) {
-          let msg = `Cookie 已失效，请重新获取。\n`;
+          let msg = `❌ Cookie 已失效，请重新获取。\n`;
           message += msg;
           console.log(msg);
           break;
@@ -165,29 +158,35 @@ if (isGetCookie = typeof $request !== `undefined`) {
 // 获取签到数据
 function GetCookie() {
   if ($request && /initMember/.test($request.url)) {
-    $.data = $request.headers['COOKIE'] || $request.headers['Cookie'] || $request.headers['cookie'];
-    if ($.data) {
-      console.log("HISENSE_SWEIXIN: " + $.data);
-      $.setdata($.data, HISENSE_SWEIXIN_KEY);
-      if (!HISENSE_SWEIXIN) {
-        $.msg($.name, ``, `🎈 点击【玩转积分】签到一次即可获取签到数据。`);
-      }
+    $.ck = $request.headers['COOKIE'] || $request.headers['Cookie'] || $request.headers['cookie'];
+    if ($.ck) {
+      console.log("HISENSE_SWEIXIN: " + $.ck);
+      $.setdata($.ck, HISENSE_SWEIXIN_KEY);
+      // if (!HISENSE_SWEIXIN) {
+      //   $.msg($.name, ``, `🎈 点击【玩转积分】签到一次即可获取签到数据。`);
+      // }
     }
-  } else if ($request && /participate|noLoginCheck/.test($request.url)) {
-    $.data = $request.headers['COOKIE'] || $request.headers['Cookie'] || $request.headers['cookie'];
-    if ($.data) {
-      console.log("HISENSE_CPS: " + $.data);
-      $.setdata($.data, HISENSE_CPS_KEY);
-      if (!HISENSE_CPS) {
-        $.msg($.name, ``, `🎉 签到数据获取成功。`);
-      }
+    $.token = $response.body.match(/TOKEN_ACTIVITY=(?:\w)+/) ? $response.body.match(/TOKEN_ACTIVITY=(?:\w)+/)[0] : '';
+    if ($.token) {
+      console.log("HISENSE_CPS: " + $.token);
+      $.setdata($.token, HISENSE_CPS_KEY);
+      $.msg($.name, ``, `🎉 签到数据获取/更新成功。`);
     }
-    try {
-      console.log("HISENSE_BODY: " + $response.body);
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  }//  else if ($request && /participate|noLoginCheck/.test($request.url)) {
+  //   $.data = $request.headers['COOKIE'] || $request.headers['Cookie'] || $request.headers['cookie'];
+  //   if ($.data) {
+  //     console.log("HISENSE_CPS: " + $.data);
+  //     $.setdata($.data, HISENSE_CPS_KEY);
+  //     if (!HISENSE_CPS) {
+  //       $.msg($.name, ``, `🎉 签到数据获取成功。`);
+  //     }
+  //   }
+  //   try {
+  //     console.log("HISENSE_BODY: " + $response.body);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
 }
 
 
