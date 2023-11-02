@@ -168,8 +168,9 @@ function GetCookie() {
     $.body['MID'] = $request.headers['MID'] || $request.headers['Mid'] || $request.headers['mid'];
     $.body = JSON.stringify($.body);
     console.log(`开始新增用户数据 ${$.body}`);
-    bodyArr.push($.body);
-    $.setdata(bodyArr.join('|'), 'JHSH_BODY');
+    // bodyArr.push($.body);
+    // $.setdata(bodyArr.join('|'), 'JHSH_BODY');
+    $.setdata($.body, 'JHSH_BODY');
     // } else {
     //   console.log('数据已存在，不再写入。');
     // }
