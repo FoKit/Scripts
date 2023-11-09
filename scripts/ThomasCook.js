@@ -141,19 +141,17 @@ function httpRequest(method, url, body = '') {
                 switch (url) {
                   case '/online/cms-api/sign/userSign':
                     let text = '';
-                    data = JSON.parse(data);
-                    // console.log(data);
-                    if (data.responseCode === '0') {
-                      $.mobile = data.data.signInfo.mobile;  // 手机号
-                      // $.accountId = data.data.signInfo.accountId;  // 用户ID
-                      $.signInStatus = data.data.signInfo.signInStatus === 1 ? '🎉 签到成功' : "❌ 签到失败";  // 签到状态：1=是 0=否
-                      $.changeIntegeral = data.data.signInfo.changeIntegeral;  // 积分变动
-                      $.continousSignDays = data.data.signInfo.continousSignDays;  // 连续签到天数
-                      $.currentIntegral = data.data.signInfo.currentIntegral + $.changeIntegeral;  // 当前积分
+                    if (result?.responseCode === '0') {
+                      $.mobile = result.data.signInfo.mobile;  // 手机号
+                      // $.accountId = result.data.signInfo.accountId;  // 用户ID
+                      $.signInStatus = result.data.signInfo.signInStatus === 1 ? '🎉 签到成功' : "❌ 签到失败";  // 签到状态：1=是 0=否
+                      $.changeIntegeral = result.data.signInfo.changeIntegeral;  // 积分变动
+                      $.continousSignDays = result.data.signInfo.continousSignDays;  // 连续签到天数
+                      $.currentIntegral = result.data.signInfo.currentIntegral + $.changeIntegeral;  // 当前积分
 
                       text = `\n账号 ${$.mobile}\n${$.signInStatus}, ${$.changeIntegeral > 0 ? `积分 +${$.changeIntegeral}, ` : ''}连续签到 ${$.continousSignDays} 天, 积分余额 ${$.currentIntegral}`;
-                    } else if (data.responseCode === '402') {
-                      $.signInStatus = data.message;
+                    } else if (result?.responseCode === '402') {
+                      $.signInStatus = result.message;
                       text = $.signInStatus;
                     } else {
                       $.signInStatus = "❌ 签到失败";
