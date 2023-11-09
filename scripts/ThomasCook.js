@@ -7,7 +7,7 @@
 ====================================================================================================
 配置 (Surge)
 [MITM]
-hostname = %APPEND% apis.folidaymall.com
+hostname = apis.folidaymall.com
 
 [Script]
 获取托迈酷客Cookie = type=http-request,pattern=^https:\/\/apis\.folidaymall\.com\/online\/capi\/uc\/getCount,requires-body=0,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/ThomasCook.js
