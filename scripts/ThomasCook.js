@@ -2,8 +2,8 @@
 脚本名称：托迈酷客
 活动规则：每日签到可获得积分
 环境变量：ThomasCook_Cookie
-使用说明：添加重写规则进入小程序即可获取Cookie
-更新时间：2023-01-31
+使用说明：添加重写规则进入“复游度假生活”小程序即可获取Cookie
+更新时间：2023-11-10 新增每日浏览任务
 ====================================================================================================
 配置 (Surge)
 [MITM]
@@ -30,7 +30,9 @@ hostname = apis.folidaymall.com
 const $ = new Env('托迈酷客');
 const notify = $.isNode() ? require('./sendNotify') : '';
 const ck_key = 'ThomasCook_Cookie';
+const origin = 'https://apis.folidaymall.com'
 let message = '', cookie = '', cookiesArr = [];
+$.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false';
 
 if (isGetCookie = typeof $request !== `undefined`) {
   GetCookie();
@@ -49,8 +51,18 @@ if (isGetCookie = typeof $request !== `undefined`) {
       if (cookiesArr[i]) {
         cookie = cookiesArr[i];
         $.index = i + 1;
-        console.log(`账号 ${$.index} 开始签到\n`);
-        await main();
+        $.activityTaskId = '';
+        $.activityTaskRelationId = '';
+        $.taskContentNum = 0;
+        console.log(`\n账号 ${$.index} 开始执行\n`);
+        await httpRequest('GET', `/online/cms-api/sign/userSign`);  // 每日签到
+        await httpRequest('GET', `/online/cms-api/activity/queryActivityTaskRelationList`);  // 获取任务
+        if (!$.activityTaskId) continue;
+        await httpRequest('POST', `/online/cms-api/activity/receiveActivityTask`, `{"activityTaskId":"${$.activityTaskId}"}`);  // 领取任务
+        await $.wait(1000 * $.taskContentNum);  // 等待任务
+        await httpRequest('POST', `/online/cms-api/activity/submitCompleteActivityTask`, `{"activityTaskId":"${$.activityTaskId}"}`);  // 提交任务
+        await httpRequest('GET', `/online/cms-api/activity/queryActivityTaskRelationList`);  // 获取任务
+        await httpRequest('POST', `/online/cms-api/activity/receiveActivityTaskRewards`, `{"activityTaskId":"${$.activityTaskId}","activityTaskRelationId":"${$.activityTaskRelationId}"}`);  // 领取奖励
       }
     }
     if (message) {
@@ -75,62 +87,153 @@ function GetCookie() {
   }
 }
 
-// 签到主函数
-function main() {
+
+function httpRequest(method, url, body = '') {
+  console.log(`🎈 请求接口: ${url}`);
+  return new Promise(resolve => {
+    switch (method) {
+      case 'POST':
+        $.post(options(method, url, body), (err, resp, data) => {
+          try {
+            if (err) {
+              $.log(err);
+            } else {
+              if (data) {
+                debug(data);
+                const result = JSON.parse(data);
+                let taskName = '';
+                switch (url) {
+                  case '/online/cms-api/activity/receiveActivityTask':
+                    taskName = "领取任务";
+                    break;
+                  case '/online/cms-api/activity/submitCompleteActivityTask':
+                    taskName = "提交任务";
+                    break;
+                  case '/online/cms-api/activity/receiveActivityTaskRewards':
+                    taskName = "领取奖励";
+                    break;
+                }
+                if (result?.responseCode == "0") {
+                  console.log(`${taskName}: ${result['message']}`);
+                } else {
+                  console.log(`${taskName}失败: ${$.toStr(result)}`);
+                }
+              } else {
+                $.log("服务器返回了空数据");
+              }
+            }
+          } catch (error) {
+            $.log(error);
+          } finally {
+            resolve();
+          }
+        })
+        break;
+      case 'GET':
+        $.get(options(method, url, body), (err, resp, data) => {
+          try {
+            if (err) {
+              $.log(err);
+            } else {
+              if (data) {
+                debug(data);
+                const result = JSON.parse(data);
+                switch (url) {
+                  case '/online/cms-api/sign/userSign':
+                    let text = '';
+                    data = JSON.parse(data);
+                    // console.log(data);
+                    if (data.responseCode === '0') {
+                      $.mobile = data.data.signInfo.mobile;  // 手机号
+                      // $.accountId = data.data.signInfo.accountId;  // 用户ID
+                      $.signInStatus = data.data.signInfo.signInStatus === 1 ? '🎉 签到成功' : "❌ 签到失败";  // 签到状态：1=是 0=否
+                      $.changeIntegeral = data.data.signInfo.changeIntegeral;  // 积分变动
+                      $.continousSignDays = data.data.signInfo.continousSignDays;  // 连续签到天数
+                      $.currentIntegral = data.data.signInfo.currentIntegral + $.changeIntegeral;  // 当前积分
+
+                      text = `\n账号 ${$.mobile}\n${$.signInStatus}, ${$.changeIntegeral > 0 ? `积分 +${$.changeIntegeral}, ` : ''}连续签到 ${$.continousSignDays} 天, 积分余额 ${$.currentIntegral}`;
+                    } else if (data.responseCode === '402') {
+                      $.signInStatus = data.message;
+                      text = $.signInStatus;
+                    } else {
+                      $.signInStatus = "❌ 签到失败";
+                      text = $.signInStatus;
+                      console.log(data);
+                    }
+                    message += text;
+                    console.log(`每日签到: ${$.signInStatus}`);
+                    break;
+                  case '/online/cms-api/activity/queryActivityTaskRelationList':
+                    let taskList = result.data.activityTaskRelations;
+                    for (const item of taskList) {
+                      const { activityTaskId, activityTaskRelationId, activityTaskName, activityTaskType, activityTaskDesc, taskProcessStatus, activityTaskSort, taskContentNum, taskRewardType, taskRewardTypeName, taskRewardValue, taskJumpAddressType, taskJumpAddressDesc, taskEventButton, taskFinishNum, successRewardDesc } = item;
+                      if (taskRewardTypeName == "积分") {
+                        $.activityTaskId = activityTaskId;
+                        // if (!activityTaskRelationId) console.log(`\n活动名称: ${activityTaskName}\n活动说明: ${activityTaskDesc}\n活动奖励: ${taskRewardValue} ${taskRewardTypeName}`);
+                        if (taskProcessStatus == "NOT_COMPLETED") {
+                          $.taskContentNum = taskContentNum;
+                          console.log(`活动名称: ${activityTaskName}\n活动说明: ${activityTaskDesc}\n活动奖励: ${taskRewardValue} ${taskRewardTypeName}`);
+                        } else {
+                          $.activityTaskRelationId = activityTaskRelationId;
+                          console.log(`完成任务: ${$.activityTaskRelationId}`);
+                        }
+                        break;
+                      }
+                      // console.log(item);
+                    }
+                    break;
+                }
+              } else {
+                $.log("服务器返回了空数据");
+              }
+            }
+          } catch (error) {
+            $.log(error);
+          } finally {
+            resolve();
+          }
+        })
+        break;
+    }
+  })
+}
+
+
+function options(method, url, body) {
   let opt = {
-    url: `https://apis.folidaymall.com/online/cms-api/sign/userSign`,
+    url: `${origin}${url}`,
     headers: {
-      'Accept-Encoding': `gzip, deflate, br`,
-      'Origin': `https://hotels.folidaymall.com`,
-      'Connection': `keep-alive`,
       'Accept': `*/*`,
-      'Referer': `https://hotels.folidaymall.com/`,
+      'Origin': `https://hotels.folidaymall.com`,
+      'Accept-Encoding': `gzip, deflate, br`,
+      'Content-Type': `application/json;charset=utf-8`,
+      'Connection': `keep-alive`,
       'Host': `apis.folidaymall.com`,
       'User-Agent': `Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.32(0x1800202c) NetType/WIFI Language/zh_CN miniProgram/wx1fa4da2889526a37`,
       'Authorization': cookie,
-      'Accept-Language': `zh-CN,zh-Hans;q=0.9`
+      'Accept-Language': `zh-CN,zh-Hans;q=0.9`,
+      'Referer': `https://hotels.folidaymall.com/`
+    },
+    body,
+    timeout: 10000
+  }
+  if (method == 'GET') delete opt.body;
+  debug(opt);
+  return opt;
+}
+
+
+// DEBUG
+function debug(content) {
+  let start = '\n------- debug ------\n';
+  let end = `\n----- ${$.time('HH:mm:ss')} -----\n`;
+  if ($.is_debug === 'true') {
+    if (typeof content == "string") {
+      console.log(start + content + end);
+    } else if (typeof content == "object") {
+      console.log(start + $.toStr(content) + end);
     }
   }
-  return new Promise(resolve => {
-    // console.log(opt);
-    $.get(opt, (err, resp, data) => {
-      try {
-        if (err) {
-          $.log(err);
-        } else {
-          if (data) {
-            let text = '';
-            data = JSON.parse(data);
-            // console.log(data);
-            if (data.responseCode === '0') {
-              $.mobile = data.data.signInfo.mobile;  // 手机号
-              // $.accountId = data.data.signInfo.accountId;  // 用户ID
-              $.signInStatus = data.data.signInfo.signInStatus === 1 ? '🎉 签到成功' : "❌ 签到失败";  // 签到状态：1=是 0=否
-              $.changeIntegeral = data.data.signInfo.changeIntegeral;  // 积分变动
-              $.continousSignDays = data.data.signInfo.continousSignDays;  // 连续签到天数
-              $.currentIntegral = data.data.signInfo.currentIntegral + $.changeIntegeral;  // 当前积分
-
-              text = `账号 ${$.mobile}\n${$.signInStatus}, ${$.changeIntegeral > 0 ? `积分+${$.changeIntegeral}, ` : ''}连续签到 ${$.continousSignDays} 天, 积分余额 ${$.currentIntegral}\n\n`;
-              message += text;
-            } else if (data.responseCode === '402') {
-              text = data.message;
-              message += text;
-            } else {
-              console.log(data);
-              message += '❌ 请求出错了~';
-            }
-            console.log(text);
-          } else {
-            $.log("服务器返回了空数据");
-          }
-        }
-      } catch (error) {
-        $.log(error);
-      } finally {
-        resolve();
-      }
-    })
-  })
 }
 
 // prettier-ignore
