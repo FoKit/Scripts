@@ -54,10 +54,11 @@ if (isGetCookie = typeof $request !== `undefined`) {
         $.activityTaskId = '';
         $.activityTaskRelationId = '';
         $.taskContentNum = 0;
+        $.notCompleted = true;
         console.log(`\n账号 ${$.index} 开始执行\n`);
         await httpRequest('GET', `/online/cms-api/sign/userSign`);  // 每日签到
         await httpRequest('GET', `/online/cms-api/activity/queryActivityTaskRelationList`);  // 获取任务
-        if (!$.activityTaskId) continue;
+        if (!$.activityTaskId || !$.notCompleted) continue;
         await httpRequest('POST', `/online/cms-api/activity/receiveActivityTask`, `{"activityTaskId":"${$.activityTaskId}"}`);  // 领取任务
         await $.wait(1000 * $.taskContentNum);  // 等待任务
         await httpRequest('POST', `/online/cms-api/activity/submitCompleteActivityTask`, `{"activityTaskId":"${$.activityTaskId}"}`);  // 提交任务
@@ -149,7 +150,7 @@ function httpRequest(method, url, body = '') {
                       $.continousSignDays = result.data.signInfo.continousSignDays;  // 连续签到天数
                       $.currentIntegral = result.data.signInfo.currentIntegral + $.changeIntegeral;  // 当前积分
 
-                      text = `\n账号 ${$.mobile}\n${$.signInStatus}, ${$.changeIntegeral > 0 ? `积分 +${$.changeIntegeral}, ` : ''}连续签到 ${$.continousSignDays} 天, 积分余额 ${$.currentIntegral}`;
+                      text = `账号 ${$.mobile}\n${$.signInStatus}, ${$.changeIntegeral > 0 ? `积分 +${$.changeIntegeral}, ` : ''}连续签到 ${$.continousSignDays} 天, 积分余额 ${$.currentIntegral}\n`;
                     } else if (result?.responseCode === '402') {
                       $.signInStatus = result.message;
                       text = $.signInStatus;
@@ -172,6 +173,7 @@ function httpRequest(method, url, body = '') {
                           $.taskContentNum = taskContentNum;
                           console.log(`活动名称: ${activityTaskName}\n活动说明: ${activityTaskDesc}\n活动奖励: ${taskRewardValue} ${taskRewardTypeName}`);
                         } else {
+                          $.notCompleted = false;
                           $.activityTaskRelationId = activityTaskRelationId;
                           console.log(`完成任务: ${$.activityTaskRelationId}`);
                         }
