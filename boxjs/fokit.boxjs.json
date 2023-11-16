@@ -144,14 +144,22 @@
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/debug.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/debug.png"
       ],
-      "keys": ["is_debug"],
+      "keys": ["is_debug", "bark_key"],
       "settings": [
         {
           "id": "is_debug",
           "name": "Debug",
           "val": false,
           "type": "boolean",
-          "desc": ""
+          "desc": "自用"
+        },
+        {
+          "id": "bark_key",
+          "name": "Bark key",
+          "val": "",
+          "type": "text",
+          "placeholder": "",
+          "desc": "自用"
         }
       ]
     },
