@@ -108,7 +108,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
         await main();  // 每日签到
         if (!$.isLogin) {
           let msg = `❌ Cookie 已失效，请重新获取。\n`;
-          if (bark_key) await barkNotice($.name, `账号[${$.index}]\n${msg}`);  // 当 Cookie 失效时，通过 Bark App 推送通知。
+          if (bark_key) await barkNotice($.name, `账号[${$.index}] ${msg}`);  // 当 Cookie 失效时，通过 Bark App 推送通知。
           message += msg;
           console.log(msg);
           break;
@@ -412,7 +412,7 @@ async function partyExchange() {
 // Bark 通知
 async function barkNotice(title, content) {
   let opt = {
-    url: `https://api.day.app/${bark_key}/${encodeURIComponent(title)}/${encodeURIComponent(content)}`,
+    url: `https://api.day.app/${bark_key}/${encodeURIComponent(title)}/${encodeURIComponent(content.replace(/\n+$/, ''))}`,
     headers: {
       'Content-Type': `application/x-www-form-urlencoded`
     }
