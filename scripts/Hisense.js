@@ -424,7 +424,7 @@ async function barkNotice(title, content) {
         err && $.log(err);
         debug(data);
         let result = JSON.parse(data);
-        if (result?.conde == 200) {
+        if (result?.code == 200) {
           console.log(`🎉 bark 推送成功`);
         } else {
           console.log(`❌ bark 推送失败`);
