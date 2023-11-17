@@ -412,7 +412,7 @@ async function partyExchange() {
 // Bark 通知
 async function barkNotice(title, content) {
   let opt = {
-    url: `https://api.day.app/${bark_key}/${title}/${content}`,
+    url: `https://api.day.app/${bark_key}/${encodeURIComponent(title)}/${encodeURIComponent(content)}`,
     headers: {
       'Content-Type': `application/x-www-form-urlencoded`
     }
