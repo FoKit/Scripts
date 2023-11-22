@@ -16,7 +16,7 @@ https://raw.githubusercontent.com/FoKit/Scripts/main/rewrite/geocaching_translat
 hostname = api.groundspeak.com
 
 [Script]
-Geocaching 翻译 = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+?&skip=0&take=20,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js
+Geocaching 翻译 = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+?&skip=\d+&take=20,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js
 
 ------------------ Loon 配置 ------------------
 
@@ -24,7 +24,7 @@ Geocaching 翻译 = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\
 hostname = api.groundspeak.com
 
 [Script]
-http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+?&skip=0&take=20 tag=Geocaching 翻译, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js,requires-body=1
+http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20 tag=Geocaching 翻译, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js,requires-body=1
 
 -------------- Quantumult X 配置 --------------
 
@@ -32,7 +32,7 @@ http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geoc
 hostname = api.groundspeak.com
 
 [rewrite_local]
-^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+?&skip=0&take=20 url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js
+^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20 url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js
 
 ------------------ Stash 配置 -----------------
 
@@ -40,7 +40,7 @@ http:
   mitm:
     - "api.groundspeak.com"
   script:
-    - match: ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+?&skip=0&take=20
+    - match: ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+?&skip=\d+&take=20
       name: Geocaching 翻译
       type: response
       require-body: true
