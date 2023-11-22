@@ -850,6 +850,34 @@
           "desc": "多账户用 @ 隔开"
         }
       ]
+    },
+    {
+      "id": "Geocaching",
+      "name": "Geocaching",
+      "author": "@FoKit",
+      "script": "",
+      "descs_html": ["用于自动翻译 Geocaching log。"],
+      "icons": [
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/geocaching.png",
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/geocaching.png"
+      ],
+      "keys": ["BaiDu_APP_ID", "BaiDu_SECURITY_KEY"],
+      "settings": [
+        {
+          "id": "BaiDu_APP_ID",
+          "name": "百度翻译 appid",
+          "val": "",
+          "type": "text",
+          "desc": ""
+        },
+        {
+          "id": "BaiDu_SECURITY_KEY",
+          "name": "百度翻译 securityKey",
+          "val": "",
+          "type": "text",
+          "desc": ""
+        }
+      ]
     }
   ]
 }
