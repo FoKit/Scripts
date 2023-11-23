@@ -113,7 +113,7 @@ async function translate_info() {
   }
   let _hints = await translateApi(hints);
   if (_hints) {
-    obj['longDescription'] = _hints + `\n--------------------------\n` + longDescription;
+    obj['hints'] = _hints + `\n--------------------------\n` + hints;
   }
   let _longDescription = await translateApi(longDescription);
   if (_longDescription) {
