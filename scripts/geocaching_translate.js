@@ -1,9 +1,9 @@
 /**
  * 脚本名称：Geocaching 翻译
- * 活动说明：用于自动翻译 Geocaching log。
+ * 活动说明：用于自动翻译 Geocaching log / describe
  * 脚本说明：配置重写和百度翻译 appid 和 securityKey 即可使用。
  * 仓库地址：https://github.com/FoKit/Scripts
- * 更新日期：2023-11-22
+ * 更新日期：2023-11-24
 /*
 --------------- BoxJS & 重写模块 --------------
 
@@ -16,7 +16,8 @@ https://raw.githubusercontent.com/FoKit/Scripts/main/rewrite/geocaching_translat
 hostname = api.groundspeak.com
 
 [Script]
-Geocaching 翻译 = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+?&skip=\d+&take=20,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js
+Geocaching logs = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js
+Geocaching info = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+$,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js
 
 ------------------ Loon 配置 ------------------
 
@@ -24,7 +25,8 @@ Geocaching 翻译 = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\
 hostname = api.groundspeak.com
 
 [Script]
-http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20 tag=Geocaching 翻译, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js,requires-body=1
+http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20 tag=Geocaching logs, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js,requires-body=1
+http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+$ tag=Geocaching info, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js,requires-body=1
 
 -------------- Quantumult X 配置 --------------
 
@@ -33,6 +35,7 @@ hostname = api.groundspeak.com
 
 [rewrite_local]
 ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20 url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js
+^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+$ url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js
 
 ------------------ Stash 配置 -----------------
 
@@ -40,8 +43,12 @@ http:
   mitm:
     - "api.groundspeak.com"
   script:
-    - match: ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+?&skip=\d+&take=20
-      name: Geocaching 翻译
+    - match: ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20
+      name: Geocaching logs
+      type: response
+      require-body: true
+    - match: ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+$
+      name: Geocaching info
       type: response
       require-body: true
 
@@ -65,24 +72,13 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     $.msg($.name, '', `❌ 未配置百度翻译 appid / securityKey, 跳出。`);
     return
   }
-  let textArr = obj.data.map(item => `${item.text.replace(/\r\n/g, "===").replace(/\n/g, "---").replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, "")}`);
-  // console.log(text);
-  $.log(`\n需要翻译的 logs 数量: ${textArr.length}\n`);
-  for (let i = 0; i < textArr.length; i++) {
-    $.log(`🌏 翻译第[${i + 1}]条`);
-    let text = await translateApi(textArr[i]);
-    await $.wait(50);
-    if (text && text != textArr[i]) {
-      text = text.replace(/\-\-\-/g, `\n`).replace(/\=\=\=/g, `\r\n`);
-      obj['data'][i]['text'] = text + `\n--------------------------------------------------\n原文:\n${obj['data'][i]['text']}`;
-      success_num += 1;
-      $.log(`🎉 翻译成功`);
-    } else {
-      $.log(`⚠️ 翻译失败 / 无需翻译: ${textArr[i]}`);
-    }
+  if ($request && /geocachelogs/.test($request.url)) {
+    await translate_log();
+  } else {
+    await translate_info();
   }
   const costTime = (new Date().getTime() - startTime) / 1000;
-  $.msg($.name, '', `🎉 成功翻译 ${success_num} 条 logs, 耗时 ${costTime} 秒`);
+  $.msg($.name, '', `成功翻译 ${success_num} 次, 用时 ${costTime} 秒 🎉`);
   debug(obj, "翻译结果");
   $done({ body: JSON.stringify(obj) });
 })()
@@ -93,9 +89,38 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     $.done();
   })
 
+// 翻译 logs
+async function translate_log() {
+  let textArr = obj.data.map(item => `${item.text}`);
+  // console.log(text);
+  $.log(`\n需要翻译的 logs 数量: ${textArr.length}\n`);
+  for (let i = 0; i < textArr.length; i++) {
+    $.log(`🌏 翻译第[${i + 1}]条`);
+    let result = await translateApi(textArr[i]);
+    if (result) {
+      obj['data'][i]['text'] = text + `\n--------------------------------------------------\n原文:\n${obj['data'][i]['text']}`;
+    }
+    await $.wait(50);
+  }
+}
+
+// 翻译 info
+async function translate_info() {
+  let { name, longDescription } = obj;
+  let _a = await translateApi(name);
+  if (_a) {
+    obj['name'] = _a + `-----` + name;
+  }
+  let _b = await translateApi(longDescription);
+  if (_b) {
+    obj['longDescription'] = _b + `-----` + longDescription;
+  }
+}
+
 // 翻译接口
 async function translateApi(query) {
   const salt = Date.now();
+  query = query.replace(/\r\n/g, "===").replace(/\n/g, "---").replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, "");
   const queryObj = {
     q: query,
     from: "auto",
@@ -122,7 +147,14 @@ async function translateApi(query) {
           try {
             let result = JSON.parse(data);
             let dst = result.trans_result[0]['dst'];
-            resolve(dst);
+            if (dst && dst != query) {
+              text = text.replace(/\-\-\-/g, `\n`).replace(/\=\=\=/g, `\r\n`);
+              resolve(text);
+              success_num += 1;
+              $.log(`🎉 翻译成功`);
+            } else {
+              $.log(`⚠️ 翻译失败 / 无需翻译: ${query}`);
+            }
           } catch (e) {
             $.log(e);
           };

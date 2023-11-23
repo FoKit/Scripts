@@ -1,8 +1,9 @@
 #!name=Geocaching 翻译
-#!desc=用于自动翻译 Geocaching log
+#!desc=用于自动翻译 Geocaching log / describe
 
 [MITM]
 hostname = %APPEND% api.groundspeak.com
 
 [Script]
-Geocaching 翻译 = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+?&skip=\d+&take=20,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js
+Geocaching logs = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js
+Geocaching info = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+$,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js
