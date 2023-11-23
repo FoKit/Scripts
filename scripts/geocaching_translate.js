@@ -17,7 +17,7 @@ hostname = api.groundspeak.com
 
 [Script]
 Geocaching logs = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js
-Geocaching info = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z|0-9]{6,}$,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js
+Geocaching info = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{6,}$,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js
 
 ------------------ Loon 配置 ------------------
 
@@ -26,7 +26,7 @@ hostname = api.groundspeak.com
 
 [Script]
 http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20 tag=Geocaching logs, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js,requires-body=1
-http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z|0-9]{6,}$ tag=Geocaching info, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js,requires-body=1
+http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{6,}$ tag=Geocaching info, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js,requires-body=1
 
 -------------- Quantumult X 配置 --------------
 
@@ -35,7 +35,7 @@ hostname = api.groundspeak.com
 
 [rewrite_local]
 ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20 url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js
-^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z|0-9]{6,}$ url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js
+^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{6,}$ url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_translate.js
 
 ------------------ Stash 配置 -----------------
 
@@ -47,7 +47,7 @@ http:
       name: Geocaching logs
       type: response
       require-body: true
-    - match: ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z|0-9]{6,}$
+    - match: ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{6,}$
       name: Geocaching info
       type: response
       require-body: true
