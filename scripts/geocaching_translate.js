@@ -106,14 +106,18 @@ async function translate_log() {
 
 // 翻译 info
 async function translate_info() {
-  let { name, longDescription } = obj;
-  let _a = await translateApi(name);
-  if (_a) {
-    obj['name'] = _a + `-----` + name;
+  let { name, hints, longDescription } = obj;
+  let _name = await translateApi(name);
+  if (_name) {
+    obj['name'] = _name + ` · ` + name;
   }
-  let _b = await translateApi(longDescription);
-  if (_b) {
-    obj['longDescription'] = _b + `-----` + longDescription;
+  let _hints = await translateApi(hints);
+  if (_hints) {
+    obj['longDescription'] = _hints + `\n--------------------------\n` + longDescription;
+  }
+  let _longDescription = await translateApi(longDescription);
+  if (_longDescription) {
+    obj['longDescription'] = _longDescription + `\n--------------------------------------------------\n原文:\n ` + longDescription;
   }
 }
 
