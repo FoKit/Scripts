@@ -117,7 +117,7 @@ async function translate_cache() {
   }
   let _longDescription = await translateApi(longDescription);
   if (_longDescription) {
-    obj['longDescription'] = _longDescription + `\r\n----------------------------------------------------------\r\n` + longDescription;
+    obj['longDescription'] = _longDescription + `\r\n----------------------------------------------------------\r\n\r\n` + longDescription;
   }
 }
 
@@ -152,7 +152,7 @@ async function translateApi(query) {
             let result = JSON.parse(data);
             let dst = result.trans_result[0]['dst'];
             if (dst && dst != query) {
-              dst = dst.replace(/\-\-\-/g, `\n`).replace(/\=\=\=/g, `\r\n`);
+              dst = dst.replace(/---/g, `\n`).replace(/===/g, `\r\n`);
               resolve(dst);
               success_num += 1;
               $.log(`🎉 翻译成功`);
