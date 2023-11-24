@@ -75,7 +75,7 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
   if ($request && /geocachelogs/.test($request.url)) {
     await translate_log();
   } else {
-    await translate_info();
+    await translate_cache();
   }
   const costTime = (new Date().getTime() - startTime) / 1000;
   $.msg($.name, '', `成功翻译 ${success_num} 次, 用时 ${costTime} 秒 🎉`);
@@ -104,8 +104,8 @@ async function translate_log() {
   }
 }
 
-// 翻译 info
-async function translate_info() {
+// 翻译 cache
+async function translate_cache() {
   let { name, hints, longDescription } = obj;
   let _name = await translateApi(name);
   if (_name) {
@@ -117,7 +117,7 @@ async function translate_info() {
   }
   let _longDescription = await translateApi(longDescription);
   if (_longDescription) {
-    obj['longDescription'] = _longDescription + `\n--------------------------------------------------\r\n原文:\n ` + longDescription;
+    obj['longDescription'] = _longDescription + `\r\n----------------------------------------------------------\r\n` + longDescription;
   }
 }
 
