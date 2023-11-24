@@ -117,7 +117,7 @@ async function translate_info() {
   }
   let _longDescription = await translateApi(longDescription);
   if (_longDescription) {
-    obj['longDescription'] = _longDescription + `\n--------------------------------------------------\n原文:\n ` + longDescription;
+    obj['longDescription'] = _longDescription + `\n--------------------------------------------------\r\n原文:\n ` + longDescription;
   }
 }
 
