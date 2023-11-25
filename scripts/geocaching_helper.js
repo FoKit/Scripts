@@ -88,7 +88,7 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     await translate_logs();
   } else {
     // 翻译标题、提示和描述
-    await translate_info();
+    await translate_cache();
   }
   // 执行耗时
   const costTime = (new Date().getTime() - startTime) / 1000;
@@ -108,7 +108,7 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
 async function translate_logs() {
   let textArr = obj.data.map(item => `${item.text}`);
   // console.log(text);
-  $.log(`\n需要翻译的 logs 数量: ${textArr.length}\n`);
+  $.log(`\n🌏 翻译 logs 数量: ${textArr.length}\n`);
   for (let i = 0; i < textArr.length; i++) {
     $.log(`🌏 翻译第[${i + 1}]条`);
     let result = await translateApi(textArr[i]);
@@ -120,7 +120,8 @@ async function translate_logs() {
 }
 
 // 翻译 info
-async function translate_info() {
+async function translate_cache() {
+  $.log("🌏 开始翻译 cache");
   let { name, hints, longDescription } = obj;
   let _name = await translateApi(name);
   if (_name) {
@@ -191,7 +192,9 @@ async function translateApi(query) {
 
 // // GPS 坐标转换 WGS-84 -> GCJ-02
 async function gps_convert() {
+  $.log("🔁 开始转换坐标")
   let coordinatesArr = obj.geocaches.map(item => `${item.postedCoordinates}`);
+  debug(coordinatesArr, "coordinatesArr")
   for (let i = 0; i < coordinatesArr.length; i++) {
     let { latitude, longitude } = coordinatesArr[i];
     let result = GPS.gcj_encrypt(latitude, longitude);
