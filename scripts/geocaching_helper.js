@@ -8,7 +8,7 @@
 --------------- BoxJS & 重写模块 --------------
 
 https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
-https://raw.githubusercontent.com/FoKit/Scripts/main/rewrite/geocaching_translate.sgmodule
+https://raw.githubusercontent.com/FoKit/Scripts/main/rewrite/geocaching_helper.sgmodule
 
 ------------------ Surge 配置 -----------------
 
