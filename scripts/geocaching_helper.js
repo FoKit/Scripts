@@ -70,7 +70,7 @@ const $ = new Env('Geocaching 翻译');
 let appid = $.getdata('BaiDu_APP_ID') || '';  // 百度翻译 appid
 let securityKey = $.getdata('BaiDu_SECURITY_KEY') || '';  // 百度翻译 securityKey
 let startTime = new Date().getTime();
-let success_num, gps_convert_num = 0;
+let success_num = 0, gps_convert_num = 0;
 let obj = JSON.parse($response.body);
 $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false';
 
