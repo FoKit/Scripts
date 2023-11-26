@@ -66,7 +66,7 @@ script-providers:
 
 */
 
-const $ = new Env('Geocaching 翻译');
+const $ = new Env('Geocaching  helper');
 let appid = $.getdata('BaiDu_APP_ID') || '';  // 百度翻译 appid
 let securityKey = $.getdata('BaiDu_SECURITY_KEY') || '';  // 百度翻译 securityKey
 let startTime = new Date().getTime();
