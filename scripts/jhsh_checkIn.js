@@ -400,13 +400,14 @@ function hideSensitiveData(string, head_length = 2, foot_length = 2) {
 
 
 // DEBUG
-function debug(content) {
-  let text = '\n----- debug -----\n';
+function debug(content, title = "debug") {
+  let start = `\n----- ${title} -----\n`;
+  let end = `\n----- ${$.time('HH:mm:ss')} -----\n`;
   if ($.is_debug === 'true') {
     if (typeof content == "string") {
-      console.log(text + content + text);
+      console.log(start + content + end);
     } else if (typeof content == "object") {
-      console.log(text + $.toStr(content) + text);
+      console.log(start + $.toStr(content) + end);
     }
   }
 }
