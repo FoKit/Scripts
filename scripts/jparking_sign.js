@@ -146,7 +146,7 @@ function GetCookie() {
 
 // 签到
 async function receive(taskNo, taskName) {
-  let result = await httpRequest(options(Api.receive.url, `{ "userId": "${$.userId}", "reqSource": "APP_JTC", "taskNo": "${taskNo}" } `));
+  let result = await httpRequest(options(Api.receive.url, `{"userId":"${$.userId}","reqSource":"APP_JTC","taskNo":"${taskNo}"}`));
   debug(result, "receive");
   if (result.success) {
     $.result += `${taskName} 完成, 获得 ${result.data} 停车币\n`;
@@ -158,7 +158,7 @@ async function receive(taskNo, taskName) {
 
 // 浏览
 async function browse() {
-  let result = await httpRequest(options(Api.complete.url, `{ "userId": "${$.userId}", "reqSource": "APP_JTC", "taskNo": "T01" } `));
+  let result = await httpRequest(options(Api.complete.url, `{"userId":"${$.userId}","reqSource":"APP_JTC","taskNo": "T01"}`));
   debug(result, "browse");
   if (result.success) {
     console.log(`🎉 浏览任务完成, 可领取${result.data.integralValue} 停车币`);
@@ -190,7 +190,7 @@ async function checkEnv() {
   // 检测账号数量
   if (userIdArr[0]) {
     // 账号数量大于1时，返回 true
-    return console.log(`\n共找到${userIdArr.length} 个账号\n`), true;
+    return console.log(`\n共找到 ${userIdArr.length} 个账号\n`), true;
   }
   return;
 }
@@ -219,7 +219,7 @@ async function sendMsg(message) {
 // 封装请求参数
 function options(url, body = '') {
   let opt = {
-    url: `${origin}${url} `,
+    url: `${origin}${url}`,
     headers: {
       "Host": "sytgate.jslife.com.cn",
       "Content-Type": "application/json;charset=utf-8",
@@ -234,6 +234,7 @@ function options(url, body = '') {
     timeout: 10000
   }
   if (body == '') delete opt.body;
+  debug(opt);
   return opt;
 }
 
