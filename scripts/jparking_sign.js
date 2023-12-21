@@ -149,7 +149,7 @@ async function receive(taskNo, taskName) {
   let result = await httpRequest(options(Api.receive.url, `{"userId":"${$.userId}","reqSource":"APP_JTC","taskNo":"${taskNo}"}`));
   debug(result, "receive");
   if (result.success) {
-    $.result += `${taskName} 完成, 获得 ${result.data} 停车币\n`;
+    $.result += `${taskName}完成, 获得 ${result.data} 停车币\n`;
   } else {
     $.result += `${result.message} \n`;
   }
@@ -160,11 +160,12 @@ async function receive(taskNo, taskName) {
 async function browse() {
   let result = await httpRequest(options(Api.complete.url, `{"userId":"${$.userId}","reqSource":"APP_JTC","taskNo": "T01"}`));
   debug(result, "browse");
-  if (result.success) {
-    console.log(`🎉 浏览任务完成, 可领取${result.data.integralValue} 停车币`);
-  } else {
+  if (!result.success) {
     console.log(`❌ 浏览任务出错: `, result);
   }
+  // else {
+  //   console.log(`🎉 浏览任务完成, 可领取 ${result.data.integralValue} 停车币`);
+  // }
 }
 
 
