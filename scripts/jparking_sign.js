@@ -170,6 +170,7 @@ async function browse() {
   debug(result, "browse");
   if (!result.success) {
     console.log(`❌ 浏览任务出错: `, result);
+    delete taskMap['T01'];
   }
   // else {
   //   console.log(`🎉 浏览任务完成, 可领取 ${result.data.integralValue} 停车币`);
