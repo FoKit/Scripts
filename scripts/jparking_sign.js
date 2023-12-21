@@ -54,12 +54,15 @@ let userId = ($.isNode() ? process.env.jtc_userId : $.getdata(jtc_userId_key)) |
 
 // 统一管理 api 接口
 const Api = {
+  // 领取奖励
   "receive": {
     "url": "/base-gateway/integral/v2/task/receive",
   },
+  // 执行任务
   "complete": {
     "url": "/base-gateway/integral/v2/task/complete",
   },
+  // 个人信息
   "query": {
     "url": "/base-gateway/member/queryMbrCityBaseInfo",
   }
@@ -67,15 +70,20 @@ const Api = {
 
 // 主执行程序
 !(async () => {
+  // 检查变量
+  await checkEnv();
   // 获取 Cookie
   if (isGetCookie = typeof $request !== 'undefined') {
     GetCookie();
     return;
   }
-  // 未检测到 userId, 退出
-  if (!(await checkEnv())) { throw new Error(`❌未获取到 userId, 请添加环境变量`) };
-  // 执行任务
-  if (userIdArr.length > 0) await main();
+  // 未检测到账号变量, 退出
+  if (!userIdArr[0]) {
+    throw new Error(`❌ 未获取到 userId, 请添加环境变量`);
+  } else {
+    // 执行任务
+    await main();
+  }
 })()
   .catch((e) => $.messages.push(e.message || e))  // 捕获登录函数等抛出的异常, 并把原因添加到全局变量(通知)
   .finally(async () => {
@@ -158,7 +166,7 @@ async function receive(taskNo, taskName) {
 
 // 浏览
 async function browse() {
-  let result = await httpRequest(options(Api.complete.url, `{"userId":"${$.userId}","reqSource":"APP_JTC","taskNo": "T01"}`));
+  let result = await httpRequest(options(Api.complete.url, `{"userId":"${$.userId}","reqSource":"APP_JTC","taskNo":"T01"}`));
   debug(result, "browse");
   if (!result.success) {
     console.log(`❌ 浏览任务出错: `, result);
@@ -171,7 +179,7 @@ async function browse() {
 
 // 用户信息
 async function getUserInfo() {
-  let result = await httpRequest(options(Api.query.url, `{ "userId": "${$.userId}", "reqSource": "APP_JTC" } `));
+  let result = await httpRequest(options(Api.query.url, `{"userId":"${$.userId}","reqSource":"APP_JTC"}`));
   debug(result, "getUserInfo");
   if (result.code == '0') {
     $.mobile = result.data.mobile;
@@ -188,12 +196,14 @@ async function getUserInfo() {
 async function checkEnv() {
   // 多账号分割
   userIdArr = userId.split('@');
-  // 检测账号数量
+  // 当下标0为空字符串也会占用长度，所以需判断是否为空字符串
   if (userIdArr[0]) {
-    // 账号数量大于1时，返回 true
-    return console.log(`\n共找到 ${userIdArr.length} 个账号\n`), true;
+    console.log(`\n检测到 ${userIdArr.length} 个账号变量\n`);
+    return userIdArr.length;
+  } else {
+    console.log(`\n检测到 0 个账号变量\n`);
+    return 0;
   }
-  return;
 }
 
 
