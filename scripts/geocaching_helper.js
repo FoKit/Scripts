@@ -173,7 +173,7 @@ async function translate_cache() {
   }
 
   // 把 cache 的信息缓存下来，用作通知调用
-  $.setjson({ name: _name, hints: _hints, longDescription: _longDescription.replace(/<\/?\w+\s?\/?>/gm, '').replace(/\\r\\n/gm, '\n') }, 'geocaching_temp');
+  $.setjson({ name: _name ?? name, hints: _hints ?? hints, longDescription: _longDescription.replace(/<.+?>/gm, '').replace(/\\r\\n/gm, '\n') ?? longDescription }, 'geocaching_temp');
 }
 
 // 翻译接口
