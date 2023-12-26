@@ -2,7 +2,9 @@
  * 脚本名称：Geocaching 助手
  * 活动说明：用于修正 Geocaching 的 GPS 坐标和翻译 Geocaching log / describe
  * 脚本说明：配置重写和百度翻译 appid 和 securityKey 即可使用。
+ * BoxJs ：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
  * 仓库地址：https://github.com/FoKit/Scripts
+ * 更新日期：2023-12-27 修复单个 cache 详情页 GPS 坐标偏移问题
  * 更新日期：2023-11-26
 /*
 --------------- BoxJS & 重写模块 --------------
@@ -72,45 +74,69 @@ let securityKey = $.getdata('BaiDu_SECURITY_KEY') || '';  // 百度翻译 securi
 let startTime = new Date().getTime();
 let success_num = 0, gps_convert_num = 0;
 let obj = JSON.parse($response.body);
+var GPS = gps_convert();
 $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false';
 
 !(async () => {
-  if ($request && (!appid || !securityKey)) {
-    $.msg($.name, '', `❌ 未配置百度翻译 appid / securityKey, 跳出。`);
-    return
-  }
+  if (!$request) return $.msg($.name, '', `❌ 非 cron 类脚本，停止执行`);
   if (/map\/search\?adventuresTake/.test($request.url)) {
-    // GPS 坐标转换 WGS-84 -> GCJ-02
-    await gps_convert();
+    $.log("🔁 开始转换坐标");
+    // 通过 map 方法创建一个新数组，用于遍历转换坐标
+    let coordinatesArr = obj.geocaches.map(item => item.postedCoordinates);
+    for (let i = 0; i < coordinatesArr.length; i++) {
+      // 提取经纬度变量
+      let { latitude, longitude } = coordinatesArr[i];
+      // GPS 坐标转换 WGS-84 -> GCJ-02
+      let result = GPS.gcj_encrypt(latitude, longitude);
+      debug(`🔁 ${latitude}, ${longitude} --> ${result.lat}, ${result.lon}`);
+      // 转换后重新赋值到 body 对象对应的 key
+      obj['geocaches'][i]['postedCoordinates']['latitude'] = result.lat;
+      obj['geocaches'][i]['postedCoordinates']['longitude'] = result.lon;
+      // 坐标转换数量 +1
+      gps_convert_num += 1;
+    }
+    $.log("✔️ 坐标转换完成");
     $.not_translate = true;
   } else if (/geocachelogs/.test($request.url)) {
     // 翻译 logs
     await translate_logs();
   } else {
-    // 翻译标题、提示和描述
+    // 翻译 cache
     await translate_cache();
+
+    // 此页面需要转换当前 cache 坐标，否则会导致定位偏移
+    $.log("🔁 开始转换坐标");
+    // 提取经纬度变量
+    let { latitude, longitude } = obj.postedCoordinates;
+    // GPS 坐标转换 WGS-84 -> GCJ-02
+    let result = GPS.gcj_encrypt(latitude, longitude);
+    debug(`🔁 ${latitude}, ${longitude} --> ${result.lat}, ${result.lon}`);
+    // 转换后重新赋值到 body 对象对应的 key
+    obj['postedCoordinates']['latitude'] = result.lat;
+    obj['postedCoordinates']['longitude'] = result.lon;
+    $.log("✔️ 坐标转换完成");
   }
-  // 执行耗时
-  const costTime = (new Date().getTime() - startTime) / 1000;
-  // 发送通知
-  if (!$.not_translate) {
-    debug(obj, "翻译结果");
-    $.msg($.name, '', `成功翻译 ${success_num} 次, 用时 ${costTime} 秒 🎉`);
-  } else {
-    $.msg($.name, '', `修正定位 ${gps_convert_num} 个, 用时 ${costTime} 秒 🎉`);
-  }
-  // 返回修改后的 body
-  $done({ body: JSON.stringify(obj) });
 })()
   .catch((e) => {
     $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
   })
   .finally(() => {
-    $.done();
+    // 执行耗时
+    const costTime = (new Date().getTime() - startTime) / 1000;
+    // 发送通知
+    if (!$.not_translate) {
+      debug(obj, "翻译结果");
+      $.msg($.name, '', `成功翻译 ${success_num} 次, 用时 ${costTime} 秒 🎉`);
+    } else {
+      $.msg($.name, '', `修正定位 ${gps_convert_num} 个, 用时 ${costTime} 秒 🎉`);
+    }
+    // 返回修改后的 body
+    $done({ body: JSON.stringify(obj) });
   })
 
 // 翻译 logs
 async function translate_logs() {
+  if (!appid || !securityKey) return $.log(`❌ 未配置百度翻译 appid / securityKey, 跳过翻译。`);
   let textArr = obj.data.map(item => `${item.text}`);
   // console.log(text);
   $.log(`\n🌏 翻译 logs 数量: ${textArr.length}\n`);
@@ -124,7 +150,7 @@ async function translate_logs() {
   }
 }
 
-// 翻译 info
+// 翻译 cache
 async function translate_cache() {
   $.log("🌏 开始翻译 cache");
   let { name, hints, longDescription } = obj;
@@ -195,22 +221,6 @@ async function translateApi(query) {
   })
 }
 
-// // GPS 坐标转换 WGS-84 -> GCJ-02
-async function gps_convert() {
-  $.log("🔁 开始转换坐标");
-  // GPS_Convert
-  var GPS = { PI: 3.141592653589793, x_pi: 52.35987755982988, delta: function (t, a) { var n = 6378245, h = .006693421622965943, i = this.transformLat(a - 105, t - 35), s = this.transformLon(a - 105, t - 35), r = t / 180 * this.PI, o = Math.sin(r); o = 1 - h * o * o; var M = Math.sqrt(o); return { lat: i = 180 * i / (n * (1 - h) / (o * M) * this.PI), lon: s = 180 * s / (n / M * Math.cos(r) * this.PI) } }, gcj_encrypt: function (t, a) { if (this.outOfChina(t, a)) return { lat: t, lon: a }; var n = this.delta(t, a); return { lat: t + n.lat, lon: a + n.lon } }, gcj_decrypt: function (t, a) { if (this.outOfChina(t, a)) return { lat: t, lon: a }; var n = this.delta(t, a); return { lat: t - n.lat, lon: a - n.lon } }, gcj_decrypt_exact: function (t, a) { for (var n, h, i = .01, s = .01, r = t - i, o = a - s, M = t + i, e = a + s, c = 0; ;) { n = (r + M) / 2, h = (o + e) / 2; var l = this.gcj_encrypt(n, h); if (i = l.lat - t, s = l.lon - a, Math.abs(i) < 1e-9 && Math.abs(s) < 1e-9) break; if (i > 0 ? M = n : r = n, s > 0 ? e = h : o = h, ++c > 1e4) break } return { lat: n, lon: h } }, bd_encrypt: function (t, a) { var n = a, h = t, i = Math.sqrt(n * n + h * h) + 2e-5 * Math.sin(h * this.x_pi), s = Math.atan2(h, n) + 3e-6 * Math.cos(n * this.x_pi); return bdLon = i * Math.cos(s) + .0065, bdLat = i * Math.sin(s) + .006, { lat: bdLat, lon: bdLon } }, bd_decrypt: function (t, a) { var n = a - .0065, h = t - .006, i = Math.sqrt(n * n + h * h) - 2e-5 * Math.sin(h * this.x_pi), s = Math.atan2(h, n) - 3e-6 * Math.cos(n * this.x_pi), r = i * Math.cos(s); return { lat: i * Math.sin(s), lon: r } }, mercator_encrypt: function (t, a) { var n = 20037508.34 * a / 180, h = Math.log(Math.tan((90 + t) * this.PI / 360)) / (this.PI / 180); return { lat: h = 20037508.34 * h / 180, lon: n } }, mercator_decrypt: function (t, a) { var n = a / 20037508.34 * 180, h = t / 20037508.34 * 180; return { lat: h = 180 / this.PI * (2 * Math.atan(Math.exp(h * this.PI / 180)) - this.PI / 2), lon: n } }, distance: function (t, a, n, h) { var i = Math.cos(t * this.PI / 180) * Math.cos(n * this.PI / 180) * Math.cos((a - h) * this.PI / 180) + Math.sin(t * this.PI / 180) * Math.sin(n * this.PI / 180); return i > 1 && (i = 1), i < -1 && (i = -1), 6371e3 * Math.acos(i) }, outOfChina: function (t, a) { return a < 72.004 || a > 137.8347 || (t < .8293 || t > 55.8271) }, transformLat: function (t, a) { var n = 2 * t - 100 + 3 * a + .2 * a * a + .1 * t * a + .2 * Math.sqrt(Math.abs(t)); return n += 2 * (20 * Math.sin(6 * t * this.PI) + 20 * Math.sin(2 * t * this.PI)) / 3, n += 2 * (20 * Math.sin(a * this.PI) + 40 * Math.sin(a / 3 * this.PI)) / 3, n += 2 * (160 * Math.sin(a / 12 * this.PI) + 320 * Math.sin(a * this.PI / 30)) / 3 }, transformLon: function (t, a) { var n = 300 + t + 2 * a + .1 * t * t + .1 * t * a + .1 * Math.sqrt(Math.abs(t)); return n += 2 * (20 * Math.sin(6 * t * this.PI) + 20 * Math.sin(2 * t * this.PI)) / 3, n += 2 * (20 * Math.sin(t * this.PI) + 40 * Math.sin(t / 3 * this.PI)) / 3, n += 2 * (150 * Math.sin(t / 12 * this.PI) + 300 * Math.sin(t / 30 * this.PI)) / 3 } };
-  let coordinatesArr = obj.geocaches.map(item => item.postedCoordinates);
-  for (let i = 0; i < coordinatesArr.length; i++) {
-    let { latitude, longitude } = coordinatesArr[i];
-    let result = GPS.gcj_encrypt(latitude, longitude);
-    debug(`🔁 ${latitude}, ${longitude} --> ${result.lat}, ${result.lon}`);
-    obj['geocaches'][i]['postedCoordinates']['latitude'] = result.lat;
-    obj['geocaches'][i]['postedCoordinates']['longitude'] = result.lon;
-    gps_convert_num += 1;
-  }
-  $.log("✔️ 转换完成");
-}
 
 // DEBUG
 function debug(content, title = "debug") {
@@ -223,6 +233,20 @@ function debug(content, title = "debug") {
       console.log(start + $.toStr(content) + end);
     }
   }
+}
+
+/** GPS 坐标转换
+ * WGS-84 to GCJ-02 ：gcj_encrypt(lat, lon)
+ * GCJ-02 to WGS-84 ：gcj_decrypt(lat, lon)
+ * GCJ-02 to WGS-84 exactly : gcj_decrypt_exact(lat, lon)
+ * WGS-84 to GCJ-02 to BD-09 : bd_encrypt(lat, lon)
+ * BD-09 to GCJ-02 to WGS-84 : bd_decrypt(lat, lon)
+ * WGS-84 to Web mercator : mercator_encrypt(lat, lon)
+ * Web mercator to WGS-84 : mercator_decrypt(lat, lon)
+ * @returns {lat, lon}
+ */
+function gps_convert() {
+  return { PI: 3.141592653589793, x_pi: 52.35987755982988, delta: function (t, a) { var n = 6378245, h = .006693421622965943, i = this.transformLat(a - 105, t - 35), s = this.transformLon(a - 105, t - 35), r = t / 180 * this.PI, o = Math.sin(r); o = 1 - h * o * o; var M = Math.sqrt(o); return { lat: i = 180 * i / (n * (1 - h) / (o * M) * this.PI), lon: s = 180 * s / (n / M * Math.cos(r) * this.PI) } }, gcj_encrypt: function (t, a) { if (this.outOfChina(t, a)) return { lat: t, lon: a }; var n = this.delta(t, a); return { lat: t + n.lat, lon: a + n.lon } }, gcj_decrypt: function (t, a) { if (this.outOfChina(t, a)) return { lat: t, lon: a }; var n = this.delta(t, a); return { lat: t - n.lat, lon: a - n.lon } }, gcj_decrypt_exact: function (t, a) { for (var n, h, i = .01, s = .01, r = t - i, o = a - s, M = t + i, e = a + s, c = 0; ;) { n = (r + M) / 2, h = (o + e) / 2; var l = this.gcj_encrypt(n, h); if (i = l.lat - t, s = l.lon - a, Math.abs(i) < 1e-9 && Math.abs(s) < 1e-9) break; if (i > 0 ? M = n : r = n, s > 0 ? e = h : o = h, ++c > 1e4) break } return { lat: n, lon: h } }, bd_encrypt: function (t, a) { var n = a, h = t, i = Math.sqrt(n * n + h * h) + 2e-5 * Math.sin(h * this.x_pi), s = Math.atan2(h, n) + 3e-6 * Math.cos(n * this.x_pi); return bdLon = i * Math.cos(s) + .0065, bdLat = i * Math.sin(s) + .006, { lat: bdLat, lon: bdLon } }, bd_decrypt: function (t, a) { var n = a - .0065, h = t - .006, i = Math.sqrt(n * n + h * h) - 2e-5 * Math.sin(h * this.x_pi), s = Math.atan2(h, n) - 3e-6 * Math.cos(n * this.x_pi), r = i * Math.cos(s); return { lat: i * Math.sin(s), lon: r } }, mercator_encrypt: function (t, a) { var n = 20037508.34 * a / 180, h = Math.log(Math.tan((90 + t) * this.PI / 360)) / (this.PI / 180); return { lat: h = 20037508.34 * h / 180, lon: n } }, mercator_decrypt: function (t, a) { var n = a / 20037508.34 * 180, h = t / 20037508.34 * 180; return { lat: h = 180 / this.PI * (2 * Math.atan(Math.exp(h * this.PI / 180)) - this.PI / 2), lon: n } }, distance: function (t, a, n, h) { var i = Math.cos(t * this.PI / 180) * Math.cos(n * this.PI / 180) * Math.cos((a - h) * this.PI / 180) + Math.sin(t * this.PI / 180) * Math.sin(n * this.PI / 180); return i > 1 && (i = 1), i < -1 && (i = -1), 6371e3 * Math.acos(i) }, outOfChina: function (t, a) { return a < 72.004 || a > 137.8347 || (t < .8293 || t > 55.8271) }, transformLat: function (t, a) { var n = 2 * t - 100 + 3 * a + .2 * a * a + .1 * t * a + .2 * Math.sqrt(Math.abs(t)); return n += 2 * (20 * Math.sin(6 * t * this.PI) + 20 * Math.sin(2 * t * this.PI)) / 3, n += 2 * (20 * Math.sin(a * this.PI) + 40 * Math.sin(a / 3 * this.PI)) / 3, n += 2 * (160 * Math.sin(a / 12 * this.PI) + 320 * Math.sin(a * this.PI / 30)) / 3 }, transformLon: function (t, a) { var n = 300 + t + 2 * a + .1 * t * t + .1 * t * a + .1 * Math.sqrt(Math.abs(t)); return n += 2 * (20 * Math.sin(6 * t * this.PI) + 20 * Math.sin(2 * t * this.PI)) / 3, n += 2 * (20 * Math.sin(t * this.PI) + 40 * Math.sin(t / 3 * this.PI)) / 3, n += 2 * (150 * Math.sin(t / 12 * this.PI) + 300 * Math.sin(t / 30 * this.PI)) / 3 } };
 }
 
 // MD5 (Message-Digest Algorithm)
