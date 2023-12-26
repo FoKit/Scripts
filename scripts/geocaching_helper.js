@@ -128,7 +128,7 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     if (!$.not_translate) {
       debug(obj, "翻译结果");
       if ($.cache) {
-        $.msg("📍 " + $.cache.name, "🪄 " + $.cache.hints + `  [tr. ${success_num}, ${costTime}"] `, "🎈 " + $.cache.longDescription);
+        $.msg("地点: " + $.cache.name, "提示: " + $.cache.hints + `  (翻译 ${success_num} 次, 用时 ${costTime} 秒)`, "描述: " + $.cache.longDescription);
       } else {
         $.msg($.name, '', `成功翻译 ${success_num} 次, 用时 ${costTime} 秒 🎉`);
       }
