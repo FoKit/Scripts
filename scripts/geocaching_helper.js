@@ -127,11 +127,7 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     // 发送通知
     if (!$.not_translate) {
       debug(obj, "翻译结果");
-      try {
-        $.msg("地点: " + $.cache.name, "提示: " + $.cache.hints + `  (翻译 ${success_num} 次, 用时 ${costTime} 秒)`, "描述: " + $.cache.longDescription);
-      } catch {
-        $.msg($.name, '', `成功翻译 ${success_num} 次, 用时 ${costTime} 秒 🎉`);
-      }
+      $.msg($.name, '', `${$.cache ? "地点: " + $.cache.name + "\n提示: " + $.cache.hints + "\n" : ''}翻译: ${success_num} 次, 用时 ${costTime} 秒 🎉`);
     } else {
       $.msg($.name, '', `修正定位 ${gps_convert_num} 个, 用时 ${costTime} 秒 🎉`);
     }
@@ -173,7 +169,7 @@ async function translate_cache() {
   }
 
   // 把 cache 的信息缓存下来，用作通知调用
-  $.setjson({ name: _name ?? name, hints: _hints ?? hints, longDescription: _longDescription.replace(/<.+?>/gm, '').replace(/\\r\\n/gm, '\n') ?? longDescription }, 'geocaching_temp');
+  $.setjson({ name: _name ?? name, hints: _hints ?? hints }, 'geocaching_temp');
 }
 
 // 翻译接口
