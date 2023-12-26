@@ -68,7 +68,7 @@ script-providers:
 
 */
 
-const $ = new Env('Geocaching  helper');
+const $ = new Env('Geocaching helper');
 let appid = $.getdata('BaiDu_APP_ID') || '';  // 百度翻译 appid
 let securityKey = $.getdata('BaiDu_SECURITY_KEY') || '';  // 百度翻译 securityKey
 let startTime = new Date().getTime();
@@ -118,7 +118,7 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
   }
 })()
   .catch((e) => {
-    $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
+    $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '');
   })
   .finally(() => {
     // 执行耗时
@@ -166,6 +166,9 @@ async function translate_cache() {
   if (_longDescription) {
     obj['longDescription'] = _longDescription + `\n--------------------------------------------------\r\n原文:\n ` + longDescription;
   }
+
+  // 把 cache 的信息缓存下来，用作通知调用
+  $.setjson({ name: _name, hints: _hints, longDescription: _longDescription }, 'geocaching_temp');
 }
 
 // 翻译接口
