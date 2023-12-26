@@ -127,7 +127,7 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     // 发送通知
     if (!$.not_translate) {
       debug(obj, "翻译结果");
-      $.msg($.name, '', `${$.cache ? "地点: " + $.cache.name + "\n提示: " + $.cache.hints + "\n" : ''}翻译: ${success_num} 次, 用时 ${costTime} 秒 🎉`);
+      $.msg($.cache ? "地点: " + $.cache.name : $.name, '', `${$.cache ? "提示: " + $.cache.hints + "\n" : ''}翻译: ${success_num} 次, 用时 ${costTime} 秒 🎉`);
     } else {
       $.msg($.name, '', `修正定位 ${gps_convert_num} 个, 用时 ${costTime} 秒 🎉`);
     }
