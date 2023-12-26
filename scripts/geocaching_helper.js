@@ -127,9 +127,9 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     // 发送通知
     if (!$.not_translate) {
       debug(obj, "翻译结果");
-      if ($.cache) {
+      try {
         $.msg("地点: " + $.cache.name, "提示: " + $.cache.hints + `  (翻译 ${success_num} 次, 用时 ${costTime} 秒)`, "描述: " + $.cache.longDescription);
-      } else {
+      } catch {
         $.msg($.name, '', `成功翻译 ${success_num} 次, 用时 ${costTime} 秒 🎉`);
       }
     } else {
@@ -173,7 +173,7 @@ async function translate_cache() {
   }
 
   // 把 cache 的信息缓存下来，用作通知调用
-  $.setjson({ name: _name, hints: _hints, longDescription: _longDescription.replace(/<\/?\w+>/gm, '').replace(/\\r\\n/gm, '\n') }, 'geocaching_temp');
+  $.setjson({ name: _name, hints: _hints, longDescription: _longDescription.replace(/<\/?\w+\s?\/?>/gm, '').replace(/\\r\\n/gm, '\n') }, 'geocaching_temp');
 }
 
 // 翻译接口
