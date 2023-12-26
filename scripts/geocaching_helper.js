@@ -101,7 +101,6 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     // 翻译 logs
     await translate_logs();
     $.cache = $.getjson('geocaching_temp'); // 读取持久化数据 (object格式)
-    $.msg("📍 " + $.cache.name, "🪄 " + $.cache.hints + `  [tr. ${success_num}, ${costTime}"] `, "🎈 " + $.cache.longDescription);
   } else {
     // 翻译 cache
     await translate_cache();
@@ -128,7 +127,11 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     // 发送通知
     if (!$.not_translate) {
       debug(obj, "翻译结果");
-      !$.cache && $.msg($.name, '', `成功翻译 ${success_num} 次, 用时 ${costTime} 秒 🎉`);
+      if ($.cache) {
+        $.msg("📍 " + $.cache.name, "🪄 " + $.cache.hints + `  [tr. ${success_num}, ${costTime}"] `, "🎈 " + $.cache.longDescription);
+      } else {
+        $.msg($.name, '', `成功翻译 ${success_num} 次, 用时 ${costTime} 秒 🎉`);
+      }
     } else {
       $.msg($.name, '', `修正定位 ${gps_convert_num} 个, 用时 ${costTime} 秒 🎉`);
     }
