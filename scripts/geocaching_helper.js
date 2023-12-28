@@ -1,12 +1,12 @@
 /**
  * 脚本名称：Geocaching 助手
- * 活动说明：用于修正 Geocaching 的 GPS 坐标和翻译 Geocaching log / describe
+ * 活动说明：用于修正 Geocaching 的 GPS 坐标、翻译 log / describe 并解除 terrain 和 difficulty 限制
  * 脚本说明：配置重写和百度翻译 appid 和 securityKey 即可使用。
  * BoxJs ：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
  * 仓库地址：https://github.com/FoKit/Scripts
- * 更新日期：2023-12-29 修改 difficulty 等级，用于解决官方 APP 需要付费升级才能 view 的问题
+ * 更新日期：2023-12-29 解除 terrain 和 difficulty 2.0 限制
  * 更新日期：2023-12-27 修复单个 cache 详情页 GPS 坐标偏移问题
- * 更新日期：2023-11-26
+ * 更新日期：2023-11-26 初版，支持修正坐标和翻译功能
 /*
 --------------- BoxJS & 重写模块 --------------
 
@@ -22,6 +22,7 @@ hostname = api.groundspeak.com
 Geocaching logs = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 Geocaching cache = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{7}$,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 Geocaching gps = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/map\/search\?adventuresTake,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
+Geocaching unlock = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/unlocksettings,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 
 ------------------ Loon 配置 ------------------
 
@@ -30,8 +31,9 @@ hostname = api.groundspeak.com
 
 [Script]
 http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20 tag=Geocaching logs, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
-http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{7}$ tag=Geocaching cache, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
+http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{7}$ tag=Geocaching logs, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
 http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/map\/search\?adventuresTake tag=Geocaching cache, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
+http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/map\/search\?adventuresTake tag=Geocaching unlock, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
 
 -------------- Quantumult X 配置 --------------
 
@@ -42,6 +44,7 @@ hostname = api.groundspeak.com
 ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20 url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{7}$ url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/map\/search\?adventuresTake url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
+^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/unlocksettings url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 
 ------------------ Stash 配置 -----------------
 
@@ -59,6 +62,10 @@ http:
       require-body: true
     - match: ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/map\/search\?adventuresTake
       name: Geocaching gps
+      type: response
+      require-body: true
+    - match: ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/map\/search\?adventuresTake
+      name: Geocaching unlock
       type: response
       require-body: true
 
@@ -95,18 +102,6 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
       obj['geocaches'][i]['postedCoordinates']['longitude'] = result.lon;
       // 坐标转换数量 +1
       gps_convert_num += 1;
-
-      // 修改 difficulty 等级，用于解决官方 APP 需要付费升级才能 view 的问题
-      if (obj['geocaches'][i]['difficulty'] >= 2) {
-        $.log(`🐛 ${obj['geocaches'][i]['name']} difficulty modify [ ${obj['geocaches'][i]['difficulty']} --> 1.5 ]`);
-        obj['geocaches'][i]['difficulty'] = 1.5;
-      }
-
-      // 修改 terrain 等级，用于解决官方 APP 需要付费升级才能 view 的问题
-      if (obj['geocaches'][i]['terrain'] >= 2) {
-        $.log(`🐛 ${obj['geocaches'][i]['name']} terrain modify [ ${obj['geocaches'][i]['terrain']} --> 1.5 ]`);
-        obj['geocaches'][i]['terrain'] = 1.5;
-      }
     }
     $.log("✔️ 坐标转换完成");
     $.not_translate = true;
@@ -114,6 +109,11 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     // 翻译 logs
     await translate_logs();
     $.cache = $.getjson('geocaching_temp'); // 读取持久化数据 (object格式)
+  } else if (/unlocksettings/.test($request.url)) {
+    // 解锁 terrain & difficulty
+    obj[0]['terrain']['max'] = 5.0;
+    obj[0]['difficulty']['max'] = 5.0;
+    $.log("🔓 terrain & difficulty max is modify to 5.0");
   } else {
     // 翻译 cache
     await translate_cache();
@@ -129,18 +129,6 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     obj['postedCoordinates']['latitude'] = result.lat;
     obj['postedCoordinates']['longitude'] = result.lon;
     $.log("✔️ 坐标转换完成");
-
-    // 修改 difficulty 等级，用于解决官方 APP 需要付费升级才能 view 的问题
-    if (obj['difficulty'] >= 2) {
-      $.log(`🐛 ${obj['name']} difficulty modify [ ${obj['difficulty']} --> 1.5 ]`);
-      obj['difficulty'] = 1.5;
-    }
-
-    // 修改 terrain 等级，用于解决官方 APP 需要付费升级才能 view 的问题
-    if (obj['terrain'] >= 2) {
-      $.log(`🐛 ${obj['name']} terrain modify [ ${obj['terrain']} --> 1.5 ]`);
-      obj['terrain'] = 1.5;
-    }
   }
 })()
   .catch((e) => {
