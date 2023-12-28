@@ -83,6 +83,7 @@ let startTime = new Date().getTime();
 let success_num = 0, gps_convert_num = 0;
 let obj = JSON.parse($response.body);
 var GPS = gps_convert();
+$.notifyMsg = [];  // 为通知准备的空数组
 $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false';
 
 !(async () => {
@@ -104,11 +105,17 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
       gps_convert_num += 1;
     }
     $.log("✔️ 坐标转换完成");
-    $.not_translate = true;
+    $.notifyMsg.push(`修正定位 ${gps_convert_num} 个, 用时 x.xx 秒 🎉`);
   } else if (/geocachelogs/.test($request.url)) {
     // 翻译 logs
     await translate_logs();
+
+    // 读取持久化数据中的信息 push 到通知
     $.cache = $.getjson('geocaching_temp'); // 读取持久化数据 (object格式)
+    if ($.cache) {
+      $.notifyMsg.push(`地点: ${$.cache.name}\n提示: ${$.cache.hints}`);
+    }
+    $.notifyMsg.push(`翻译: ${success_num} 次, 用时 x.xx 秒 🎉`);
   } else if (/unlocksettings/.test($request.url)) {
     // 解锁 terrain & difficulty
     obj[0]['terrain']['max'] = 5.0;
@@ -134,15 +141,12 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
   .catch((e) => {
     $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '');
   })
-  .finally(() => {
+  .finally(async () => {
     // 执行耗时
     const costTime = (new Date().getTime() - startTime) / 1000;
     // 发送通知
-    if (!$.not_translate) {
-      debug(obj, "翻译结果");
-      $.msg($.cache ? "地点: " + $.cache.name : $.name, '', `${$.cache ? "提示: " + $.cache.hints + "\n" : ''}翻译: ${success_num} 次, 用时 ${costTime} 秒 🎉`);
-    } else {
-      $.msg($.name, '', `修正定位 ${gps_convert_num} 个, 用时 ${costTime} 秒 🎉`);
+    if ($.notifyMsg.length > 0) {
+      await sendMsg($.notifyMsg.join('\n').replace(/x\.xx/, costTime));  // 推送通知
     }
     // 返回修改后的 body
     $done({ body: JSON.stringify(obj) });
