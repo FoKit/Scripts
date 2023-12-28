@@ -101,6 +101,12 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
         $.log(`🐛 ${obj['geocaches'][i]['name']} difficulty modify [ ${obj['geocaches'][i]['difficulty']} --> 1.5 ]`);
         obj['geocaches'][i]['difficulty'] = 1.5;
       }
+
+      // 修改 terrain 等级，用于解决官方 APP 需要付费升级才能 view 的问题
+      if (obj['geocaches'][i]['terrain'] >= 2) {
+        $.log(`🐛 ${obj['geocaches'][i]['name']} terrain modify [ ${obj['geocaches'][i]['terrain']} --> 1.5 ]`);
+        obj['geocaches'][i]['terrain'] = 1.5;
+      }
     }
     $.log("✔️ 坐标转换完成");
     $.not_translate = true;
@@ -123,6 +129,18 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     obj['postedCoordinates']['latitude'] = result.lat;
     obj['postedCoordinates']['longitude'] = result.lon;
     $.log("✔️ 坐标转换完成");
+
+    // 修改 difficulty 等级，用于解决官方 APP 需要付费升级才能 view 的问题
+    if (obj['difficulty'] >= 2) {
+      $.log(`🐛 ${obj['name']} difficulty modify [ ${obj['difficulty']} --> 1.5 ]`);
+      obj['difficulty'] = 1.5;
+    }
+
+    // 修改 terrain 等级，用于解决官方 APP 需要付费升级才能 view 的问题
+    if (obj['terrain'] >= 2) {
+      $.log(`🐛 ${obj['name']} terrain modify [ ${obj['terrain']} --> 1.5 ]`);
+      obj['terrain'] = 1.5;
+    }
   }
 })()
   .catch((e) => {
