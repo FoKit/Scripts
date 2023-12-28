@@ -4,6 +4,7 @@
  * 脚本说明：配置重写和百度翻译 appid 和 securityKey 即可使用。
  * BoxJs ：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
  * 仓库地址：https://github.com/FoKit/Scripts
+ * 更新日期：2023-12-29 修改 difficulty 等级，用于解决官方 APP 需要付费升级才能 view 的问题
  * 更新日期：2023-12-27 修复单个 cache 详情页 GPS 坐标偏移问题
  * 更新日期：2023-11-26
 /*
@@ -94,6 +95,12 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
       obj['geocaches'][i]['postedCoordinates']['longitude'] = result.lon;
       // 坐标转换数量 +1
       gps_convert_num += 1;
+
+      // 修改 difficulty 等级，用于解决官方 APP 需要付费升级才能 view 的问题
+      if (obj['geocaches'][i]['difficulty'] >= 2) {
+        $.log(`🐛 ${obj['geocaches'][i]['name']} difficulty modify [ ${obj['geocaches'][i]['difficulty']} --> 1.5 ]`);
+        obj['geocaches'][i]['difficulty'] = 1.5;
+      }
     }
     $.log("✔️ 坐标转换完成");
     $.not_translate = true;
