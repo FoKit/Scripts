@@ -141,12 +141,12 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
   .catch((e) => {
     $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '');
   })
-  .finally(async () => {
+  .finally(() => {
     // 执行耗时
     const costTime = (new Date().getTime() - startTime) / 1000;
     // 发送通知
     if ($.notifyMsg.length > 0) {
-      await sendMsg($.notifyMsg.join('\n').replace(/x\.xx/, costTime));  // 推送通知
+      $.msg($.name, '', $.notifyMsg.join('\n').replace(/x\.xx/, costTime));
     }
     // 返回修改后的 body
     $done({ body: JSON.stringify(obj) });
