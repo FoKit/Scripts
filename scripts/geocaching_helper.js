@@ -4,6 +4,7 @@
  * 脚本说明：配置重写和百度翻译 appid 和 securityKey 即可使用。
  * BoxJs ：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
  * 仓库地址：https://github.com/FoKit/Scripts
+ * 更新日期：2023-12-30 优化通知
  * 更新日期：2023-12-29 支持解锁 Premium 会员
  * 更新日期：2023-12-27 修复单个 cache 详情页 GPS 坐标偏移问题
  * 更新日期：2023-11-26 初版，支持修正坐标和翻译功能
@@ -104,8 +105,9 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
       // 坐标转换数量 +1
       gps_convert_num += 1;
     }
-    $.log("✔️ 坐标转换完成");
-    $.notifyMsg.push(`修正定位 ${gps_convert_num} 个, 用时 x.xx 秒 🎉`);
+    $.log(`✔️ 坐标转换完成, 修正定位 ${gps_convert_num} 个, 用时 x.xx 秒 🎉`);
+    !gps_convert_num && $.notifyMsg.push(`❌ 修正定位失败`);
+    // $.notifyMsg.push(`修正定位 ${gps_convert_num} 个, 用时 x.xx 秒 🎉`);
   } else if (/geocachelogs/.test($request.url)) {
     // 翻译 logs
     await translate_logs();
@@ -115,7 +117,7 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     if ($.cache) {
       $.notifyMsg.push(`地点: ${$.cache.name}\n提示: ${$.cache.hints}`);
     }
-    $.notifyMsg.push(`翻译: ${success_num} 次, 用时 x.xx 秒 🎉`);
+    $.notifyMsg.push($.error_msg ? `❌ 翻译失败: ${$.error_msg}` : `翻译: ${success_num} 次, 用时 x.xx 秒 🎉`);
   } else if (/\/mobile\/v1\/profileview/.test($request.url)) {
     const membershipTypeId = $.getdata('Geo_membershipTypeId') || '';
     if (membershipTypeId) {
@@ -219,14 +221,17 @@ async function translateApi(query) {
           debug(data, "响应");
           try {
             let result = JSON.parse(data);
-            let dst = result.trans_result[0]['dst'];
+            let dst = result?.trans_result?.[0]?.['dst'];
             if (dst && dst != query) {
               dst = dst.replace(/\-\-\-/g, `\n`).replace(/\=\=\=/g, `\r\n`);
               resolve(dst);
               success_num += 1;
               $.log(`🎉 翻译成功`);
+            } else if (result?.error_msg) {
+              $.error_msg = result.error_msg;
+              $.log(`⚠️ 翻译失败: ${result.error_msg}`);
             } else {
-              $.log(`⚠️ 翻译失败 / 无需翻译: ${query}`);
+              $.log(`⚠️ 无需翻译: ${query}`);
             }
           } catch (e) {
             $.log(e);
