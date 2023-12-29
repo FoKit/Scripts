@@ -1,5 +1,5 @@
 #!name=Geocaching 助手
-#!desc=用于修正 Geocaching 的 GPS 坐标、翻译 log / describe 并解除 terrain 和 difficulty 限制
+#!desc=用于修正 Geocaching 的 GPS 坐标、翻译 log / describe
 
 [MITM]
 hostname = %APPEND% api.groundspeak.com

@@ -1,10 +1,10 @@
 /**
  * 脚本名称：Geocaching 助手
- * 活动说明：用于修正 Geocaching 的 GPS 坐标、翻译 log / describe 并解除 terrain 和 difficulty 限制
+ * 活动说明：用于修正 Geocaching 的 GPS 坐标、翻译 log / describe
  * 脚本说明：配置重写和百度翻译 appid 和 securityKey 即可使用。
  * BoxJs ：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
  * 仓库地址：https://github.com/FoKit/Scripts
- * 更新日期：2023-12-29 解除 terrain 和 difficulty 2.0 限制
+ * 更新日期：2023-12-29 支持解锁 Premium 会员
  * 更新日期：2023-12-27 修复单个 cache 详情页 GPS 坐标偏移问题
  * 更新日期：2023-11-26 初版，支持修正坐标和翻译功能
 /*
@@ -22,7 +22,7 @@ hostname = api.groundspeak.com
 Geocaching logs = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 Geocaching cache = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{7}$,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 Geocaching gps = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/map\/search\?adventuresTake,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
-Geocaching unlock = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/unlocksettings,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
+Geocaching unlock = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/profileview,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 
 ------------------ Loon 配置 ------------------
 
@@ -33,7 +33,7 @@ hostname = api.groundspeak.com
 http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20 tag=Geocaching logs, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
 http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{7}$ tag=Geocaching logs, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
 http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/map\/search\?adventuresTake tag=Geocaching cache, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
-http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/map\/search\?adventuresTake tag=Geocaching unlock, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
+http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/profileview tag=Geocaching unlock, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
 
 -------------- Quantumult X 配置 --------------
 
@@ -44,7 +44,7 @@ hostname = api.groundspeak.com
 ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20 url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{7}$ url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/map\/search\?adventuresTake url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
-^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/unlocksettings url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
+^https:\/\/api\.groundspeak\.com\/mobile\/v1\/profileview url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 
 ------------------ Stash 配置 -----------------
 
@@ -64,7 +64,7 @@ http:
       name: Geocaching gps
       type: response
       require-body: true
-    - match: ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/map\/search\?adventuresTake
+    - match: ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/profileview
       name: Geocaching unlock
       type: response
       require-body: true
@@ -116,11 +116,12 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
       $.notifyMsg.push(`地点: ${$.cache.name}\n提示: ${$.cache.hints}`);
     }
     $.notifyMsg.push(`翻译: ${success_num} 次, 用时 x.xx 秒 🎉`);
-  } else if (/unlocksettings/.test($request.url)) {
-    // 解锁 terrain & difficulty
-    obj[0]['terrain']['max'] = 5.0;
-    obj[0]['difficulty']['max'] = 5.0;
-    $.log("🔓 terrain & difficulty max is modify to 5.0");
+  } else if (/\/mobile\/v1\/profileview/.test($request.url)) {
+    const membershipTypeId = $.getdata('Geo_membershipTypeId') || '';
+    if (membershipTypeId) {
+      obj['profile']['membershipTypeId'] = membershipTypeId;
+      $.log(`🔓 MembershipTypeId modify to [${membershipTypeId}].`);
+    }
   } else {
     // 翻译 cache
     await translate_cache();

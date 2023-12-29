@@ -861,7 +861,7 @@
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/geocaching.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/geocaching.png"
       ],
-      "keys": ["BaiDu_APP_ID", "BaiDu_SECURITY_KEY"],
+      "keys": ["BaiDu_APP_ID", "BaiDu_SECURITY_KEY", "Geo_membershipTypeId"],
       "settings": [
         {
           "id": "BaiDu_APP_ID",
@@ -873,6 +873,13 @@
         {
           "id": "BaiDu_SECURITY_KEY",
           "name": "百度翻译 securityKey",
+          "val": "",
+          "type": "text",
+          "desc": ""
+        },
+        {
+          "id": "Geo_membershipTypeId",
+          "name": "membershipTypeId",
           "val": "",
           "type": "text",
           "desc": ""
