@@ -105,7 +105,7 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
       // 坐标转换数量 +1
       gps_convert_num += 1;
     }
-    $.log(`✔️ 坐标转换完成, 修正定位 ${gps_convert_num} 个, 用时 x.xx 秒 🎉`);
+    $.log(`✔️ 坐标转换完成, 修正定位 ${gps_convert_num} 个`);
     !gps_convert_num && $.notifyMsg.push(`❌ 修正定位失败`);
     // $.notifyMsg.push(`修正定位 ${gps_convert_num} 个, 用时 x.xx 秒 🎉`);
   } else if (/geocachelogs/.test($request.url)) {
@@ -114,9 +114,7 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
 
     // 读取持久化数据中的信息 push 到通知
     $.cache = $.getjson('geocaching_temp'); // 读取持久化数据 (object格式)
-    if ($.cache) {
-      $.notifyMsg.push(`地点: ${$.cache.name}\n提示: ${$.cache.hints}`);
-    }
+    $.cache && $.notifyMsg.push(`地点: ${$.cache.name}  |  提示: ${$.cache.hints}`);
     $.notifyMsg.push($.error_msg ? `❌ 翻译失败: ${$.error_msg}` : `翻译: ${success_num} 次, 用时 x.xx 秒 🎉`);
   } else if (/\/mobile\/v1\/profileview/.test($request.url)) {
     const membershipTypeId = $.getdata('Geo_membershipTypeId') || '';
@@ -127,6 +125,7 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
   } else {
     // 翻译 cache
     await translate_cache();
+    $.error_msg && $.notifyMsg.push(`❌ 翻译失败: ${$.error_msg}`);
 
     // 此页面需要转换当前 cache 坐标，否则会导致定位偏移
     $.log("🔁 开始转换坐标");
