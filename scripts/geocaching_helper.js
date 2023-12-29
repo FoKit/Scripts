@@ -119,7 +119,7 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
   } else if (/\/mobile\/v1\/profileview/.test($request.url)) {
     const membershipTypeId = $.getdata('Geo_membershipTypeId') || '';
     if (membershipTypeId) {
-      obj['profile']['membershipTypeId'] = membershipTypeId;
+      obj['profile']['membershipTypeId'] = parseInt(membershipTypeId);
       $.log(`🔓 MembershipTypeId modify to [${membershipTypeId}].`);
     }
   } else {
