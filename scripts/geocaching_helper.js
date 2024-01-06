@@ -4,6 +4,7 @@
  * 脚本说明：配置重写和百度翻译 appid 和 securityKey 即可使用。
  * BoxJs ：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
  * 仓库地址：https://github.com/FoKit/Scripts
+ * 更新日期：2024-01-06 通知添加 difficulty 和 terrain
  * 更新日期：2023-12-30 优化通知
  * 更新日期：2023-12-29 支持解锁 Premium 会员
  * 更新日期：2023-12-27 修复单个 cache 详情页 GPS 坐标偏移问题
@@ -114,8 +115,11 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
 
     // 读取持久化数据中的信息 push 到通知
     $.cache = $.getjson('geocaching_temp'); // 读取持久化数据 (object格式)
-    $.cache && $.notifyMsg.push(`地点: ${$.cache.name}  |  提示: ${$.cache.hints}`);
-    $.notifyMsg.push($.error_msg ? `❌ 翻译失败: ${$.error_msg}` : `翻译: ${success_num} 次, 用时 x.xx 秒 🎉`);
+    $.cache && $.notifyMsg.push(`地点: ${$.cache.name}\n提示: ${$.cache.hints} | 难度: ${$.cache.difficulty} | 地形: ${$.cache.terrain}`);
+    $.error_msg && $.notifyMsg.push(`❌ 翻译失败: ${$.error_msg}`);
+    // 翻译耗时
+    const costTime = (new Date().getTime() - startTime) / 1000;
+    $.log(`翻译: ${success_num} 次, 用时 ${costTime} 秒 🎉`);
   } else if (/\/mobile\/v1\/profileview/.test($request.url)) {
     const membershipTypeId = $.getdata('Geo_membershipTypeId') || '';
     if (membershipTypeId) {
@@ -144,11 +148,9 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '');
   })
   .finally(() => {
-    // 执行耗时
-    const costTime = (new Date().getTime() - startTime) / 1000;
     // 发送通知
     if ($.notifyMsg.length > 0) {
-      $.msg($.name, '', $.notifyMsg.join('\n').replace(/x\.xx/, costTime));
+      $.msg($.name, '', $.notifyMsg.join('\n'));
     }
     // 返回修改后的 body
     $done({ body: JSON.stringify(obj) });
@@ -173,7 +175,7 @@ async function translate_logs() {
 // 翻译 cache
 async function translate_cache() {
   $.log("🌏 开始翻译 cache");
-  let { name, hints, longDescription } = obj;
+  let { name, hints, longDescription, difficulty, terrain } = obj;  // 标题, 提示, 描述, 难度, 地形
   let _name = await translateApi(name);
   if (_name) {
     obj['name'] = _name + ` · ` + name;
@@ -188,7 +190,7 @@ async function translate_cache() {
   }
 
   // 把 cache 的信息缓存下来，用作通知调用
-  $.setjson({ name: _name ?? name, hints: _hints ?? hints }, 'geocaching_temp');
+  $.setjson({ name: _name ?? name, hints: _hints ?? hints, difficulty, terrain }, 'geocaching_temp');
 }
 
 // 翻译接口
