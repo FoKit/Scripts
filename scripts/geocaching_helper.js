@@ -81,6 +81,7 @@ script-providers:
 const $ = new Env('Geocaching helper');
 let appid = $.getdata('BaiDu_APP_ID') || '';  // 百度翻译 appid
 let securityKey = $.getdata('BaiDu_SECURITY_KEY') || '';  // 百度翻译 securityKey
+let translateTo = $.getdata('BAIDU_TRANSLATE_TO_KEY') || 'zh';  // 翻译后的语言
 let startTime = new Date().getTime();
 let success_num = 0, gps_convert_num = 0;
 let obj = JSON.parse($response.body);
@@ -200,7 +201,7 @@ async function translateApi(query) {
   const queryObj = {
     q: query,
     from: "auto",
-    to: "zh",
+    to: translateTo,
     appid,
     salt,
     sign: MD5(appid + query + salt + securityKey),
