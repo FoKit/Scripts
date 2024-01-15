@@ -865,7 +865,8 @@
         "BaiDu_APP_ID",
         "BaiDu_SECURITY_KEY",
         "Geo_membershipTypeId",
-        "BAIDU_TRANSLATE_TO_KEY"
+        "BAIDU_TRANSLATE_TO_KEY",
+        "geocaching_temp"
       ],
       "settings": [
         {
@@ -923,6 +924,15 @@
             {
               "key": "spa",
               "label": "Español - 西班牙语"
+            },
+            {
+              "id": "geocaching_temp",
+              "name": "缓存数据",
+              "val": "",
+              "type": "textarea",
+              "autoGrow": true,
+              "rows": 1,
+              "desc": ""
             }
           ],
           "desc": ""
