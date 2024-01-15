@@ -861,7 +861,12 @@
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/geocaching.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/geocaching.png"
       ],
-      "keys": ["BaiDu_APP_ID", "BaiDu_SECURITY_KEY", "Geo_membershipTypeId"],
+      "keys": [
+        "BaiDu_APP_ID",
+        "BaiDu_SECURITY_KEY",
+        "Geo_membershipTypeId",
+        "BAIDU_TRANSLATE_TO_KEY"
+      ],
       "settings": [
         {
           "id": "BaiDu_APP_ID",
@@ -875,6 +880,51 @@
           "name": "百度翻译 securityKey",
           "val": "",
           "type": "text",
+          "desc": ""
+        },
+        {
+          "id": "BAIDU_TRANSLATE_TO_KEY",
+          "name": "翻译目标语言",
+          "val": "zh",
+          "type": "selects",
+          "items": [
+            {
+              "key": "zh",
+              "label": "中文（简体）"
+            },
+            {
+              "key": "yue",
+              "label": "中文（粤语）"
+            },
+            {
+              "key": "cht",
+              "label": "中文（繁体）"
+            },
+            {
+              "key": "en",
+              "label": "English - 英语"
+            },
+            {
+              "key": "jp",
+              "label": "日本語 - 日语"
+            },
+            {
+              "key": "kor",
+              "label": "한국어 - 韩语"
+            },
+            {
+              "key": "fra",
+              "label": "Français - 法语"
+            },
+            {
+              "key": "de",
+              "label": "Deutsch - 德语"
+            },
+            {
+              "key": "spa",
+              "label": "Español - 西班牙语"
+            }
+          ],
           "desc": ""
         },
         {

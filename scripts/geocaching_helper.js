@@ -21,7 +21,7 @@ https://raw.githubusercontent.com/FoKit/Scripts/main/rewrite/geocaching_helper.s
 hostname = api.groundspeak.com
 
 [Script]
-Geocaching logs = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
+Geocaching logs = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{7}\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 Geocaching cache = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{7}$,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 Geocaching gps = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/map\/search\?adventuresTake,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 Geocaching unlock = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/profileview,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
@@ -32,7 +32,7 @@ Geocaching unlock = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\
 hostname = api.groundspeak.com
 
 [Script]
-http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20 tag=Geocaching logs, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
+http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{7}\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20 tag=Geocaching logs, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
 http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{7}$ tag=Geocaching logs, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
 http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/map\/search\?adventuresTake tag=Geocaching cache, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
 http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/profileview tag=Geocaching unlock, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
@@ -43,7 +43,7 @@ http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/profileview tag=Geoc
 hostname = api.groundspeak.com
 
 [rewrite_local]
-^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20 url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
+^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{7}\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20 url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{7}$ url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/map\/search\?adventuresTake url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/profileview url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
@@ -54,7 +54,7 @@ http:
   mitm:
     - "api.groundspeak.com"
   script:
-    - match: ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/\w+\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20
+    - match: ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{7}\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20
       name: Geocaching logs
       type: response
       require-body: true
@@ -116,7 +116,10 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
 
     // 读取持久化数据中的信息 push 到通知
     $.cache = $.getjson('geocaching_temp'); // 读取持久化数据 (object格式)
-    $.cache && $.notifyMsg.push(`地点: ${$.cache.name}\n提示: ${$.cache.hints} | 难度: ${$.cache.difficulty} | 地形: ${$.cache.terrain}`);
+    if ($.cache) {
+      const { name, hints, difficulty, terrain } = $.cache[obj.data[0].geocache.referenceCode];
+      $.cache && $.notifyMsg.push(`地点: ${name}\n提示: ${hints} | 难度: ${difficulty} | 地形: ${terrain}`);
+    }
     $.error_msg && $.notifyMsg.push(`❌ 翻译失败: ${$.error_msg}`);
     // 翻译耗时
     const costTime = (new Date().getTime() - startTime) / 1000;
@@ -159,7 +162,6 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
 
 // 翻译 logs
 async function translate_logs() {
-  if (!appid || !securityKey) return $.log(`❌ 未配置百度翻译 appid / securityKey, 跳过翻译。`);
   let textArr = obj.data.map(item => `${item.text}`);
   // console.log(text);
   $.log(`\n🌏 翻译 logs 数量: ${textArr.length}\n`);
@@ -176,7 +178,7 @@ async function translate_logs() {
 // 翻译 cache
 async function translate_cache() {
   $.log("🌏 开始翻译 cache");
-  let { name, hints, longDescription, difficulty, terrain } = obj;  // 标题, 提示, 描述, 难度, 地形
+  let { name, hints, longDescription, difficulty, terrain, referenceCode } = obj;  // 标题, 提示, 描述, 难度, 地形, 编码
   let _name = await translateApi(name);
   if (_name) {
     obj['name'] = _name + ` · ` + name;
@@ -191,11 +193,22 @@ async function translate_cache() {
   }
 
   // 把 cache 的信息缓存下来，用作通知调用
-  $.setjson({ name: _name ?? name, hints: _hints ?? hints, difficulty, terrain }, 'geocaching_temp');
+  $.cache = $.getjson('geocaching_temp', {}); // 读取持久化数据 (object格式)
+  $.cache[referenceCode] = {
+    name: _name ?? name,
+    hints: _hints ?? hints,
+    difficulty,
+    terrain
+  }
+  $.setjson($.cache, 'geocaching_temp');
 }
 
 // 翻译接口
 async function translateApi(query) {
+  if (!appid || !securityKey) {
+    $.log(`❌ 未配置百度翻译 appid / securityKey, 跳过翻译。`);
+    return
+  }
   const salt = Date.now();
   query = query.replace(/\r\n/g, "===").replace(/\n/g, "---").replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, "");
   const queryObj = {
