@@ -6,7 +6,7 @@
  * 更新时间：2023-10-31  修复多账号 Set-Cookie 参数的串号问题
  * 更新时间：2023-10-30  修复 Cokie 失效问题，增加骑行券类型参数，感谢 Sliverkiss、𝘠𝘶𝘩𝘦𝘯𝘨、苍井灰灰 大佬提供帮助。
  * 更新时间：2024-01-30  修复 Stash 代理工具无法获取 mbc-user-agent 参数问题
- * 更新时间：2024-01-31  增加周 X 断签一次功能，非建行信用卡用户连续签到 7 天优惠力度较低(满39元减10元)
+ * 更新时间：2024-01-31  增加借记卡用户自动断签功能，非建行信用卡用户连续签到 7 天优惠力度较低(满39元减10元)
 /*
 
 https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
@@ -74,7 +74,7 @@ let giftType = ($.isNode() ? process.env.JHSH_GIFT : $.getdata('JHSH_GIFT')) || 
 let bodyStr = ($.isNode() ? process.env.JHSH_BODY : $.getdata('JHSH_BODY')) || '';  // 签到所需的 body
 let autoLoginInfo = ($.isNode() ? process.env.JHSH_LOGIN_INFO : $.getdata('JHSH_LOGIN_INFO')) || '';  // 刷新 session 所需的数据
 let AppVersion = ($.isNode() ? process.env.JHSH_VERSION : $.getdata('JHSH_VERSION')) || '2.1.5.002';  // 最新版本号，获取失败时使用
-let skipDay = ($.isNode() ? process.env.JHSH_SKIPDAY : $.getdata('JHSH_SKIPDAY')) || '';  // 星期 x 跳过签到任务 (适用于借记卡用户)
+let skipDay = ($.isNode() ? process.env.JHSH_SKIPDAY : $.getdata('JHSH_SKIPDAY')) || '';  // 下个断签日 (适用于借记卡用户)
 let bodyArr = bodyStr ? bodyStr.split("|") : [];
 let bodyArr2 = autoLoginInfo ? autoLoginInfo.split("|") : [];
 $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false';
@@ -89,7 +89,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
       return;
     }
     const date = new Date();
-    const day = date.getDay();
+    let day = date.getDay();
     const weekMap = {
       0: "星期天",
       1: "星期一",
@@ -100,7 +100,9 @@ if (isGetCookie = typeof $request !== `undefined`) {
       6: "星期六",
     };
     if (day == skipDay) {
-      console.log(`今天是[${weekMap[day]}], 跳过签到任务。`);
+      let text = `今天是断签日[${weekMap[day]}], 跳过签到任务。`
+      console.log(text);
+      message += text;
       return;
     }
     console.log(`\n共有[${bodyArr.length}]个建行生活账号\n`);
@@ -276,6 +278,13 @@ async function main() {
             console.log(text);
             message += text;
             if (data?.data?.IS_AWARD == 1) {
+              // 更新自动断签日
+              if (skipDay >= 0) {
+                // 当 day 等于 6 时，下一断签日修正为 0，否则 day + 1
+                day = day == 6 ? 0 : day + 1;
+                $.setdata(String(day), 'JHSH_SKIPDAY');
+                console.log(`♻️ 已更新断签配置：明天(${weekMap[day]})将会断签`);
+              }
               $.GIFT_BAG = data?.data?.GIFT_BAG;
               $.GIFT_BAG.forEach(item => {
                 let body = { "couponId": item.couponId, "nodeDay": item.nodeDay, "couponType": item.couponType, "dccpBscInfSn": item.dccpBscInfSn };

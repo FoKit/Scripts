@@ -800,7 +800,7 @@
         },
         {
           "id": "JHSH_SKIPDAY",
-          "name": "周 X 断签",
+          "name": "下个断签日",
           "val": "-1",
           "type": "selects",
           "items": [
