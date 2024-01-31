@@ -5,6 +5,7 @@
  * 仓库地址：https://github.com/FoKit/Scripts
  * 更新时间：2023-10-31  修复多账号 Set-Cookie 参数的串号问题
  * 更新时间：2023-10-30  修复 Cokie 失效问题，增加骑行券类型参数，感谢 Sliverkiss、𝘠𝘶𝘩𝘦𝘯𝘨、苍井灰灰 大佬提供帮助。
+ * 更新时间：2024-01-30  修复 Stash 代理工具无法获取 mbc-user-agent 参数问题
  * 更新时间：2024-01-31  增加周 X 断签一次功能，非建行信用卡用户连续签到 7 天优惠力度较低(满39元减10元)
 /*
 
@@ -174,28 +175,17 @@ if (isGetCookie = typeof $request !== `undefined`) {
 function GetCookie() {
   debug($request.headers);
   debug($request.body);
+  const headers = ObjectKeys2LowerCase($request.headers);  // 将 headers 的所有 key 转换为小写以兼容各个代理 App
   if (/A3341A038/.test($request.url)) {
     $.body = JSON.parse($request.body);
-    // if (bodyStr.indexOf('MID') == -1) {
-    //   bodyStr = '';
-    //   $.setdata(bodyStr, 'JHSH_BODY');
-    //   console.log(`用户数据缺失字段，已清空用户数据，请重新获取Cookie。`);
-    // }
-    // if (bodyStr.indexOf($.body?.MEB_ID) == -1) {
-    $.body['MID'] = $request.headers['MID'] || $request.headers['Mid'] || $request.headers['mid'];
+    $.body['MID'] = headers['mid'];
     $.body = JSON.stringify($.body);
     console.log(`开始新增用户数据 ${$.body}`);
-    // bodyArr.push($.body);
-    // $.setdata(bodyArr.join('|'), 'JHSH_BODY');
     $.setdata($.body, 'JHSH_BODY');
-    // } else {
-    //   console.log('数据已存在，不再写入。');
-    // }
     $.msg($.name, ``, `🎉 建行生活签到数据获取成功。`);
   } else if (/autoLogin/.test($request.url)) {
-    $.DeviceId = $request.headers['DeviceId'] || $request.headers['Deviceid'] || $request.headers['deviceid'];
-    $.MBCUserAgent = $request.headers['MBC-User-Agent'] || $request.headers['Mbc-user-agent'] || $request.headers['mbc-user-agent'];
-
+    $.DeviceId = headers['deviceid'];
+    $.MBCUserAgent = headers['mbc-user-agent'];
     if ($.DeviceId && $.MBCUserAgent && $request.body) {
       autoLoginInfo = {
         "DeviceId": $.DeviceId,
@@ -204,6 +194,8 @@ function GetCookie() {
       }
       $.setdata(JSON.stringify(autoLoginInfo), 'JHSH_LOGIN_INFO');
       console.log(JSON.stringify(autoLoginInfo) + "写入成功");
+    } else {
+      console.log("❌ autoLogin 数据获取失败");
     }
   }
 }
@@ -262,14 +254,12 @@ async function main() {
   let opt = {
     url: `https://yunbusiness.ccb.com/clp_coupon/txCtrl?txcode=A3341A115`,
     headers: {
-      "MID": $.info?.MID,
-      "Content-Type": "application/json;charset=utf-8",
+      "Mid": $.info?.MID,
+      "Content-Type": "application/json",
       "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_1_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148/CloudMercWebView/UnionPay/1.0 CCBLoongPay",
       "Accept": "application/json,text/javascript,*/*",
-      "content-type": "application/json",
       "Cookie": $.token
     },
-    // body: `{"ACT_ID":"${$.info.ACT_ID}","MEB_ID":"${$.info.MEB_ID}","USR_TEL":"${$.info.USR_TEL}","REGION_CODE":"${$.info.REGION_CODE}","chnlType":"${$.info.chnlType}","regionCode":"${$.info.regionCode}"}`,
     body: `{"ACT_ID":"${$.info.ACT_ID}","REGION_CODE":"${$.info.REGION_CODE}","chnlType":"${$.info.chnlType}","regionCode":"${$.info.regionCode}"}`
   }
   debug(opt)
@@ -397,6 +387,24 @@ async function getLatestVersion() {
         resolve();
       }
     })
+  })
+}
+
+
+/**
+ * 对象属性转小写
+ * @param {*} obj
+ * @returns
+ */
+function ObjectKeys2LowerCase(obj) {
+  const _lower = Object.fromEntries(Object.entries(obj).map(([k, v]) => [k.toLowerCase(), v]))
+  return new Proxy(_lower, {
+    get: function (target, propKey, receiver) {
+      return Reflect.get(target, propKey.toLowerCase(), receiver)
+    },
+    set: function (target, propKey, value, receiver) {
+      return Reflect.set(target, propKey.toLowerCase(), value, receiver)
+    }
   })
 }
 
