@@ -155,19 +155,19 @@ if (isGetCookie = typeof $request !== `undefined`) {
         await $.wait(1000 * 3);
       }
     }
-    if (message) {
-      message = message.replace(/\n+$/, '');
-      if ($.isNode()) {
-        await notify.sendNotify($.name, message);
-      } else {
-        $.msg($.name, '', message);
-      }
-    }
   })()
     .catch((e) => {
       $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
     })
-    .finally(() => {
+    .finally(async () => {
+      if (message) {
+        message = message.replace(/\n+$/, '');
+        if ($.isNode()) {
+          await notify.sendNotify($.name, message);
+        } else {
+          $.msg($.name, '', message);
+        }
+      }
       $.done();
     })
 }
