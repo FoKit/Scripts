@@ -5,6 +5,7 @@
  * 仓库地址：https://github.com/FoKit/Scripts
  * 更新时间：2023-10-31  修复多账号 Set-Cookie 参数的串号问题
  * 更新时间：2023-10-30  修复 Cokie 失效问题，增加骑行券类型参数，感谢 Sliverkiss、𝘠𝘶𝘩𝘦𝘯𝘨、苍井灰灰 大佬提供帮助。
+ * 更新时间：2024-01-31  增加周 X 断签一次功能，非建行信用卡用户连续签到 7 天优惠力度较低(满39元减10元)
 /*
 
 https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
@@ -72,6 +73,7 @@ let giftType = ($.isNode() ? process.env.JHSH_GIFT : $.getdata('JHSH_GIFT')) || 
 let bodyStr = ($.isNode() ? process.env.JHSH_BODY : $.getdata('JHSH_BODY')) || '';  // 签到所需的 body
 let autoLoginInfo = ($.isNode() ? process.env.JHSH_LOGIN_INFO : $.getdata('JHSH_LOGIN_INFO')) || '';  // 刷新 session 所需的数据
 let AppVersion = ($.isNode() ? process.env.JHSH_VERSION : $.getdata('JHSH_VERSION')) || '2.1.5.002';  // 最新版本号，获取失败时使用
+let skipDay = ($.isNode() ? process.env.JHSH_SKIPDAY : $.getdata('JHSH_SKIPDAY')) || '';  // 星期 x 跳过签到任务 (适用于借记卡用户)
 let bodyArr = bodyStr ? bodyStr.split("|") : [];
 let bodyArr2 = autoLoginInfo ? autoLoginInfo.split("|") : [];
 $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false';
@@ -83,6 +85,21 @@ if (isGetCookie = typeof $request !== `undefined`) {
   !(async () => {
     if (!autoLoginInfo || !bodyStr) {
       $.msg($.name, '❌ 请先获取建行生活Cookie。');
+      return;
+    }
+    const date = new Date();
+    const day = date.getDay();
+    const weekMap = {
+      0: "星期天",
+      1: "星期一",
+      2: "星期二",
+      3: "星期三",
+      4: "星期四",
+      5: "星期五",
+      6: "星期六",
+    };
+    if (day == skipDay) {
+      console.log(`今天是[${weekMap[day]}], 跳过签到任务。`);
       return;
     }
     console.log(`\n共有[${bodyArr.length}]个建行生活账号\n`);
