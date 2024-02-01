@@ -5,7 +5,7 @@
 活动奖励：停车币可用于兑换停车券，比例 1000:1
 环境变量：jtc_userId（Node环境，多账号以@隔开）
 使用说明：添加重写规则并打开捷停车APP即可获取userId
-更新时间：2023-12-21
+更新时间：2024-02-01
 
 ================ Surge 配置 ================
 [MITM]
@@ -41,7 +41,7 @@ http-request ^https:\/\/sytgate\.jslife\.com\.cn\/core-gateway\/order\/carno\/pa
 
 // ---------------------- 一般不动变量区域 ----------------------
 const $ = new Env('捷停车签到');
-const taskMap = { "T00": "签到", "T01": "浏览" };
+const taskMap = { "T00": "签到", "T01": "浏览", "T02": "看视频" };
 const origin = 'https://sytgate.jslife.com.cn';
 const jtc_userId_key = 'jtc_userId';
 const Notify = 1;  // 0 为关闭通知, 1 为打开通知, 默认为 1
@@ -50,7 +50,7 @@ $.messages = [];  // 为通知准备的空数组
 // ---------------------- 自定义变量区域 ----------------------
 $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false';  // 调试模式
 let userId = ($.isNode() ? process.env.jtc_userId : $.getdata(jtc_userId_key)) || '', userIdArr = [];
-
+let watchVideo = ($.isNode() ? process.env.jtc_video : $.getdata(jtc_video)) || 'false';  // 此功能有封号风险，默认禁用
 
 // 统一管理 api 接口
 const Api = {
@@ -65,6 +65,10 @@ const Api = {
   // 个人信息
   "query": {
     "url": "/base-gateway/member/queryMbrCityBaseInfo",
+  },
+  // adToken
+  "adToken": {
+    "url": "/base-gateway/integral/v2/task/token",
   }
 }
 
@@ -85,7 +89,7 @@ const Api = {
     await main();
   }
 })()
-  .catch((e) => $.messages.push(e.message || e))  // 捕获登录函数等抛出的异常, 并把原因添加到全局变量(通知)
+  .catch((e) => $.messages.push(e.message || e) && console.log(e))  // 捕获登录函数等抛出的异常, 并把原因添加到全局变量(通知)
   .finally(async () => {
     await sendMsg($.messages.join('\n'));  // 推送通知
     $.done();
@@ -102,14 +106,18 @@ async function main() {
     $.result = '';
     $.mobile = '未知';
     $.integralValue = 0;
-    $.userId = userIdArr[i];
+    $.userId = userIdArr[i].split(',')[0];
+    $.token = userIdArr[i].split(',')[1];
 
     // 浏览任务
     await browse();
 
+    // 看视频
+    watchVideo == 'true' && $.token && await videos();
+
     // 遍历 taskNo
     for (taskNo in taskMap) {
-      await receive(taskNo, taskMap[taskNo]);
+      await receive(taskNo);
     }
     console.log($.result);
 
@@ -140,7 +148,7 @@ function GetCookie() {
     let body = JSON.parse($request.body);
     if (body?.userId) {
       if (!userIdArr.includes(body.userId)) {
-        userId ? userId += `@${body.userId}` : userId += `${body.userId}`;
+        userId ? userId += `@${body.userId},${body.token}` : userId += `${body.userId},${body.token}`;
         $.setdata(userId, jtc_userId_key);
         console.log(`userId: ${body.userId} \n`);
         $.messages.push($.name, ``, `🎉 userId 写入成功\n${hideSensitiveData(body.userId, 4, 4)} `);
@@ -152,17 +160,16 @@ function GetCookie() {
 }
 
 
-// 签到
-async function receive(taskNo, taskName) {
+// 提交任务（浏览 & 签到）
+async function receive(taskNo) {
   let result = await httpRequest(options(Api.receive.url, `{"userId":"${$.userId}","reqSource":"APP_JTC","taskNo":"${taskNo}"}`));
   debug(result, "receive");
   if (result.success) {
-    $.result += `${taskName}任务完成, 获得 ${result.data} 停车币\n`;
+    $.result += `${taskMap[taskNo]} 任务完成, 获得 ${result.data} 停车币\n`;
   } else {
     $.result += `${result.message} \n`;
   }
 }
-
 
 // 浏览
 async function browse() {
@@ -172,9 +179,33 @@ async function browse() {
     console.log(`❌ 浏览任务出错: `, result);
     delete taskMap['T01'];
   }
-  // else {
-  //   console.log(`🎉 浏览任务完成, 可领取 ${result.data.integralValue} 停车币`);
-  // }
+}
+
+// 看视频
+async function videos() {
+  // 获取 adToken
+  let res = await httpRequest(options(Api.adToken.url, `{"adTime":"600","userId":"${$.userId}","taskNo":"T02","token":"${$.token}","timestamp":"${Date.now()}"}`));
+  console.log(222)
+  debug(res, "getAdToken");
+  if (res.success) {
+    let = adToken = res['data']['token'];
+    let videosCoins = 0;  // 看视频奖励数
+    // 领取奖励(每日50次)
+    for (let i = 1; i <= 50; i++) {
+      let result = await httpRequest(options(Api.complete.url, `{"timestamp":"${Date.now()}","taskNo":"T02","reqSource":"APP_JTC","receiveTag":"true","userId":"${$.userId}","token":"${$.token}","adToken":"${adToken}"}`));
+      debug(result, "videos");
+      if (result.success) {
+        videosCoins += result['data']['integralValue'];
+        console.log(`✅ 完成看视频任务，获得 ${result['data']['integralValue']} 停车币\n`);
+      } else {
+        console.log(`❌ 看视频任务失败: `, result);
+        break;
+      }
+    }
+    videosCoins && ($.result += `${taskMap['T02']} 任务完成, 获得 ${videosCoins} 停车币\n`);
+  } else {
+    console.log(`❌ 获取 adToken失败: `, res);
+  }
 }
 
 
