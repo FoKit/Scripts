@@ -177,7 +177,7 @@ async function browse() {
   let result = await httpRequest(options(Api.complete.url, `{"userId":"${$.userId}","reqSource":"APP_JTC","taskNo":"T01"}`));
   debug(result, "browse");
   if (!result.success) {
-    console.log(`❌ 领取浏览任务失败: ${result.message}`);
+    console.log(`❌ 领取 ${taskMap['T01']} 任务失败: ${result.message}`);
     delete taskMap['T01'];
   }
 }
@@ -205,7 +205,7 @@ async function videos() {
     }
     videosCoins && ($.result += `${taskMap['T02']} 任务完成, 获得 ${videosCoins} 停车币\n`);
   } else {
-    console.log(`❌ 获取 adToken失败: `, res);
+    console.log(`❌ 领取 ${taskMap['T02']} 任务失败: ${result.message}`);
   }
 }
 
