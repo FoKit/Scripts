@@ -113,7 +113,7 @@ async function main() {
     await browse();
 
     // 看视频
-    watchVideo == 'true' && $.token && await videos();
+    watchVideo == 'true' && $.token && await videos() && delete taskMap['T02'];
 
     // 遍历 taskNo
     for (taskNo in taskMap) {
@@ -176,7 +176,7 @@ async function browse() {
   let result = await httpRequest(options(Api.complete.url, `{"userId":"${$.userId}","reqSource":"APP_JTC","taskNo":"T01"}`));
   debug(result, "browse");
   if (!result.success) {
-    console.log(`❌ 浏览任务出错: `, result);
+    console.log(`❌ 领取浏览任务失败: ${result.message}`);
     delete taskMap['T01'];
   }
 }
