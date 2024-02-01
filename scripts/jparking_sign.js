@@ -41,7 +41,6 @@ http-request ^https:\/\/sytgate\.jslife\.com\.cn\/core-gateway\/order\/carno\/pa
 
 // ---------------------- 一般不动变量区域 ----------------------
 const $ = new Env('捷停车签到');
-const taskMap = { "T00": "签到", "T01": "浏览", "T02": "看视频" };
 const origin = 'https://sytgate.jslife.com.cn';
 const jtc_userId_key = 'jtc_userId';
 const Notify = 1;  // 0 为关闭通知, 1 为打开通知, 默认为 1
@@ -108,6 +107,7 @@ async function main() {
     $.integralValue = 0;
     $.userId = userIdArr[i].split(',')[0];
     $.token = userIdArr[i].split(',')[1];
+    $.taskMap = { "T00": "签到", "T01": "浏览", "T02": "看视频" };
 
     // 领取浏览任务
     await browse();
@@ -168,7 +168,7 @@ async function receive(taskNo) {
   let result = await httpRequest(options(Api.receive.url, `{"userId":"${$.userId}","reqSource":"APP_JTC","taskNo":"${taskNo}"}`));
   debug(result, "receive");
   if (result.success) {
-    $.result += `${taskMap[taskNo]} 任务完成, 获得 ${result.data} 停车币\n`;
+    $.result += `${$.taskMap[taskNo]} 任务完成, 获得 ${result.data} 停车币\n`;
   } else {
     $.result += `${result.message} \n`;
   }
@@ -179,8 +179,8 @@ async function browse() {
   let result = await httpRequest(options(Api.complete.url, `{"userId":"${$.userId}","reqSource":"APP_JTC","taskNo":"T01"}`));
   debug(result, "browse");
   if (!result.success) {
-    console.log(`❌ 领取 ${taskMap['T01']} 任务失败: ${result.message}`);
-    delete taskMap['T01'];
+    console.log(`❌ 领取 ${$.taskMap['T01']} 任务失败: ${result.message}`);
+    delete $.taskMap['T01'];
   }
 }
 
@@ -204,9 +204,9 @@ async function videos() {
         break;
       }
     }
-    videosCoins && ($.result += `${taskMap['T02']} 任务完成, 获得 ${videosCoins} 停车币\n`);
+    videosCoins && ($.result += `${$.taskMap['T02']} 任务完成, 获得 ${videosCoins} 停车币\n`);
   } else {
-    console.log(`❌ 领取 ${taskMap['T02']} 任务失败: ${result.message}`);
+    console.log(`❌ 领取 ${$.taskMap['T02']} 任务失败: ${result.message}`);
   }
 }
 
