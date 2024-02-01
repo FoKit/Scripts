@@ -178,7 +178,7 @@
           "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jparking_sign.js"
         }
       ],
-      "keys": ["jtc_userId", "jtc_taskNo"],
+      "keys": ["jtc_userId"],
       "settings": [
         {
           "id": "jtc_userId",
@@ -189,14 +189,6 @@
           "rows": 1,
           "placeholder": "userId1@userId2",
           "desc": "多个ID@隔开"
-        },
-        {
-          "id": "jtc_taskNo",
-          "name": "任务ID",
-          "val": "T71811221608",
-          "type": "text",
-          "placeholder": "T71811221608",
-          "desc": "默认 T71811221608 可留空"
         }
       ]
     },
