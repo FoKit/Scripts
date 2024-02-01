@@ -113,7 +113,8 @@ async function main() {
     await browse();
 
     // 看视频
-    watchVideo == 'true' && $.token && await videos() && delete taskMap['T02'];
+    watchVideo == 'true' && $.token && await videos();
+    delete taskMap['T02'];
 
     // 遍历 taskNo
     for (taskNo in taskMap) {
