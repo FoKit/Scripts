@@ -179,7 +179,7 @@ async function browse() {
   let result = await httpRequest(options(Api.complete.url, `{"userId":"${$.userId}","reqSource":"APP_JTC","taskNo":"T01"}`));
   debug(result, "browse");
   if (!result.success) {
-    console.log(`❌ 领取 ${$.taskMap['T01']} 任务失败: ${result.message}`);
+    console.log(`❌ 领取${$.taskMap['T01']}任务失败: ${result.message}`);
     delete $.taskMap['T01'];
   }
 }
@@ -198,7 +198,7 @@ async function videos() {
       debug(result, "videos");
       if (result.success) {
         videosCoins += result['data']['integralValue'];
-        console.log(`✅ 完成看视频任务，获得 ${result['data']['integralValue']} 停车币\n`);
+        console.log(`✅ 完成看视频任务，获得 ${result['data']['integralValue']} 停车币`);
       } else {
         console.log(`❌ 看视频任务失败: `, result);
         break;
@@ -206,7 +206,7 @@ async function videos() {
     }
     videosCoins && ($.result += `${$.taskMap['T02']} 任务完成, 获得 ${videosCoins} 停车币\n`);
   } else {
-    console.log(`❌ 领取 ${$.taskMap['T02']} 任务失败: ${res.message}`);
+    console.log(`❌ 领取${$.taskMap['T02']}任务失败: ${res.message}`);
   }
 }
 
