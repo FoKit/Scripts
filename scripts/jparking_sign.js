@@ -50,7 +50,7 @@ $.messages = [];  // 为通知准备的空数组
 // ---------------------- 自定义变量区域 ----------------------
 $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false';  // 调试模式
 let userId = ($.isNode() ? process.env.jtc_userId : $.getdata(jtc_userId_key)) || '', userIdArr = [];
-let watchVideo = ($.isNode() ? process.env.jtc_video : $.getdata(jtc_video)) || 'false';  // 此功能有封号风险，默认禁用
+let watchVideo = ($.isNode() ? process.env.jtc_video : $.getdata('jtc_video')) || 'false';  // 此功能有封号风险，默认禁用
 
 // 统一管理 api 接口
 const Api = {
