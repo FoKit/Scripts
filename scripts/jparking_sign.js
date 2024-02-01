@@ -206,7 +206,7 @@ async function videos() {
     }
     videosCoins && ($.result += `${$.taskMap['T02']} 任务完成, 获得 ${videosCoins} 停车币\n`);
   } else {
-    console.log(`❌ 领取 ${$.taskMap['T02']} 任务失败: ${result.message}`);
+    console.log(`❌ 领取 ${$.taskMap['T02']} 任务失败: ${res.message}`);
   }
 }
 
