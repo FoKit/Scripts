@@ -151,7 +151,7 @@ function GetCookie() {
         userId ? userId += `@${body.userId},${body.token}` : userId += `${body.userId},${body.token}`;
         $.setdata(userId, jtc_userId_key);
         console.log(`userId: ${body.userId} \n`);
-        $.messages.push($.name, ``, `🎉 userId 写入成功\n${hideSensitiveData(body.userId, 4, 4)} `);
+        $.messages.push(`🎉 userId 写入成功\n${hideSensitiveData(body.userId, 4, 4)} `);
       } else {
         console.log(`❌ ${body.userId} 已存在\n`);
       }
