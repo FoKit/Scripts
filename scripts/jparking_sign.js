@@ -148,7 +148,7 @@ function GetCookie() {
   if ($request && $request.body) {
     let body = JSON.parse($request.body);
     if (body?.userId) {
-      if (!userIdArr.includes(body.userId)) {
+      if (new RegExp(body.userId).test(userId)) {
         userId ? userId += `@${body.userId},${body.token}` : userId += `${body.userId},${body.token}`;
         $.setdata(userId, jtc_userId_key);
         console.log(`userId: ${body.userId} \n`);
