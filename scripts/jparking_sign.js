@@ -109,17 +109,19 @@ async function main() {
     $.userId = userIdArr[i].split(',')[0];
     $.token = userIdArr[i].split(',')[1];
 
-    // 浏览任务
+    // 领取浏览任务
     await browse();
 
-    // 看视频
+    // 看视频任务
     watchVideo == 'true' && $.token && await videos();
-    delete taskMap['T02'];
 
-    // 遍历 taskNo
-    for (taskNo in taskMap) {
-      await receive(taskNo);
-    }
+    // 领取签到奖励
+    await receive("T00");
+
+    // 领取浏览奖励
+    await receive("T01");
+
+    // 打印结果
     console.log($.result);
 
     // 等待 1 秒
@@ -186,7 +188,6 @@ async function browse() {
 async function videos() {
   // 获取 adToken
   let res = await httpRequest(options(Api.adToken.url, `{"adTime":"600","userId":"${$.userId}","taskNo":"T02","token":"${$.token}","timestamp":"${Date.now()}"}`));
-  console.log(222)
   debug(res, "getAdToken");
   if (res.success) {
     let = adToken = res['data']['token'];
