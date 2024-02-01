@@ -119,7 +119,7 @@ async function main() {
     await receive("T00");
 
     // 领取浏览奖励
-    await receive("T01");
+    $.taskMap['T01'] && await receive("T01");
 
     // 打印结果
     console.log($.result);
