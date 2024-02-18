@@ -239,6 +239,7 @@ async function checkEnv() {
 // 发送消息
 async function sendMsg(message) {
   if (!message) return;
+  message = message.replace(/\n+$/, '');  // 清除末尾换行
   if (Notify > 0) {
     if ($.isNode()) {
       try {
