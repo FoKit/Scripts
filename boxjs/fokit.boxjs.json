@@ -992,7 +992,7 @@
       "repo": "",
       "icons": [
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/WeChat.png",
-        "https://raw.githubusercontent.com/sliverkiss/QuantumultX/main/icon/WeChat.png"
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/WeChat.png"
       ],
       "keys": ["codeServer"],
       "settings": [
