@@ -1008,6 +1008,8 @@
           "name": "服务器地址",
           "val": "",
           "type": "textarea",
+          "autoGrow": true,
+          "rows": 1,
           "desc": "填入服务器地址，不包括/，如http://127.0.0.1"
         },
         {
@@ -1015,6 +1017,8 @@
           "name": "实例 GUID",
           "val": "",
           "type": "textarea",
+          "autoGrow": true,
+          "rows": 1,
           "desc": "微信实例 GUID"
         },
         {
@@ -1022,6 +1026,8 @@
           "name": "接口密码",
           "val": "",
           "type": "textarea",
+          "autoGrow": true,
+          "rows": 1,
           "desc": "API 接口密码"
         }
       ]
