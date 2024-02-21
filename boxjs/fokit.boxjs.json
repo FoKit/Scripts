@@ -984,6 +984,47 @@
           "desc": ""
         }
       ]
+    },
+    {
+      "id": "WxCode",
+      "name": "Code Server",
+      "author": "@FoKit",
+      "repo": "",
+      "icons": [
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/WeChat.png",
+        "https://raw.githubusercontent.com/sliverkiss/QuantumultX/main/icon/WeChat.png"
+      ],
+      "keys": ["codeServer"],
+      "settings": [
+        {
+          "id": "@codeServer.open",
+          "name": "开启code模式",
+          "val": false,
+          "type": "boolean",
+          "desc": "默认关闭"
+        },
+        {
+          "id": "@codeServer.address",
+          "name": "服务器地址",
+          "val": "",
+          "type": "textarea",
+          "desc": "填入服务器地址，不包括/，如http://127.0.0.1"
+        },
+        {
+          "id": "@codeServer.guid",
+          "name": "实例 GUID",
+          "val": "",
+          "type": "textarea",
+          "desc": "微信实例 GUID"
+        },
+        {
+          "id": "@codeServer.password",
+          "name": "接口密码",
+          "val": "",
+          "type": "textarea",
+          "desc": "API 接口密码"
+        }
+      ]
     }
   ]
 }
