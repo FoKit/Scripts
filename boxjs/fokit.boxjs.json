@@ -1029,6 +1029,15 @@
           "autoGrow": true,
           "rows": 1,
           "desc": "API 接口密码"
+        },
+        {
+          "id": "@codeServer.fun",
+          "name": "自定义函数",
+          "val": "",
+          "type": "textarea",
+          "autoGrow": true,
+          "rows": 1,
+          "desc": "API 接口自定义函数"
         }
       ]
     }
