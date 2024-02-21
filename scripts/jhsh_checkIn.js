@@ -8,6 +8,7 @@
  * 更新时间：2024-01-30  修复 Stash 代理工具无法获取 mbc-user-agent 参数问题
  * 更新时间：2024-01-31  增加借记卡用户自动断签功能，非建行信用卡用户连续签到 7 天优惠力度较低(满39元减10元)
  * 更新时间：2024-02-18  修复默认断签问题
+ * 更新时间：2024-02-21  修复变量作用域导致无法自动领取签到奖励问题
 /*
 
 https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
@@ -90,7 +91,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
       return;
     }
     const date = new Date();
-    let day = date.getDay();
+    $.whichDay = date.getDay();
     const weekMap = {
       0: "星期天",
       1: "星期一",
@@ -100,8 +101,8 @@ if (isGetCookie = typeof $request !== `undefined`) {
       5: "星期五",
       6: "星期六",
     };
-    if (day === parseInt(skipDay)) {
-      let text = `今天是断签日[${weekMap[day]}], 跳过签到任务。`
+    if ($.whichDay === parseInt(skipDay)) {
+      let text = `今天是断签日[${weekMap[$.whichDay]}], 跳过签到任务。`
       console.log(text);
       message += text;
       return;
@@ -281,10 +282,10 @@ async function main() {
             if (data?.data?.IS_AWARD == 1) {
               // 更新自动断签日
               if (skipDay >= 0) {
-                // 当 day 等于 6 时，下一断签日修正为 0，否则 day + 1
-                day = day == 6 ? 0 : day + 1;
-                $.setdata(String(day), 'JHSH_SKIPDAY');
-                console.log(`♻️ 已更新断签配置：明天(${weekMap[day]})将会断签`);
+                // 当 $.whichDay 等于 6 时，下一断签日修正为 0，否则 $.whichDay + 1
+                $.whichDay = $.whichDay == 6 ? 0 : $.whichDay + 1;
+                $.setdata(String($.whichDay), 'JHSH_SKIPDAY');
+                console.log(`♻️ 已更新断签配置：明天(${weekMap[$.whichDay]})将会断签`);
               }
               $.GIFT_BAG = data?.data?.GIFT_BAG;
               $.GIFT_BAG.forEach(item => {
