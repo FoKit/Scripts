@@ -1040,6 +1040,41 @@
           "desc": "API 接口自定义函数"
         }
       ]
+    },
+    {
+      "id": "YueRanHui",
+      "name": "悦然荟小程序",
+      "author": "@FoKit",
+      "repo": "",
+      "icons": [
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/yrh.png",
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/yrh.png"
+      ],
+      "descs_html": [],
+      "keys": ["yueranhui"],
+      "settings": [
+        {
+          "id": "@yueranhui.appid",
+          "name": "appid",
+          "val": "",
+          "type": "text",
+          "desc": "悦然荟小程序 appid"
+        },
+        {
+          "id": "@yueranhui.bid",
+          "name": "bid",
+          "val": "",
+          "type": "text",
+          "desc": "悦然荟小程序 bid"
+        },
+        {
+          "id": "@yueranhui.version",
+          "name": "version",
+          "val": "",
+          "type": "text",
+          "desc": "悦然荟小程序 version"
+        }
+      ]
     }
   ]
 }

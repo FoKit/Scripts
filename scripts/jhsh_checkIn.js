@@ -404,8 +404,8 @@ async function getLatestVersion() {
 
 /**
  * 对象属性转小写
- * @param {*} obj
- * @returns
+ * @param {object} obj - 传入 $request.headers
+ * @returns {object} 返回转换后的对象
  */
 function ObjectKeys2LowerCase(obj) {
   const _lower = Object.fromEntries(Object.entries(obj).map(([k, v]) => [k.toLowerCase(), v]))
