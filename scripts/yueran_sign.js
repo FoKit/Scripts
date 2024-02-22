@@ -3,7 +3,7 @@
  * 活动规则：每日签到可获得积分
  * 更新时间：2024-02-22
  * 环境变量：YUERANHUI_BID、YUERANHUI_APPID、YUERANHUI_VERSION、CODESERVER_ADDRESS、CODESERVER_FUN
- * https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
+ * BoxJs订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
  * 感谢 @yuheng @Sliverkiss 提供帮助
 
 ------------------ Surge 配置 -----------------
@@ -209,7 +209,7 @@ async function getWxCode() {
   try {
     $.codeServer = ($.isNode() ? process.env["CODESERVER_ADDRESS"] : $.getdata("@codeServer.address")) || '';
     $.codeFuc = ($.isNode() ? process.env["CODESERVER_FUN"] : $.getdata("@codeServer.fun")) || '';
-    !$.codeServer && await sendMsg(`❌ 未配置微信 Code Server，结束运行。`), $.done();
+    !$.codeServer && (await sendMsg(`❌ 未配置微信 Code Server，结束运行。`), $.done());
 
     $.codeList = $.codeFuc
       ? (eval($.codeFuc), await WxCode($.appid))
