@@ -92,7 +92,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
     }
     const date = new Date();
     $.whichDay = date.getDay();
-    const weekMap = {
+    $.weekMap = {
       0: "星期天",
       1: "星期一",
       2: "星期二",
@@ -102,7 +102,7 @@ if (isGetCookie = typeof $request !== `undefined`) {
       6: "星期六",
     };
     if ($.whichDay === parseInt(skipDay)) {
-      let text = `今天是断签日[${weekMap[$.whichDay]}], 跳过签到任务。`
+      let text = `今天是断签日[${$.weekMap[$.whichDay]}], 跳过签到任务。`
       console.log(text);
       message += text;
       return;
@@ -285,7 +285,7 @@ async function main() {
                 // 当 $.whichDay 等于 6 时，下一断签日修正为 0，否则 $.whichDay + 1
                 $.whichDay = $.whichDay == 6 ? 0 : $.whichDay + 1;
                 $.setdata(String($.whichDay), 'JHSH_SKIPDAY');
-                console.log(`♻️ 已更新断签配置：明天(${weekMap[$.whichDay]})将会断签`);
+                console.log(`♻️ 已更新断签配置：明天(${$.weekMap[$.whichDay]})将会断签`);
               }
               $.GIFT_BAG = data?.data?.GIFT_BAG;
               $.GIFT_BAG.forEach(item => {
