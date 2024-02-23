@@ -144,14 +144,23 @@
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/debug.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/debug.png"
       ],
-      "keys": ["is_debug", "bark_key"],
+      "keys": ["is_debug", "bark_key", "remoteScriptURL"],
       "settings": [
         {
           "id": "is_debug",
           "name": "Debug",
           "val": false,
           "type": "boolean",
-          "desc": "自用"
+          "desc": "Debug 模式"
+        },
+        {
+          "id": "remoteScriptURL",
+          "name": "远程脚本地址",
+          "val": "",
+          "type": "textarea",
+          "autoGrow": true,
+          "rows": 1,
+          "desc": "用于远程调试"
         },
         {
           "id": "bark_key",
@@ -159,7 +168,7 @@
           "val": "",
           "type": "text",
           "placeholder": "",
-          "desc": "自用"
+          "desc": "Bark 通知 key"
         }
       ]
     },
