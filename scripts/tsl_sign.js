@@ -135,7 +135,7 @@ async function getToken() {
     msg = `账号: ${hideSensitiveData($.mobile, 3, 4)}`;
     $.log(`✅ 成功获取 Token: ${$.token}`);
   } else {
-    $.log(`❌ 获取 Token 失败: ${$.toStr(result)}`);
+    msg = `❌ 获取 Token 失败: ${$.toStr(result)}`;
   }
   $.messages.push(msg) && $.log(msg);
 }
