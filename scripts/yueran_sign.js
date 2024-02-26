@@ -223,10 +223,10 @@ async function getWxCode() {
 
 /**
  * 请求函数二次封装
- * @param {object | string} options - 构造请求内容，可传入对象或 Url *
+ * @param {(object|string)} options - 构造请求内容，可传入对象或 Url *
  * @param {string} method - 请求方式 get / post 等，默认自动判断
  * @param {boolean} onlyBody 仅返回 body 内容，默认为 true
- * @returns {object | string} 自动根据内容返回 JSON 对象或字符串
+ * @returns {(object|string)} 自动根据内容返回 JSON 对象或字符串
  */
 async function Request(options, method, onlyBody = true) {
   try {
