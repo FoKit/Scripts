@@ -133,7 +133,7 @@ async function getToken() {
     $.mobile = mobile;
     $.token = 'Bearer ' + token;
     msg = `账号: ${hideSensitiveData($.mobile, 3, 4)}`;
-    $.log(`✅ 成功获取 Token: ${$.token}`);
+    $.log(`✅ 成功获取 Token`);
   } else {
     msg = `❌ 获取 Token 失败: ${$.toStr(result)}`;
   }
@@ -145,7 +145,7 @@ async function getToken() {
 !(async () => {
   await main();  // 主函数
 })()
-  .catch((e) => $.messages.push(e.message || e) && console.log(e))  // 捕获登录函数等抛出的异常, 并把原因添加到全局变量(通知)
+  .catch((e) => $.messages.push(e.message || e) && $.logErr(e))
   .finally(async () => {
     await sendMsg($.messages.join('\n'));  // 推送通知
     $.done();
@@ -164,7 +164,7 @@ async function getWxCode() {
       .filter(item => item.length === 32);
     $.log(`♻️ 获取到 ${$.codeList.length} 个微信Code:\n${$.codeList}`);
   } catch (e) {
-    console.error(`❌ 获取微信 Code 失败！`);
+    $.logErr(`❌ 获取微信 Code 失败！`);
   }
 }
 
@@ -195,24 +195,28 @@ function hideSensitiveData(string, head_length = 2, foot_length = 2) {
  * @returns {object | string} 自动根据内容返回 JSON 对象或字符串
  */
 async function Request(options, method, onlyBody = true) {
-  options = typeof options === 'string' ? { url: options } : options;
-  typeof method === 'undefined' ? ('body' in options ? (method = 'post') : (method = 'get')) : (method = method);
-  const timeout = options?.timeout ? options.timeout : 15e3;
-  const http = [
-    new Promise((_, e) => setTimeout(() => e('当前请求已超时'), timeout)),
-    new Promise((resolve, reject) => {
-      debug(options, '[Request]');
-      $.http[method.toLowerCase()](options)
-        .then((response) => {
-          debug(response, '[Response]');
-          let res = onlyBody ? response.body : response;
-          res = $.toObj(res) || res;
-          resolve(res);
-        })
-        .catch((err) => reject(err));
-    })
-  ];
-  return await Promise.race(http).then((res) => res).catch((err) => err);
+  try {
+    options = options.url ? options : { url: options };
+    method = method || 'body' in options ? method = 'post' : method = 'get';
+    const _timeout = options?.timeout || 15e3;
+    const _http = [
+      new Promise((_, reject) => setTimeout(() => reject(new Error(`❌ 请求超时： ${options['url']}`)), _timeout)),
+      new Promise((resolve, reject) => {
+        debug(options, '[Request]');
+        $.http[method.toLowerCase()](options)
+          .then((response) => {
+            debug(response, '[Response]');
+            let res = onlyBody ? response.body : response;
+            res = $.toObj(res) || res;
+            resolve(res);
+          })
+          .catch((err) => reject(new Error(err)));
+      })
+    ];
+    return await Promise.race(_http);
+  } catch (err) {
+    $.logErr(err);
+  }
 }
 
 // 发送消息
@@ -231,7 +235,7 @@ async function sendMsg(message) {
       $.msg($.name, '', message);
     }
   } catch (e) {
-    console.log(`\n\n----- ${$.name} -----\n${message}`);
+    $.log(`\n\n----- ${$.name} -----\n${message}`);
   }
 }
 
@@ -245,9 +249,9 @@ function debug(content, title = "debug") {
   let end = `\n----- ${$.time('HH:mm:ss')} -----\n`;
   if ($.is_debug === 'true') {
     if (typeof content == "string") {
-      console.log(start + content + end);
+      $.log(start + content + end);
     } else if (typeof content == "object") {
-      console.log(start + $.toStr(content) + end);
+      $.log(start + $.toStr(content) + end);
     }
   }
 }

@@ -99,7 +99,7 @@ if (isGetUserInfo = typeof $request !== `undefined`) {
       }
     }
   })()
-    .catch((e) => $.messages.push(e.message || e) && console.log(e))  // 捕获登录函数等抛出的异常, 并把原因添加到全局变量(通知)
+    .catch((e) => $.messages.push(e.message || e) && $.logErr(e))
     .finally(async () => {
       await sendMsg($.messages.join('\n'));  // 推送通知
       $.done();
@@ -142,7 +142,7 @@ async function sign() {
     let text = result?.detail?.signDays ? `签到成功: 连续签到 ${result?.detail?.signDays} 天, 获得 ${result?.detail?.integral} 积分` : `签到失败: ${result?.errMsg}`;
     $.messages.push(text) && $.log(text);
   } else {
-    console.log(`❌ 签到失败: ${$.toStr(result)}`);
+    $.logErr(`❌ 签到失败: ${$.toStr(result)}`);
   }
 }
 
@@ -150,9 +150,9 @@ async function sign() {
 async function userCenter() {
   // 计算 mkey
   $.body['mkeyUrl'] = '/clientApi/userCenterDetail';
-  console.log($.body)
+  $.log($.body);
   $.body['mkey'] = hash(generateQueryString($.body));
-  console.log($.body)
+  $.log($.body);
 
   // 构造请求
   let opt = {
@@ -167,7 +167,7 @@ async function userCenter() {
     let text = `会员: ${nickName}  等级: ${cardLevelName}  积分: ${integral}`;
     $.messages.push(text) && $.log(text);
   } else {
-    console.log(`❌ 个人信息查询失败: ${$.toStr(result)}`);
+    $.logErr(`❌ 个人信息查询失败: ${$.toStr(result)}`);
   }
 }
 
@@ -200,7 +200,7 @@ async function getToken() {
       $.log(`❌ 获取 Token 失败: ${$.toStr(result)}`);
     }
   } catch (e) {
-    console.error(e);
+    $.logErr(e);
   }
 }
 
@@ -217,7 +217,7 @@ async function getWxCode() {
       .filter(item => item.length === 32);
     debug($.codeList, "getWxCode()");
   } catch (e) {
-    console.error(`❌ 获取微信 Code 失败！`);
+    $.logErr(`❌ 获取微信 Code 失败！`);
   }
 }
 
@@ -229,24 +229,28 @@ async function getWxCode() {
  * @returns {object | string} 自动根据内容返回 JSON 对象或字符串
  */
 async function Request(options, method, onlyBody = true) {
-  options = typeof options === 'string' ? { url: options } : options;
-  typeof method === 'undefined' ? ('body' in options ? (method = 'post') : (method = 'get')) : (method = method);
-  const timeout = options?.timeout ? options.timeout : 15e3;
-  const http = [
-    new Promise((_, e) => setTimeout(() => e('当前请求已超时'), timeout)),
-    new Promise((resolve, reject) => {
-      debug(options, '[Request]');
-      $.http[method.toLowerCase()](options)
-        .then((response) => {
-          debug(response, '[Response]');
-          let res = onlyBody ? response.body : response;
-          res = $.toObj(res) || res;
-          resolve(res);
-        })
-        .catch((err) => reject(err));
-    })
-  ];
-  return await Promise.race(http).then((res) => res).catch((err) => err);
+  try {
+    options = options.url ? options : { url: options };
+    method = method || 'body' in options ? method = 'post' : method = 'get';
+    const _timeout = options?.timeout || 15e3;
+    const _http = [
+      new Promise((_, reject) => setTimeout(() => reject(new Error(`❌ 请求超时： ${options['url']}`)), _timeout)),
+      new Promise((resolve, reject) => {
+        debug(options, '[Request]');
+        $.http[method.toLowerCase()](options)
+          .then((response) => {
+            debug(response, '[Response]');
+            let res = onlyBody ? response.body : response;
+            res = $.toObj(res) || res;
+            resolve(res);
+          })
+          .catch((err) => reject(new Error(err)));
+      })
+    ];
+    return await Promise.race(_http);
+  } catch (err) {
+    $.logErr(err);
+  }
 }
 
 // 发送消息
@@ -265,7 +269,7 @@ async function sendMsg(message) {
       $.msg($.name, '', message);
     }
   } catch (e) {
-    console.log(`\n\n----- ${$.name} -----\n${message}`);
+    $.log(`\n\n----- ${$.name} -----\n${message}`);
   }
 }
 
@@ -296,9 +300,9 @@ function debug(content, title = "debug") {
   let end = `\n----- ${$.time('HH:mm:ss')} -----\n`;
   if ($.is_debug === 'true') {
     if (typeof content == "string") {
-      console.log(start + content + end);
+      $.log(start + content + end);
     } else if (typeof content == "object") {
-      console.log(start + $.toStr(content) + end);
+      $.log(start + $.toStr(content) + end);
     }
   }
 }
