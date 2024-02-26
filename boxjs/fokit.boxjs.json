@@ -1084,6 +1084,27 @@
           "desc": "悦然荟小程序 version"
         }
       ]
+    },
+    {
+      "id": "huachenghui",
+      "name": "花城汇小程序",
+      "author": "@FoKit",
+      "repo": "",
+      "icons": [
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/hch.png",
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/hch.png"
+      ],
+      "descs_html": [],
+      "keys": ["hch"],
+      "settings": [
+        {
+          "id": "@hch.userid",
+          "name": "userId",
+          "val": "",
+          "type": "text",
+          "desc": "花城汇小程序 userId, 以数组形式保存"
+        }
+      ]
     }
   ]
 }
