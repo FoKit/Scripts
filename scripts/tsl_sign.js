@@ -197,7 +197,7 @@ function hideSensitiveData(string, head_length = 2, foot_length = 2) {
 async function Request(options, method, onlyBody = true) {
   try {
     options = options.url ? options : { url: options };
-    method = method || 'body' in options ? method = 'post' : method = 'get';
+    method = method || ('body' in options ? method = 'post' : method = 'get');
     const _timeout = options?.timeout || 15e3;
     const _http = [
       new Promise((_, reject) => setTimeout(() => reject(new Error(`❌ 请求超时： ${options['url']}`)), _timeout)),
