@@ -910,13 +910,36 @@
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/geocaching.png"
       ],
       "keys": [
+        "geocaching_translate",
+        "geocaching_gps_fix",
+        "Geo_membershipTypeId",
         "BaiDu_APP_ID",
         "BaiDu_SECURITY_KEY",
-        "Geo_membershipTypeId",
         "BAIDU_TRANSLATE_TO_KEY",
         "geocaching_temp"
       ],
       "settings": [
+        {
+          "id": "geocaching_translate",
+          "name": "百度翻译",
+          "val": false,
+          "type": "boolean",
+          "desc": "开启后自动翻译 log / describe"
+        },
+        {
+          "id": "geocaching_gps_fix",
+          "name": "坐标修正",
+          "val": true,
+          "type": "boolean",
+          "desc": "用于修复高德地图坐标偏移 WGS-84 -> GCJ-02"
+        },
+        {
+          "id": "Geo_membershipTypeId",
+          "name": "membershipTypeId",
+          "val": "",
+          "type": "text",
+          "desc": ""
+        },
         {
           "id": "BaiDu_APP_ID",
           "name": "百度翻译 appid",
@@ -974,13 +997,6 @@
               "label": "Español - 西班牙语"
             }
           ],
-          "desc": ""
-        },
-        {
-          "id": "Geo_membershipTypeId",
-          "name": "membershipTypeId",
-          "val": "",
-          "type": "text",
           "desc": ""
         },
         {
