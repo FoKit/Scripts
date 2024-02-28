@@ -83,8 +83,8 @@ const $ = new Env('Geocaching helper');
 const appid = $.getdata('BaiDu_APP_ID') || '';  // 百度翻译 appid
 const securityKey = $.getdata('BaiDu_SECURITY_KEY') || '';  // 百度翻译 securityKey
 const translateTo = $.getdata('BAIDU_TRANSLATE_TO_KEY') || 'zh';  // 翻译后的语言
-const geocaching_translate = $.getjson('geocaching_translate') || false;  // 百度翻译
-const geocaching_gps_fix = $.getjson('geocaching_gps_fix') || true;  // 坐标转换
+const geocaching_translate = Boolean($.getdata('geocaching_translate') || 'false');  // 百度翻译
+const geocaching_gps_fix = Boolean($.getdata('geocaching_gps_fix') || 'true');  // 坐标转换
 let startTime = new Date().getTime();
 let success_num = 0, gps_convert_num = 0;
 let obj = JSON.parse($response.body);
