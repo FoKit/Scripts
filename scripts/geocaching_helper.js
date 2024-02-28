@@ -95,7 +95,7 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
 !(async () => {
   if (!$request) return $.msg($.name, '', `❌ 非 cron 类脚本，停止执行`);
   if (/map\/search\?adventuresTake/.test($request.url)) {
-    if (!geocaching_gps_fix) return console.log(`⚠️ 未启用翻译功能，跳过翻译。`);
+    if (!geocaching_gps_fix) return console.log(`⚠️ 未启用转换坐标功能`);
     $.log("🔁 开始转换坐标");
     // 通过 map 方法创建一个新数组，用于遍历转换坐标
     let coordinatesArr = obj.geocaches.map(item => item.postedCoordinates);
@@ -140,7 +140,7 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     $.error_msg && $.notifyMsg.push(`❌ 翻译失败: ${$.error_msg}`);
 
     // 此页面需要转换当前 cache 坐标，否则会导致定位偏移
-    if (!geocaching_gps_fix) return console.log(`⚠️ 未启用翻译功能，跳过翻译。`);
+    if (!geocaching_gps_fix) return console.log(`⚠️ 未启用转换坐标功能`);
     $.log("🔁 开始转换坐标");
     // 提取经纬度变量
     let { latitude, longitude } = obj.postedCoordinates;
