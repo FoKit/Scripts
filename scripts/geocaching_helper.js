@@ -94,7 +94,6 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
 
 !(async () => {
   if (!$request) throw new Error('❌ 非 cron 类脚本，不支持手动运行');
-    $.log("🔁 开始转换坐标");
   if (/map\/search\?adventuresTake/.test($request.url)) {
     if (!geocaching_gps_fix) throw new Error('⚠️ 未启用转换坐标功能');
     $.log("🔁 开始转换坐标");
