@@ -1121,6 +1121,43 @@
           "desc": "花城汇小程序 userId, 以数组形式保存"
         }
       ]
+    },
+    {
+      "id": "10086_coupons",
+      "name": "移动话费券",
+      "author": "@FoKit",
+      "repo": "",
+      "icons": [
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/10086.png",
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/10086.png"
+      ],
+      "descs_html": [],
+      "keys": ["wx10086_token", "wx10086_count", "wx10086_wait"],
+      "settings": [
+        {
+          "id": "wx10086_token",
+          "name": "Token",
+          "val": "",
+          "type": "textarea",
+          "autoGrow": true,
+          "rows": 1,
+          "desc": "活动 Token, 以数组字符串形式保存"
+        },
+        {
+          "id": "wx10086_count",
+          "name": "请求次数",
+          "val": "",
+          "type": "text",
+          "desc": ""
+        },
+        {
+          "id": "wx10086_wait",
+          "name": "间隔时间",
+          "val": "",
+          "type": "text",
+          "desc": "单位 ms"
+        }
+      ]
     }
   ]
 }
