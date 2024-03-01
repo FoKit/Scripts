@@ -22,7 +22,7 @@ const reRequest = $.getjson('reRequest') || {};
 const _options = JSON.parse(reRequest['options']) || {};
 const _count = reRequest['count'] || 200;  // 重试次数
 const _wait = reRequest['wait'] || 50;  // 间隔时间 ms
-const _timeout = reRequest['wait'] || 5e3;  // 超时时间 ms
+const _timeout = reRequest['timeout'] || 5e3;  // 超时时间 ms
 $.is_debug = $.getdata('is_debug') || 'false';  // 调试模式
 
 if (typeof $request !== `undefined`) {

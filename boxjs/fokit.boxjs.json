@@ -144,23 +144,43 @@
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/debug.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/debug.png"
       ],
-      "keys": ["is_debug", "bark_key", "remoteScriptURL"],
+      "scripts": [
+        {
+          "name": "reRequest",
+          "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/reRequest.js"
+        }
+      ],
+      "keys": ["reRequest", "bark_key", "is_debug"],
       "settings": [
         {
-          "id": "is_debug",
-          "name": "Debug",
-          "val": false,
-          "type": "boolean",
-          "desc": "Debug 模式"
-        },
-        {
-          "id": "remoteScriptURL",
-          "name": "远程脚本地址",
+          "id": "@reRequest.options",
+          "name": "请求信息",
           "val": "",
           "type": "textarea",
           "autoGrow": true,
           "rows": 1,
-          "desc": "用于远程调试"
+          "desc": "Request options"
+        },
+        {
+          "id": "@reRequest.count",
+          "name": "请求次数",
+          "val": "100",
+          "type": "text",
+          "desc": "Request count"
+        },
+        {
+          "id": "@reRequest.wait",
+          "name": "请求间隔",
+          "val": "0",
+          "type": "text",
+          "desc": "Request wait (ms)"
+        },
+        {
+          "id": "@reRequest.timeout",
+          "name": "超时时间",
+          "val": "0",
+          "type": "text",
+          "desc": "Request timeout (ms)"
         },
         {
           "id": "bark_key",
@@ -169,6 +189,13 @@
           "type": "text",
           "placeholder": "",
           "desc": "Bark 通知 key"
+        },
+        {
+          "id": "is_debug",
+          "name": "Debug",
+          "val": false,
+          "type": "boolean",
+          "desc": "Debug 模式"
         }
       ]
     },
@@ -1068,7 +1095,7 @@
     },
     {
       "id": "YueRanHui",
-      "name": "悦然荟小程序",
+      "name": "悦然荟",
       "author": "@FoKit",
       "repo": "",
       "icons": [
@@ -1103,7 +1130,7 @@
     },
     {
       "id": "huachenghui",
-      "name": "花城汇小程序",
+      "name": "花城汇",
       "author": "@FoKit",
       "repo": "",
       "icons": [
