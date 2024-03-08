@@ -1185,6 +1185,29 @@
           "desc": "单位 ms"
         }
       ]
+    },
+    {
+      "id": "pp_parking",
+      "name": "PP 停车",
+      "author": "@FoKit",
+      "repo": "",
+      "icons": [
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/pp_parking.png",
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/pp_parking.png"
+      ],
+      "descs_html": [],
+      "keys": ["pp_token"],
+      "settings": [
+        {
+          "id": "pp_token",
+          "name": "Token",
+          "val": "",
+          "type": "textarea",
+          "autoGrow": true,
+          "rows": 1,
+          "desc": "活动 Token, 以数组字符串形式保存"
+        }
+      ]
     }
   ]
 }
