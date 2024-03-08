@@ -176,13 +176,12 @@ if (typeof $request !== `undefined`) {
 function GetCookie() {
   try {
     debug($request.headers);
-    debug($request.body);
     const headers = ObjectKeys2LowerCase($request.headers);
     $.newToken = headers['rest_api_token'];
     if (/user\/token/.test($request.url) && !new RegExp($.newToken).test($.token)) {
       $.tokenArr.push($.newToken)
-      console.log(`开始新增用户数据 ${$.token}`);
-      $.setdata($.tokenArr, 'pp_token');
+      console.log(`开始新增用户数据 ${$.newToken}`);
+      $.setdata($.toStr($.tokenArr), 'pp_token');
       $.msg($.name, ``, `Token 获取成功。🎉`);
     }
   } catch (e) {
