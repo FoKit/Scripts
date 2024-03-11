@@ -233,7 +233,7 @@ async function getToken() {
     // $.openid = openid;
     // $.mobile = mobile;
     // $.nickname = nickname;
-    $.token = 'Bearer ' + access_token.value;
+    $.token = access_token.value;
     // msg = `昵称: ${$.nickname} 手机: ${hideSensitiveData($.mobile, 3, 4)}`;
     $.log(`✅ 成功获取 Token`);
   } else {
