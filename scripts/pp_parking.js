@@ -132,8 +132,7 @@ async function task() {
         for (let i = 0; i < item['repeat_limit']; i++) {
           if ($.is_done) break;
           $.log(`✈️ 执行任务: ${item['name']} [${i + 1}/${item['repeat_limit']}]`);
-          await complete(purpose, voucher);
-          await acquire(purpose, item['name']);
+          await complete(purpose, voucher) && await acquire(purpose, item['name']);
         }
       } else if (item['name'].includes('签到')) {
         await acquire(purpose, item['name']);
