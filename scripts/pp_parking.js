@@ -5,6 +5,7 @@
  * 环境变量：PP_TOKEN / CODESERVER_ADDRESS、CODESERVER_FUN
  * BoxJs 订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
  * 更新时间：2024-03-11 新增 3 个浏览任务，感谢 @leiyiyan 提供帮助
+ * 更新时间：2024-03-12 新增用户昵称和积分查询，修复看视频任务二次任务
 
 ------------------ Surge 配置 -----------------
 
@@ -90,11 +91,21 @@ async function main() {
     for (let i = 0; i < $.tokenArr.length; i++) {
       $.log(`----- 账号 [${i + 1}] 开始执行 -----`);
       // 初始化
-      $.nickname = `\n账号[${i + 1}]`;
+      $.nickname = '';
+      $.identity = '';
+      $.mobile = '';
       $.token = 'Bearer ' + $.tokenArr[i];
-      $.messages.push(`${$.nickname}`);
+
+      // 用户信息
+      await whoami();
+
+      // 判断 Token 是否有效
+      if (!$.token) continue;
+
+      // 用户积分
+      await balance();
       // 执行任务
-      $.token && await task();
+      await task();
     }
     $.log(`----- 所有账号执行完成 -----`);
   } else {
@@ -119,27 +130,46 @@ async function task() {
   };
 
   // 发起请求
-  const result = await Request(opt);
+  var result = await Request(opt);
   if (result?.code == "1001") {
     $.log(`任务列表获取成功 ✅`);
     var row = result['payload']['row'];
-    for (const item of row) {
-      let purpose = item['purpose'];
-      if (item['referer_url'].includes('voucher=')) {
-        $.is_done = false;
-        let voucher = new URLSearchParams(item['referer_url']).get('voucher');
-        // 看视频任务需要执行 2 次
-        for (let i = 0; i < item['repeat_limit']; i++) {
-          if ($.is_done) break;
-          $.log(`✈️ 执行任务: ${item['name']} [${i + 1}/${item['repeat_limit']}]`);
-          await complete(purpose, voucher) && await acquire(purpose, item['name']);
+
+    // 获取最大任务次数
+    const repeatLimit = row.reduce((max, item) => {
+      if (item.referer_url.includes('voucher=')) {
+        return Math.max(max, item.repeat_limit);
+      } else {
+        return max;
+      }
+    }, 0);
+
+    for (let i = 0; i < repeatLimit; i++) {
+      for (const item of row) {
+        let purpose = item['purpose'];
+        let taskName = i > 0 ? item['name'] + (i + 1) : item['name'];
+        if (item['referer_url'].includes('voucher=')) {
+          let voucher = new URLSearchParams(item['referer_url']).get('voucher');
+          console.log(`✈️ 执行任务: ${taskName}`);
+          await complete(purpose, voucher) && await acquire(purpose, taskName);
+        } else if (taskName.includes('签到')) {
+          console.log(`✈️ 执行任务: ${taskName}`);
+          await acquire(purpose, taskName);
         }
-      } else if (item['name'].includes('签到')) {
-        await acquire(purpose, item['name']);
+      }
+      if (repeatLimit == i + 1) break;
+      // 更新任务列表
+      var result = await Request(opt);
+      if (result?.code == "1001") {
+        $.log(`更新任务列表成功 ✅`);
+        var row = result['payload']['row'];
+        row = row.filter(item => {
+          return item.repeat_limit > i + 1 && item['referer_url'].includes('voucher=');
+        });
+      } else {
+        break;
       }
     }
-  } else if (result?.code == "401") {
-    msg = `Token 已失效 ❌`;
   } else {
     msg = `任务列表获取失败 ❌`;
   }
@@ -197,10 +227,9 @@ async function acquire(purpose, taskName) {
   if (result?.code == "1001") {
     msg = `${taskName} 任务完成, 获得 ${result['payload']['value']} 积分 🎉`;
   } else if (result?.code == "1002") {
-    $.is_done = true;
-    msg = `${taskName} 任务完成, ${result['message']} ❌`;
+    msg = `${taskName} 任务已完成 ✅`;
   } else {
-    msg = `${taskName} 任务执行失败 ❌`;
+    msg = `${taskName} 任务失败 ❌`;
   }
 
   $.messages.push(msg) && $.log(msg);
@@ -237,6 +266,67 @@ async function getToken() {
     $.log(`✅ 成功获取 Token`);
   } else {
     msg = `❌ 获取 Token 失败: ${$.toStr(result)}`;
+  }
+  $.messages.push(msg) && $.log(msg);
+}
+
+
+// 获取用户信息
+async function whoami() {
+  let msg = ''
+  // 构造请求
+  const options = {
+    url: `https://user-api.4pyun.com/rest/2.0/user/whoami`,
+    headers: {
+      'Content-Type': `application/x-www-form-urlencoded`,
+      'Authorization': $.token
+    }
+  }
+
+  // 发起请求
+  const result = await Request(options)
+  if (result?.code == "1001") {
+    const { access_token, identity, mobile, openid, nickname, account } = result.payload;
+    $.identity = identity;  // user_id & identity
+    // $.openid = openid;
+    $.mobile = mobile;
+    $.nickname = nickname;
+    // $.token = access_token.value;
+    $.log(`✅ 用户信息获取成功`);
+  } else if (result?.code == "401") {
+    $.token = '';
+    msg = `Token 已失效 ❌`;
+  } else {
+    msg = `❌ 用户信息获取失败: ${$.toStr(result)}`;
+  }
+  $.messages.push(msg) && $.log(msg);
+}
+
+
+// 获取用户积分
+async function balance() {
+  let msg = ''
+  var params = {
+    user_id: $.identity,
+    user_type: 1,
+    identity: $.identity
+  };
+  // 构造请求
+  const options = {
+    url: `https://user-api.4pyun.com/rest/2.0/reward/balance?${serializeParams(getEncryptKeys(params))}`,
+    headers: {
+      'Content-Type': `application/x-www-form-urlencoded`,
+      'Authorization': $.token
+    }
+  }
+
+  // 发起请求
+  const result = await Request(options)
+  if (result?.code == "1001") {
+    msg = `昵称: ${$.nickname}  积分: ${result.payload.balance}`;
+    $.log(`✅ 用户积分获取成功`);
+  } else {
+    msg = `❌ 用户积分获取失败: ${$.toStr(result)}`;
   }
   $.messages.push(msg) && $.log(msg);
 }
@@ -353,7 +443,7 @@ async function Request(options) {
           debug(response, '[response]');
           error && $.log($.toStr(error));
           if (_respType !== 'all') {
-            resolve($.toObj(response[_respType], response[_respType]));
+            resolve($.toObj(response?.[_respType], response?.[_respType]));
           } else {
             resolve(response);
           }
@@ -370,7 +460,6 @@ async function Request(options) {
 // 发送消息
 async function sendMsg(message) {
   if (!message) return;
-  message = message.replace(/\n+$/, '');  // 清除末尾换行
   try {
     if ($.isNode()) {
       try {
