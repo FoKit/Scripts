@@ -70,14 +70,10 @@ script-providers:
 */
 
 const $ = new Env('海信爱家');
-const HISENSE_CPS_KEY = 'HISENSE_CPS';
-const HISENSE_SWEIXIN_KEY = 'HISENSE_SWEIXIN';
-const HISENSE_GAME_SCORE_KEY = 'HISENSE_GAME_SCORE';
-const HISENSE_PARTY_EXCHANGE_KEY = 'HISENSE_PARTY_EXCHANGE';
-let HISENSE_CPS = ($.isNode() ? process.env.HISENSE_CPS : $.getdata(HISENSE_CPS_KEY)) || '';
-let HISENSE_SWEIXIN = ($.isNode() ? process.env.HISENSE_SWEIXIN : $.getdata(HISENSE_SWEIXIN_KEY)) || '';
-let HISENSE_GAME_SCORE = ($.isNode() ? process.env.HISENSE_GAME_SCORE : $.getdata(HISENSE_GAME_SCORE_KEY)) || '15-20';
-let HISENSE_PARTY_EXCHANGE = ($.isNode() ? process.env.HISENSE_PARTY_EXCHANGE : $.getdata(HISENSE_PARTY_EXCHANGE_KEY)) || 'false';
+let HISENSE_CPS = ($.isNode() ? process.env.HISENSE_CPS : $.getdata('HISENSE_CPS')) || '';
+let HISENSE_SWEIXIN = ($.isNode() ? process.env.HISENSE_SWEIXIN : $.getdata('HISENSE_SWEIXIN')) || '';
+let HISENSE_GAME_SCORE = ($.isNode() ? process.env.HISENSE_GAME_SCORE : $.getdata('HISENSE_GAME_SCORE')) || '15-20';
+let HISENSE_PARTY_EXCHANGE = ($.isNode() ? process.env.HISENSE_PARTY_EXCHANGE : $.getdata('HISENSE_PARTY_EXCHANGE')) || 'false';
 $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false';
 $.appid = 'wx3b97b20380656267';  // 微信 appId
 $.messages = [];
@@ -327,11 +323,11 @@ function GetCookie() {
     debug($response.body);
     const headers = ObjectKeys2LowerCase($request['headers']);
     $.log("HISENSE_SWEIXIN: " + headers['cookie']);
-    $.setdata(headers['cookie'], HISENSE_SWEIXIN_KEY);
+    $.setdata(headers['cookie'], 'HISENSE_SWEIXIN');
     $.token = $response.body.match(/TOKEN_ACTIVITY=(?:\w)+/) ? $response.body.match(/TOKEN_ACTIVITY=(?:\w)+/)[0] : '';
     if ($.token) {
       $.log("HISENSE_CPS: " + $.token);
-      $.setdata($.token, HISENSE_CPS_KEY);
+      $.setdata($.token, 'HISENSE_CPS');
       $.msg($.name, ``, `🎉 签到数据获取/更新成功。`);
     }
   }
