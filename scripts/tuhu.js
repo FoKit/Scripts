@@ -103,8 +103,8 @@ async function main() {
 
       // 每日签到
       const taskMap = [
-        { "name": "APP ", "url": "" },
-        { "name": "小程序", "url": "?channel=wxapp" }
+        { "name": "软件", "url": "" },
+        { "name": "微信", "url": "?channel=wxapp" }
       ]
       for (item of taskMap) {
         await checkin(item['url'], item['name']);
@@ -164,7 +164,7 @@ async function whoami() {
   const result = await Request(options);
   if (result?.code == 10000 && result?.data) {
     const { nickName, mobile } = result.data;
-    msg += `\n用户: ${nickName}  [${hideSensitiveData(mobile, 3, 4)}]`;
+    msg += `\n当前用户: ${nickName}`;
   } else if (/token无效/.test($.toStr(result))) {
     $.is_login = false;
     msg += `${$.toStr(result)} ❌`;
@@ -190,9 +190,9 @@ async function checkin(suffix, name) {
 
   var result = await Request(opt);
   if (result?.Code == 1) {
-    msg += `${name}签到成功, 积分 +${result.AddIntegral}, 连续签到: ${result.NeedDays}/7天 ✅`;
+    msg += `${name}任务: 签到成功, 积分 +${result.AddIntegral}, 连续签到: ${result.NeedDays}/7天 ✅`;
   } else {
-    msg += `${name}签到失败, ${result?.Message || $.toStr(result)}`;
+    msg += `${name}任务: 签到失败, ${result?.Message || $.toStr(result)}`;
   }
 
   $.messages.push(msg), $.log(msg);
@@ -213,7 +213,7 @@ async function getIntegral() {
   // 发起请求
   const result = await Request(options);
   if (result?.Code == 1) {
-    msg += `当前积分: ${result.IntegralNumber} 分, 可抵现: ${result.IntegralNumber / 100} 元`;
+    msg += `查询积分: ${result.IntegralNumber} 分, 可抵现: ${result.IntegralNumber / 100} 元`;
   } else {
     msg += `❌ 积分查询失败`;
   }
