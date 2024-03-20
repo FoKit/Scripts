@@ -203,16 +203,11 @@
       "id": "jparking",
       "name": "捷停车",
       "author": "@FoKit",
+      "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jparking_sign.js",
       "descs_html": ["捷停车签到"],
       "icons": [
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/jparking.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/jparking.png"
-      ],
-      "scripts": [
-        {
-          "name": "捷停车签到",
-          "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jparking_sign.js"
-        }
       ],
       "keys": ["jtc_userId"],
       "settings": [
@@ -264,45 +259,6 @@
           "val": "",
           "type": "text",
           "desc": "微博昵称"
-        }
-      ]
-    },
-    {
-      "id": "Analyzing",
-      "name": "活动解析",
-      "author": "@FoKit",
-      "descs_html": ["用于解析京东活动数据"],
-      "icons": [
-        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/analyzing.png",
-        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/analyzing.png"
-      ],
-      "keys": ["TG_BOT_TOKEN", "TG_USER_ID", "QUOTATION"],
-      "settings": [
-        {
-          "id": "TG_BOT_TOKEN",
-          "name": "TG_BOT_TOKEN",
-          "val": "",
-          "type": "text",
-          "placeholder": "123456:abcdefgabcdefgabcdefg",
-          "desc": "填写 Telegram 机器人的 Token，格式：123456:abcdefgabcdefgabcdefg"
-        },
-        {
-          "id": "TG_USER_ID",
-          "name": "TG群组ID",
-          "type": "text",
-          "val": "-1001589058412",
-          "placeholder": "-100xxxxxxxx",
-          "desc": "填写TG群组ID"
-        },
-        {
-          "id": "QUOTATION",
-          "name": "随机语录",
-          "type": "textarea",
-          "val": "",
-          "placeholder": "今天工作不努力，明天努力找工作！",
-          "autoGrow": true,
-          "rows": 1,
-          "desc": "多条数据使用&分隔"
         }
       ]
     },
@@ -382,75 +338,6 @@
           "autoGrow": true,
           "rows": 1,
           "desc": "示例：replace@text 多条规则以换行分隔"
-        }
-      ]
-    },
-    {
-      "id": "token_95598",
-      "name": "南网在线Token",
-      "author": "@FoKit",
-      "descs_html": ["南网在线Token"],
-      "icons": [
-        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/95598.png",
-        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/95598.png"
-      ],
-      "keys": ["token_95598"],
-      "settings": [
-        {
-          "id": "token_95598",
-          "name": "南网在线Token",
-          "val": "",
-          "type": "text",
-          "desc": ""
-        }
-      ]
-    },
-    {
-      "id": "12123",
-      "name": "交管12123",
-      "author": "@FoKit",
-      "descs_html": ["交管12123数据"],
-      "icons": [
-        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/12123.png",
-        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/12123.png"
-      ],
-      "keys": ["body_12123", "referer_12123"],
-      "settings": [
-        {
-          "id": "body_12123",
-          "name": "交管12123_Body",
-          "val": "",
-          "type": "textarea",
-          "autoGrow": true,
-          "rows": 1,
-          "desc": ""
-        },
-        {
-          "id": "referer_12123",
-          "name": "交管12123_Referer",
-          "val": "",
-          "type": "text",
-          "desc": ""
-        }
-      ]
-    },
-    {
-      "id": "huawei_cloud",
-      "name": "华为云服务",
-      "author": "@FoKit",
-      "descs_html": ["华为云服务 Cookie"],
-      "icons": [
-        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/huawei.png",
-        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/huawei.png"
-      ],
-      "keys": ["huawei_cookie"],
-      "settings": [
-        {
-          "id": "huawei_cookie",
-          "name": "Cookie",
-          "val": "",
-          "type": "text",
-          "desc": ""
         }
       ]
     },
@@ -1097,6 +984,7 @@
       "id": "YueRanHui",
       "name": "悦然荟",
       "author": "@FoKit",
+      "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yueran_sign.js",
       "repo": "",
       "icons": [
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/yrh.png",
@@ -1132,6 +1020,7 @@
       "id": "huachenghui",
       "name": "花城汇",
       "author": "@FoKit",
+      "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/hch_sign.js",
       "repo": "",
       "icons": [
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/hch.png",
@@ -1190,12 +1079,13 @@
       "id": "pp_parking",
       "name": "PP 停车",
       "author": "@FoKit",
+      "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/pp_parking.js",
       "repo": "",
       "icons": [
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/pp_parking.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/pp_parking.png"
       ],
-      "descs_html": [],
+      "descs_html": ["PP 停车每日任务"],
       "keys": ["pp_token"],
       "settings": [
         {
@@ -1206,6 +1096,37 @@
           "autoGrow": true,
           "rows": 1,
           "desc": "活动 Token, 以数组字符串形式保存"
+        }
+      ]
+    },
+    {
+      "id": "tuhu",
+      "name": "途虎养车",
+      "author": "@FoKit",
+      "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/tuhu.js",
+      "repo": "",
+      "icons": [
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/tuhu.png",
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/tuhu.png"
+      ],
+      "descs_html": ["途虎养车签到"],
+      "keys": ["tuhu_token", "tuhu_blackbox"],
+      "settings": [
+        {
+          "id": "tuhu_token",
+          "name": "Token",
+          "val": "",
+          "type": "textarea",
+          "autoGrow": true,
+          "rows": 1,
+          "desc": "活动 Token, 以数组字符串形式保存"
+        },
+        {
+          "id": "tuhu_blackbox",
+          "name": "Blackbox",
+          "val": "",
+          "type": "text",
+          "desc": ""
         }
       ]
     }
