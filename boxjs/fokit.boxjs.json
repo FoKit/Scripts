@@ -1129,6 +1129,30 @@
           "desc": ""
         }
       ]
+    },
+    {
+      "id": "livingmall",
+      "name": "丽影云街",
+      "author": "@FoKit",
+      "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/livingmall.js",
+      "repo": "",
+      "icons": [
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/livingmall.png",
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/livingmall.png"
+      ],
+      "descs_html": ["丽影云街签到"],
+      "keys": ["living_info"],
+      "settings": [
+        {
+          "id": "living_info",
+          "name": "用户信息",
+          "val": "",
+          "type": "textarea",
+          "autoGrow": true,
+          "rows": 1,
+          "desc": ""
+        }
+      ]
     }
   ]
 }
