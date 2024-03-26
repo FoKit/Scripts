@@ -218,9 +218,11 @@ function GetCookie() {
     const headers = ObjectKeys2LowerCase($request.headers);
     const token = headers['authorization'];
     const member_id = $.toObj($request.body)['params']['member_id'];
+    
+    if (!token || !member_id) return;
 
     // 使用 find() 方法找到与 member_id 匹配的对象，以新增/更新用户 token
-    const user = $.userArr.find(user => user.member_id === newMemberId);
+    const user = $.userArr.find(user => user.member_id === member_id);
     if (user) {
       msg += `更新用户[${member_id}] token: ${token}`;
       user.access_token = token;
