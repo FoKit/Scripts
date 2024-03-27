@@ -204,19 +204,19 @@ function GetCookie() {
     let msg = '';
     debug($response.body);
     const body = $.toObj($response.body);
-    const { token, openid } = body['data'];
+    const { session_token, openid } = body['data'];
     const version = new URLSearchParams($request.url).get('coutom_version');
     if (version) $.setdata(version, 'wechat_pay_version');
-    if (token && openid) {
+    if (session_token && openid) {
       // 使用 find() 方法找到与 member_id 匹配的对象，以新增/更新用户 token
       const user = $.userArr.find(user => user.openid === openid);
       if (user) {
-        if (user.token == token) return;
-        msg += `更新用户 [${openid}] Token: ${token}`;
-        user.token = token;
+        if (user.token == session_token) return;
+        msg += `更新用户 [${openid}] Token: ${session_token}`;
+        user.token = session_token;
       } else {
-        msg += `新增用户 [${openid}] Token: ${token}`;
-        $.userArr.push({ "openid": openid, "token": token });
+        msg += `新增用户 [${openid}] Token: ${session_token}`;
+        $.userArr.push({ "openid": openid, "token": session_token });
       }
       // 写入数据持久化
       $.setdata($.toStr($.userArr), 'wechat_pay_token');
