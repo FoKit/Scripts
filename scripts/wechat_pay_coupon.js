@@ -84,7 +84,7 @@ async function main() {
     for (let i = 0; i < $.userArr.length; i++) {
       $.log(`----- 账号 [${i + 1}] 开始执行 -----`);
       // 初始化
-      $.token = $.userArr[i];
+      $.token = $.userArr[i]['token'];
 
       // 获取任务列表
       await getTask();
@@ -113,7 +113,7 @@ async function getToken(code) {
   if (result?.errcode == 0 && result?.data) {
     const { session_token, openid } = result.data;
     // 把新的 Token 添加到 $.userArr
-    session_token && $.userArr.push(session_token);
+    session_token && openid && $.userArr.push({ "openid": openid, "token": session_token });
     $.log(`✅ 成功获取 Token`);
   } else {
     $.log(`❌ 获取 Token 失败: ${$.toStr(result)}`);
@@ -197,25 +197,30 @@ async function getCoin(task_id) {
   })
 
 
+
 // 获取签到数据
 function GetCookie() {
   try {
     let msg = '';
     debug($response.body);
-    const token = $.toObj($response.body)['data']['session_token'];
+    const body = $.toObj($response.body);
+    const { token, openid } = body['data'];
     const version = new URLSearchParams($request.url).get('coutom_version');
-
     if (version) $.setdata(version, 'wechat_pay_version');
-    if (token) {
+    if (token && openid) {
       // 使用 find() 方法找到与 member_id 匹配的对象，以新增/更新用户 token
-      const user = $.userArr.find(ck => ck === token);
-      if (!user) {
-        $.userArr.push(token);
-        msg += `新增用户 token: ${token}`;
-        // 写入数据持久化
-        $.setdata($.toStr($.userArr), 'wechat_pay_token');
-        $.messages.push(msg), $.log(msg);
+      const user = $.userArr.find(user => user.openid === openid);
+      if (user) {
+        if (user.token == token) return;
+        msg += `更新用户 [${openid}] Token: ${token}`;
+        user.token = token;
+      } else {
+        msg += `新增用户 [${openid}] Token: ${token}`;
+        $.userArr.push({ "openid": openid, "token": token });
       }
+      // 写入数据持久化
+      $.setdata($.toStr($.userArr), 'wechat_pay_token');
+      $.messages.push(msg), $.log(msg);
     }
   } catch (e) {
     $.log("❌ 签到数据获取失败"), $.log(e);
