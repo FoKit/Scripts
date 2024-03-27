@@ -186,7 +186,7 @@ async function checkin() {
 
   var result = await Request(opt);
   if (result?.code == 200 && result?.data) {
-    msg += `任务: 签到成功, 积分 +${result.data.point} ✅`;
+    msg += `任务: 连续签到 ${result.data.num} 天, 积分 +${result.data.point} ✅`;
   } else {
     msg += `任务: 签到失败, ${result?.msg || $.toStr(result)}`;
   }
@@ -218,7 +218,7 @@ function GetCookie() {
     const headers = ObjectKeys2LowerCase($request.headers);
     const token = headers['authorization'];
     const member_id = $.toObj($request.body)['params']['member_id'];
-    
+
     if (!token || !member_id) return;
 
     // 使用 find() 方法找到与 member_id 匹配的对象，以新增/更新用户 token

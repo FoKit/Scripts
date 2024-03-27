@@ -9,6 +9,7 @@
  * 更新时间：2024-01-31  增加借记卡用户自动断签功能，非建行信用卡用户连续签到 7 天优惠力度较低(满39元减10元)
  * 更新时间：2024-02-18  修复默认断签问题
  * 更新时间：2024-02-21  修复变量作用域导致无法自动领取签到奖励问题
+ * 更新时间：2024-03-27  支持 Node.js 环境读取脚本同目录 box.dat 的 JHSH_SKIPDAY 缓存，内容格式：{"JHSH_SKIPDAY": "3"}
 /*
 
 https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
@@ -72,14 +73,14 @@ script-providers:
 const $ = new Env('建行生活');
 const notify = $.isNode() ? require('./sendNotify') : '';
 let AppId = '1472477795', giftMap = { "1": "打车", "2": "外卖", "3": "骑行" }, message = '';
-let giftType = ($.isNode() ? process.env.JHSH_GIFT : $.getdata('JHSH_GIFT')) || '2';  // 奖励类型，默认领取'外卖'券
-let bodyStr = ($.isNode() ? process.env.JHSH_BODY : $.getdata('JHSH_BODY')) || '';  // 签到所需的 body
-let autoLoginInfo = ($.isNode() ? process.env.JHSH_LOGIN_INFO : $.getdata('JHSH_LOGIN_INFO')) || '';  // 刷新 session 所需的数据
-let AppVersion = ($.isNode() ? process.env.JHSH_VERSION : $.getdata('JHSH_VERSION')) || '2.1.5.002';  // 最新版本号，获取失败时使用
-let skipDay = ($.isNode() ? process.env.JHSH_SKIPDAY : $.getdata('JHSH_SKIPDAY')) || '';  // 下个断签日 (适用于借记卡用户)
+let giftType = getEnv('JHSH_GIFT') || '2';  // 奖励类型，默认领取'外卖'券
+let bodyStr = getEnv('JHSH_BODY') || '';  // 签到所需的 body
+let autoLoginInfo = getEnv('JHSH_LOGIN_INFO') || '';  // 刷新 session 所需的数据
+let AppVersion = getEnv('JHSH_VERSION') || '2.1.5.002';  // 最新版本号，获取失败时使用
+let skipDay = getEnv('JHSH_SKIPDAY') || '';  // 下个断签日 (适用于借记卡用户)
 let bodyArr = bodyStr ? bodyStr.split("|") : [];
 let bodyArr2 = autoLoginInfo ? autoLoginInfo.split("|") : [];
-$.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false';
+$.is_debug = getEnv('is_debug') || 'false';
 
 if (isGetCookie = typeof $request !== `undefined`) {
   GetCookie();
@@ -399,6 +400,15 @@ async function getLatestVersion() {
       }
     })
   })
+}
+
+
+// 获取环境变量
+function getEnv(...keys) {
+  for (let key of keys) {
+    var value = $.isNode() ? process.env[key] || process.env[key.toUpperCase()] || process.env[key.toLowerCase()] || $.getdata(key) : $.getdata(key);
+    if (value) return value;
+  }
 }
 
 
