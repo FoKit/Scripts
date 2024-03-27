@@ -1153,6 +1153,37 @@
           "desc": ""
         }
       ]
+    },
+    {
+      "id": "wechat_pay_coupon",
+      "name": "微信支付有优惠",
+      "author": "@FoKit",
+      "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/wechat_pay_coupon.js",
+      "repo": "",
+      "icons": [
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/wechat_pay_coupon.png",
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/wechat_pay_coupon.png"
+      ],
+      "descs_html": ["微信支付有优惠 - 领金币"],
+      "keys": ["wechat_pay_token", "wechat_pay_version"],
+      "settings": [
+        {
+          "id": "wechat_pay_token",
+          "name": "用户信息",
+          "val": "",
+          "type": "textarea",
+          "autoGrow": true,
+          "rows": 1,
+          "desc": ""
+        },
+        {
+          "id": "wechat_pay_version",
+          "name": "版本号",
+          "val": "",
+          "type": "text",
+          "desc": ""
+        }
+      ]
     }
   ]
 }
