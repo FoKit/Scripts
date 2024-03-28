@@ -1,6 +1,6 @@
 /**
  * 脚本名称：微信支付有优惠 - 领金币
- * 活动规则：每周累计使用微信支付 10 次可领取 15 金币，每周日执行一次即可。
+ * 活动规则：每周累计使用微信支付 10 次可领取 15 金币。
  * 脚本说明：添加重写进入"微信支付有优惠"小程序即可获取 Token，支持多账号，兼容 NE / Node.js 环境。
  * 环境变量：WECHAT_PAY_TOKEN / CODESERVER_ADDRESS、CODESERVER_FUN
  * 更新时间：2024-03-27
@@ -15,7 +15,7 @@ hostname = payapp.weixin.qq.com
 [Script]
 微付金币² = type=http-response,pattern=https:\/\/payapp\.weixin\.qq\.com\/coupon-center-user\/home\/login,requires-body=1,max-size=0,binary-body-mode=0,timeout=30,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/wechat_pay_coupon.js,script-update-interval=0
 
-微付金币 = type=cron,cronexp=30 9 * * 0,timeout=60,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/wechat_pay_coupon.js,script-update-interval=0
+微付金币 = type=cron,cronexp=30 9 * * *,timeout=60,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/wechat_pay_coupon.js,script-update-interval=0
 
 ------------------- Loon 配置 -------------------
 
@@ -25,7 +25,7 @@ hostname = payapp.weixin.qq.com
 [Script]
 http-response https:\/\/payapp\.weixin\.qq\.com\/coupon-center-user\/home\/login tag=微付金币²,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/wechat_pay_coupon.js,requires-body=1
 
-cron "30 9 * * 0" script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/wechat_pay_coupon.js,tag=微付金币,enable=true
+cron "30 9 * * *" script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/wechat_pay_coupon.js,tag=微付金币,enable=true
 
 --------------- Quantumult X 配置 ---------------
 
@@ -36,14 +36,14 @@ hostname = payapp.weixin.qq.com
 https:\/\/payapp\.weixin\.qq\.com\/coupon-center-user\/home\/login url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/wechat_pay_coupon.js
 
 [task_local]
-30 9 * * 0 https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/wechat_pay_coupon.js, tag=微付金币, img-url=https://raw.githubusercontent.com/FoKit/Scripts/main/images/wechat_pay_coupon.png, enabled=true
+30 9 * * * https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/wechat_pay_coupon.js, tag=微付金币, img-url=https://raw.githubusercontent.com/FoKit/Scripts/main/images/wechat_pay_coupon.png, enabled=true
 
 ------------------ Stash 配置 ------------------
 
 cron:
   script:
     - name: 微付金币
-      cron: '30 9 * * 0'
+      cron: '30 9 * * *'
       timeout: 10
 
 http:
