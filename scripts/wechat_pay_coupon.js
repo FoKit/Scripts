@@ -2,7 +2,7 @@
  * 脚本名称：微信支付有优惠 - 领金币
  * 活动规则：每周累计使用微信支付 10 次可领取 15 金币，每周日执行一次即可。
  * 脚本说明：添加重写进入微信支付有优惠小程序即可获取 Token，支持多账号，兼容 NE / Node.js 环境。
- * 环境变量：LIVING_VERSION / CODESERVER_ADDRESS、CODESERVER_FUN
+ * 环境变量：WECHAT_PAY_TOKEN / CODESERVER_ADDRESS、CODESERVER_FUN
  * 更新时间：2024-03-27
 
 # BoxJs 订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
