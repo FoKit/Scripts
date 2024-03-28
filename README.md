@@ -1,6 +1,33 @@
-### 访问数量：
+### 访问统计：
 
 ![](http://profile-counter.glitch.me/FoKit_Scripts/count.svg)
+
+---
+
+### 仓库脚本：
+
+| 序号 | 名称            | 类型           | 更新       | 环境      | 状态 |
+| ---- | --------------- | -------------- | ---------- | --------- | ---- |
+| 1    | 中国电信        | rewrite        | 2022-11-11 | NE        | ✅   |
+| 2    | 京东 WSKEY      | rewrite        | 2023-10-17 | NE        | ✅   |
+| 3    | 找不同 8000 关+ | rewrite        | 2023-07-17 | NE        | ✅   |
+| 4    | Geocaching      | rewrite        | 2024-02-27 | NE        | ✅   |
+| 5    | 青龙变量同步    | task           | 2023-06-27 | Node      | ✅   |
+| 6    | 京东账号同步    | task           | 2023-03-10 | NE        | ✅   |
+| 7    | 花城汇          | task & rewrite | 2024-02-26 | NE & Node | ✅   |
+| 8    | 海信爱家        | task & rewrite | 2024-03-19 | NE & Node | ✅   |
+| 9    | 建行生活        | task & rewrite | 2024-03-27 | NE & Node | ✅   |
+| 10   | 捷停车          | task & rewrite | 2024-02-18 | NE & Node | ✅   |
+| 11   | 丽影云街        | task & rewrite | 2024-03-27 | NE & Node | ✅   |
+| 12   | PP 停车         | task & rewrite | 2024-03-12 | NE & Node | ✅   |
+| 13   | 托迈酷客        | task & rewrite | 2024-02-18 | NE & Node | ✅   |
+| 14   | 谢瑞麟 · TSL    | task & rewrite | 2024-02-26 | NE & Node | ✅   |
+| 15   | 途虎养车        | task & rewrite | 2023-03-20 | NE & Node | ✅   |
+| 16   | 微信支付有优惠  | task & rewrite | 2023-03-28 | NE & Node | ✅   |
+| 17   | 新浪微博        | task & rewrite | 2022-11-08 | NE & Node | ✅   |
+| 18   | 威锋论坛        | task & rewrite | 2022-11-15 | NE & Node | ✅   |
+| 19   | 伊利乳品        | task & rewrite | 2023-08-19 | NE & Node | ✅   |
+| 20   | 悦然荟          | task & rewrite | 2024-02-26 | NE & Node | ✅   |
 
 ---
 
