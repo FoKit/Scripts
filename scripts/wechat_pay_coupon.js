@@ -205,7 +205,7 @@ async function collectstamp() {
 
   // 发起请求
   var result = await Request(opt);
-  if (result?.errcode == 0 && result?.data?.user_calendar_stamp_record?.user_calendar_stamp_record_id == 8) {
+  if (result?.errcode == 0) {
     msg += `任务: 集章日历, 任务已完成 ✅`;
   } else if (result?.errcode == 270718475) {
     $.is_login = false;  // Token 失效
