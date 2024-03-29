@@ -1165,7 +1165,7 @@
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/wechat_pay_coupon.png"
       ],
       "descs_html": ["微信支付有优惠 - 领金币"],
-      "keys": ["wechat_pay_token", "wechat_pay_version"],
+      "keys": ["wechat_pay_token", "wechat_pay_version", "wechat_pay_exchange"],
       "settings": [
         {
           "id": "wechat_pay_token",
@@ -1182,6 +1182,13 @@
           "val": "",
           "type": "text",
           "desc": ""
+        },
+        {
+          "id": "wechat_pay_exchange",
+          "name": "兑换好礼",
+          "val": false,
+          "type": "boolean",
+          "desc": "每日使用1积分兑换好礼, 获得补贴金"
         }
       ]
     }

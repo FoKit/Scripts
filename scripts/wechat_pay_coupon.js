@@ -3,7 +3,7 @@
  * 活动规则：每周累计使用微信支付 10 次可领取 15 金币。
  * 脚本说明：添加重写进入"微信支付有优惠"小程序即可获取 Token，支持多账号，兼容 NE / Node.js 环境。
  * 环境变量：WECHAT_PAY_TOKEN / CODESERVER_ADDRESS、CODESERVER_FUN
- * 更新时间：2024-03-27
+ * 更新时间：2024-03-30 新增兑换今日好礼，默认关闭需要到 Boxjs 开启或配置环境变量 WECHAT_PAY_EXCHANGE='true'
 
 # BoxJs 订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
 
@@ -65,8 +65,9 @@ script-providers:
 const $ = new Env('微信支付有优惠');
 $.is_debug = getEnv('is_debug') || 'false';  // 调试模式
 $.version = getEnv('wechat_pay_version') || '6.49.5';  // 小程序版本
-$.userInfo = getEnv('wechat_pay_token') || '';  // Token
-$.userArr = $.toObj($.userInfo) || [];  // 用户数组
+$.exchange = getEnv('wechat_pay_exchange') || 'false';  // 兑换好礼
+$.userInfo = getEnv('wechat_pay_token') || '';  // 获取账号
+$.userArr = $.toObj($.userInfo) || [];  // 用户信息
 $.appid = 'wxe73c2db202c7eebf';  // 小程序 appId
 $.messages = [];
 
@@ -86,6 +87,7 @@ async function main() {
       // 初始化
       $.is_login = true;
       $.token = $.userArr[i]['token'];
+      $.openid = $.userArr[i]['openid'];
 
       // 集章任务
       await collectstamp();
@@ -94,6 +96,9 @@ async function main() {
 
       // 获取任务列表
       await getTask();
+
+      // 获取今日好礼
+      $.exchange && await todaygift();
 
     }
     $.log(`----- 所有账号执行完成 -----`);
@@ -164,7 +169,7 @@ async function getTask() {
     msg += `\nToken 已失效 ❌`;
     $.log($.toStr(result));
   }
-  $.messages.push(msg), $.log(msg);
+  $.messages.push(msg.trimEnd()), $.log(msg);
 }
 
 
@@ -212,6 +217,70 @@ async function collectstamp() {
     msg += `${result.msg} ❌`;
   } else {
     $.log(`每日集章任务执行失败 `);
+  }
+  $.messages.push(msg), $.log(msg);
+}
+
+
+// 获取今日好礼
+async function todaygift() {
+  let msg = ''
+  // 构造请求
+  const options = {
+    url: `https://payapp.weixin.qq.com/coupon-center-award/shelf/todaygift`,
+    params: {
+      session_token: $.token,
+      coutom_version: $.version
+    }
+  }
+
+  // 发起请求
+  const result = await Request(options);
+  if (result?.errcode == 0 && result?.data) {
+    let award_list = result.data.shelf_list[0].award_list;
+    let [award,] = award_list.filter((item, index, array) => {
+      return item?.discount_rule?.discount_coin_count != undefined;
+    });
+    const { name, award_id } = award;
+    $.log(`兑换今日好礼: [${award_id}]${name}`);
+    await getGift(award_id, name);  // 兑换今日好礼
+  } else {
+    msg += `获取今日好礼失败 ❌`;
+    $.log($.toStr(result));
+  }
+  $.log(msg);
+}
+
+
+// 兑换今日好礼
+async function getGift(award_id, name) {
+  let msg = ''
+  // 构造请求
+  const options = {
+    url: `https://payapp.weixin.qq.com/coupon-center-award/award/obtain?session_token=${$.token}`,
+    headers: {
+      'content-type': 'application/json'
+    },
+    body: $.toStr({
+      coutom_version: $.version,
+      idempotent_id: `${$.openid}_${award_id}_${parseInt(Date.now() / 1000)}`,
+      award_id,
+      obtain_source: {
+        award_detail_page: true,
+        share_source: "OBTAIN_SHARE_SOURCE_NOT_SHARE",
+        award_obtain_source: "AWARD_OBTAIN_SOURCE_TODAY_GIFT_SHELF"
+      }
+    })
+  }
+
+  // 发起请求
+  const result = await Request(options);
+  if (result?.errcode == 0 && result?.data) {
+    msg += `任务: 兑换好礼, 获得${name} ✅`;
+
+  } else {
+    msg += `任务: 兑换好礼失败, ${result.msg} ❌`;
+    $.log($.toStr(result));
   }
   $.messages.push(msg), $.log(msg);
 }
