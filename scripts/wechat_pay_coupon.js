@@ -4,6 +4,7 @@
  * 脚本说明：添加重写进入"微信支付有优惠"小程序即可获取 Token，支持多账号，兼容 NE / Node.js 环境。
  * 环境变量：WECHAT_PAY_TOKEN / CODESERVER_ADDRESS、CODESERVER_FUN
  * 更新时间：2024-03-30 新增兑换今日好礼，默认关闭需要到 Boxjs 开启或配置环境变量 WECHAT_PAY_EXCHANGE='true'
+            2024-03-31 优化通知内容
 
 # BoxJs 订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
 
@@ -69,7 +70,7 @@ $.exchange = getEnv('wechat_pay_exchange') || 'false';  // 兑换好礼
 $.userInfo = getEnv('wechat_pay_token') || '';  // 获取账号
 $.userArr = $.toObj($.userInfo) || [];  // 用户信息
 $.appid = 'wxe73c2db202c7eebf';  // 小程序 appId
-$.messages = [];
+$.messages = []; beforeMsgs = '';
 
 
 // 主函数
@@ -86,6 +87,7 @@ async function main() {
       $.log(`----- 账号 [${i + 1}] 开始执行 -----`);
       // 初始化
       $.is_login = true;
+      $.beforeMsgs = '';
       $.token = $.userArr[i]['token'];
       $.openid = $.userArr[i]['openid'];
 
@@ -94,11 +96,23 @@ async function main() {
 
       if (!$.is_login) continue;  // 无效 token 跳出
 
+      // 获取今日好礼
+      $.exchange && await todaygift();
+
       // 获取任务列表
       await getTask();
 
-      // 获取今日好礼
-      $.exchange && await todaygift();
+      // 查询昵称
+      await queryName();
+
+      // 查询金币
+      await queryCoin();
+
+      // 查询补贴金
+      await querySubsidies();
+
+      // 合并通知
+      $.messages.splice(0, 0, $.beforeMsgs);
 
     }
     $.log(`----- 所有账号执行完成 -----`);
@@ -132,6 +146,81 @@ async function getToken(code) {
 }
 
 
+// 查询昵称
+async function queryName() {
+  let msg = ''
+  // 构造请求
+  const options = {
+    url: `https://payapp.weixin.qq.com/coupon-center-user/home/mainpageextra`,
+    params: {
+      session_token: $.token,
+      coutom_version: $.version
+    }
+  }
+
+  // 发起请求
+  const result = await Request(options);
+  if (result?.errcode == 0 && result?.data) {
+    let nickname = result.data.user_info.nickname;
+    $.beforeMsgs += `\n账号: ${nickname}`;
+  } else {
+    msg += `查询昵称失败 ❌`;
+    $.log($.toStr(result));
+  }
+  $.log(msg);
+}
+
+
+// 查询金币
+async function queryCoin() {
+  let msg = ''
+  // 构造请求
+  const options = {
+    url: `https://payapp.weixin.qq.com/coupon-center-account/account/get`,
+    params: {
+      session_token: $.token,
+      coutom_version: $.version
+    }
+  }
+
+  // 发起请求
+  const result = await Request(options);
+  if (result?.errcode == 0 && result?.data) {
+    let balance = result.data.account_info.account.avalible_balance.balance;
+    $.beforeMsgs += `  金币: ${balance}`;
+  } else {
+    msg += `查询金币失败 ❌`;
+    $.log($.toStr(result));
+  }
+  $.log(msg);
+}
+
+
+// 查询补贴金
+async function querySubsidies() {
+  let msg = ''
+  // 构造请求
+  const options = {
+    url: `https://payapp.weixin.qq.com/coupon-center-award/award/getuserttzsubsidyinfo`,
+    params: {
+      session_token: $.token,
+      coutom_version: $.version
+    }
+  }
+
+  // 发起请求
+  const result = await Request(options);
+  if (result?.errcode == 0 && result?.data) {
+    let subsidies = result.data.user_ttz_subsidy_info.can_obtain_amount || 0;
+    $.beforeMsgs += `  补贴: ${subsidies / 100} 元`;
+  } else {
+    msg += `查询补贴金失败 ❌`;
+    $.log($.toStr(result));
+  }
+  $.log(msg);
+}
+
+
 // 获取任务列表
 async function getTask() {
   let msg = ''
@@ -147,26 +236,33 @@ async function getTask() {
   // 发起请求
   const result = await Request(options);
   if (result?.errcode == 0 && result?.data) {
-    let task_list = result.data.task_info.task_item_list;
-    for (let i = 1; i <= task_list.length; i++) {
-      const { name, reward_coin_count, state, task_id, total_times } = task_list[i - 1];
-      switch (state) {
-        case 'USER_TASK_STATE_OBTAIN':  // 奖励已领取
-          msg += `任务: 支付${total_times}次, 已获得${reward_coin_count}金币 ✅\n`;
-          break;
+    const task_info = result.data.task_info;
+    const { week_total_coin, week_obtained_coin, task_item_list } = task_info; // 本周最多可获得金币数量, 已领取金币数量, 任务列表
 
-        case 'USER_TASK_STATE_COMPLETE_NOT_OBTAIN':  // 奖励未领取
-          const coin_count = await getCoin(task_id);
-          msg += `任务: 支付${total_times}次, 已领取${coin_count}金币 💰\n`;
-          break;
+    // 初始化
+    let ObtainedCoin = 0;
+    let maxTotalTimes = 0;
+    let maxFinishedTimes = 0;
 
-        case 'USER_TASK_STATE_RUNNING':  // 任务未完成
-          msg += `任务: 支付${total_times}次, 可获得${reward_coin_count}金币 ❌\n`;
-          break;
+    for (let i = 1; i <= task_item_list.length; i++) {
+      const { name, reward_coin_count, state, task_id, total_times, finished_times = 0 } = task_item_list[i - 1];
+      if (total_times > maxTotalTimes) maxTotalTimes = total_times;  // 提取最大的 total_times
+      if (finished_times > maxFinishedTimes) maxFinishedTimes = finished_times;  // 提取最大的 finished_times
+
+      // 领取待零钱金币
+      if (state == 'USER_TASK_STATE_COMPLETE_NOT_OBTAIN') {
+        await getCoin(task_id);
+      }
+
+      // 统计本周获得金币数量
+      if (state != 'USER_TASK_STATE_RUNNING') {
+        ObtainedCoin += reward_coin_count;
       }
     }
+
+    msg += `任务: 支付(${maxFinishedTimes}/${maxTotalTimes})次, 获得(${ObtainedCoin}/${week_total_coin})金币💰`
   } else {
-    msg += `\nToken 已失效 ❌`;
+    msg += `获取任务列表失败 ❌`;
     $.log($.toStr(result));
   }
   $.messages.push(msg.trimEnd()), $.log(msg);
@@ -211,7 +307,7 @@ async function collectstamp() {
   // 发起请求
   var result = await Request(opt);
   if (result?.errcode == 0) {
-    msg += `任务: 集章日历, 任务已完成 ✅`;
+    msg += `任务: 集章日历, 任务已完成 🎉`;
   } else if (result?.errcode == 270718475) {
     $.is_login = false;  // Token 失效
     msg += `${result.msg} ❌`;
@@ -280,7 +376,7 @@ async function getGift(award_id, name) {
   // 发起请求
   const result = await Request(options);
   if (result?.errcode == 0 && result?.data) {
-    msg += `任务: 兑换好礼, 获得${name} ✅`;
+    msg += `任务: 兑换好礼, 获得${name} 🎉`;
 
   } else {
     msg += `任务: 兑换好礼失败, ${result.msg} ❌`;
