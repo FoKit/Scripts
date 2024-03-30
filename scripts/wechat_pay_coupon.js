@@ -241,9 +241,13 @@ async function todaygift() {
     let [award,] = award_list.filter((item, index, array) => {
       return item?.discount_rule?.discount_coin_count != undefined;
     });
-    const { name, award_id } = award;
-    $.log(`兑换今日好礼: [${award_id}]${name}`);
-    await getGift(award_id, name);  // 兑换今日好礼
+    if (award) {
+      const { name, award_id } = award;
+      $.log(`兑换今日好礼: [${award_id}]${name}`);
+      await getGift(award_id, name);  // 兑换今日好礼
+    } else {
+      msg += `没有 1 金币商品可兑换 ⚠️`;
+    }
   } else {
     msg += `获取今日好礼失败 ❌`;
     $.log($.toStr(result));
