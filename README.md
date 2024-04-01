@@ -27,7 +27,7 @@
 | 17   | [花城汇](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/hch_sign.js)                  | task & rewrite | 2024-02-26 | NE & Node | ✅   |
 | 18   | [途虎养车](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/tuhu.js)                    | task & rewrite | 2023-03-20 | NE & Node | ✅   |
 | 19   | [谢瑞麟 · TSL](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/tsl_sign.js)            | task & rewrite | 2024-02-26 | NE & Node | ✅   |
-| 20   | [微信支付有优惠](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/wechat_pay_coupon.js) | task & rewrite | 2024-03-28 | NE & Node | ✅   |
+| 20   | [微信支付有优惠](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/wechat_pay_coupon.js) | task & rewrite | 2024-04-01 | NE & Node | ✅   |
 
 ---
 

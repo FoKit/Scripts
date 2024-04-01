@@ -1,10 +1,11 @@
 /**
  * 脚本名称：微信支付有优惠 - 领金币
  * 活动规则：每周累计使用微信支付 10 次可领取 15 金币。
- * 脚本说明：添加重写进入"微信支付有优惠"小程序即可获取 Token，支持多账号，兼容 NE / Node.js 环境。
+ * 脚本说明：添加重写进入"微信支付有优惠"小程序即可获取 Token，支持多账号，仅支持 NE 环境。
  * 环境变量：WECHAT_PAY_TOKEN / CODESERVER_ADDRESS、CODESERVER_FUN
  * 更新时间：2024-03-30 新增兑换今日好礼，默认关闭需要到 Boxjs 开启或配置环境变量 WECHAT_PAY_EXCHANGE='true'
             2024-03-31 优化通知内容
+            2024-04-01 修复兑换今日好礼变量配置和多账号通知等问题
 
 # BoxJs 订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
 
@@ -70,7 +71,7 @@ $.exchange = getEnv('wechat_pay_exchange') || 'false';  // 兑换好礼
 $.userInfo = getEnv('wechat_pay_token') || '';  // 获取账号
 $.userArr = $.toObj($.userInfo) || [];  // 用户信息
 $.appid = 'wxe73c2db202c7eebf';  // 小程序 appId
-$.messages = []; beforeMsgs = '';
+$.Messages = [];
 
 
 // 主函数
@@ -86,8 +87,9 @@ async function main() {
     for (let i = 0; i < $.userArr.length; i++) {
       $.log(`----- 账号 [${i + 1}] 开始执行 -----`);
       // 初始化
-      $.is_login = true;
       $.beforeMsgs = '';
+      $.is_login = true;
+      $.messages = [];
       $.token = $.userArr[i]['token'];
       $.openid = $.userArr[i]['openid'];
 
@@ -113,6 +115,7 @@ async function main() {
 
       // 合并通知
       $.messages.splice(0, 0, $.beforeMsgs);
+      $.Messages = $.Messages.concat($.messages);
 
     }
     $.log(`----- 所有账号执行完成 -----`);
@@ -161,7 +164,7 @@ async function queryName() {
   // 发起请求
   const result = await Request(options);
   if (result?.errcode == 0 && result?.data) {
-    let nickname = result.data.user_info.nickname;
+    let nickname = result?.data?.user_info?.nickname;
     $.beforeMsgs += `\n账号: ${nickname}`;
   } else {
     msg += `查询昵称失败 ❌`;
@@ -186,7 +189,7 @@ async function queryCoin() {
   // 发起请求
   const result = await Request(options);
   if (result?.errcode == 0 && result?.data) {
-    let balance = result.data.account_info.account.avalible_balance.balance;
+    let balance = result?.data?.account_info?.account?.avalible_balance?.balance || 0;
     $.beforeMsgs += `  金币: ${balance}`;
   } else {
     msg += `查询金币失败 ❌`;
@@ -211,7 +214,7 @@ async function querySubsidies() {
   // 发起请求
   const result = await Request(options);
   if (result?.errcode == 0 && result?.data) {
-    let subsidies = result.data.user_ttz_subsidy_info.can_obtain_amount || 0;
+    let subsidies = result?.data?.user_ttz_subsidy_info?.can_obtain_amount || 0;
     $.beforeMsgs += `  补贴: ${subsidies / 100} 元`;
   } else {
     msg += `查询补贴金失败 ❌`;
@@ -255,7 +258,7 @@ async function getTask() {
       }
 
       // 统计本周获得金币数量
-      if (state != 'USER_TASK_STATE_RUNNING') {
+      if (state != 'USER_TASK_STATE_RUNNING' && state != 'USER_TASK_STATE_NOT_COMPLETE') {
         ObtainedCoin += reward_coin_count;
       }
     }
@@ -281,12 +284,10 @@ async function getCoin(task_id) {
     }
   };
 
-  let coin_count = 0;
   var result = await Request(opt);
   if (result?.errcode == 0 && result?.data) {
-    coin_count = result.data.coin_type_package.coin_count || 0;
+    $.log(`成功领取 ${result?.data?.coin_type_package?.coin_count} 金币 🎉`);
   }
-  return coin_count;
 }
 
 
@@ -393,9 +394,9 @@ async function getGift(award_id, name) {
     await main();  // 主函数
   }
 })()
-  .catch((e) => $.messages.push(e.message || e) && $.logErr(e))
+  .catch((e) => $.Messages.push(e.message || e) && $.logErr(e))
   .finally(async () => {
-    await sendMsg($.messages.join('\n').trimStart().trimEnd());  // 推送通知
+    await sendMsg($.Messages.join('\n').trimStart().trimEnd());  // 推送通知
     $.done();
   })
 
@@ -423,7 +424,7 @@ function GetCookie() {
       }
       // 写入数据持久化
       $.setdata($.toStr($.userArr), 'wechat_pay_token');
-      $.messages.push(msg), $.log(msg);
+      $.Messages.push(msg), $.log(msg);
     }
   } catch (e) {
     $.log("❌ 签到数据获取失败"), $.log(e);
