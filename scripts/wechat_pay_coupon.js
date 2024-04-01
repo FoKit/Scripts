@@ -97,7 +97,7 @@ async function main() {
       if (!$.is_login) continue;  // 无效 token 跳出
 
       // 获取今日好礼
-      $.exchange && await todaygift();
+      if ($.exchange == 'true') await todaygift();
 
       // 获取任务列表
       await getTask();
