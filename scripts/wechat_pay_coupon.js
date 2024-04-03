@@ -126,7 +126,6 @@ async function main() {
 
 // 获取 Token
 async function getToken(code) {
-  console.log(typeof code, code)
   // 构造请求
   const options = {
     url: `https://payapp.weixin.qq.com/coupon-center-user/home/login`,
@@ -140,9 +139,21 @@ async function getToken(code) {
   const result = await Request(options);
   if (result?.errcode == 0 && result?.data) {
     const { session_token, openid } = result.data;
-    // 把新的 Token 添加到 $.userArr
-    session_token && openid && $.userArr.push({ "openid": openid, "token": session_token });
-    $.log(`✅ 成功获取 Token`);
+    if (openid && session_token) {
+      $.log(`✅ 成功获取 Token`);
+      // 使用 find() 方法找到与 mobile 匹配的对象，以新增/更新用户 token
+      const user = $.userArr.find(user => user.openid === openid);
+      if (user) {
+        if (user.token == session_token) return;
+        $.log(`♻️ 更新用户 [${openid}] Token: ${session_token}`);
+        user.token = session_token;
+      } else {
+        $.log(`🆕 新增用户 [${openid}] Token: ${session_token}`);
+        $.userArr.push({ "openid": openid, "token": session_token });
+      }
+      // 写入数据持久化
+      $.setdata($.toStr($.userArr), 'aeon_data');
+    }
   } else {
     $.log(`❌ 获取 Token 失败: ${$.toStr(result)}`);
   }

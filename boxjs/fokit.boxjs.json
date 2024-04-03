@@ -1191,6 +1191,30 @@
           "desc": "每日使用1积分兑换好礼, 获得补贴金"
         }
       ]
+    },
+    {
+      "id": "aeon_sign",
+      "name": "永旺 Aeon",
+      "author": "@FoKit",
+      "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/aeon_sign.js",
+      "repo": "",
+      "icons": [
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/aeon.png",
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/aeon.png"
+      ],
+      "descs_html": ["永旺 Aeon - 签到"],
+      "keys": ["aeon_data"],
+      "settings": [
+        {
+          "id": "aeon_data",
+          "name": "用户信息",
+          "val": "",
+          "type": "textarea",
+          "autoGrow": true,
+          "rows": 1,
+          "desc": ""
+        }
+      ]
     }
   ]
 }
