@@ -5,7 +5,9 @@
 #!Quantumult X版本：https://raw.githubusercontent.com/FoKit/Scripts/main/rewrite/get_jd_wskey.conf
 
 [Script]
-京东 WSKEY = type=http-response,pattern=^https:\/\/api\.m\.jd\.com\/client\.action\?functionId=newUserInfo,requires-body=1,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_jd_wskey.js,script-update-interval=0
+京东 WSKEY = type=http-request,pattern=https:\/\/api\.m\.jd\.com\/client\.action\?functionId=xview2Config,requires-body=0,max-size=0,binary-body-mode=0,timeout=30,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_jd_wskey.js,script-update-interval=0
+
+京东 PIN = type=http-request,pattern=https:\/\/perf\.m\.jd\.com\/app_monitor\/v2\/getRule,requires-body=0,max-size=0,binary-body-mode=0,timeout=30,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_jd_wskey.js,script-update-interval=0
 
 [MITM]
-hostname = %APPEND% api.m.jd.com
+hostname = %APPEND% api.m.jd.com, perf.m.jd.com

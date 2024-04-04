@@ -86,6 +86,7 @@ async function GetCookie() {
       $.jd_temp = {};
     }
 
+    // 写入缓存
     if (wskey) {
       $.log(`wskey: ${wskey}`);
       $.jd_temp['wskey'] = wskey;
@@ -121,6 +122,7 @@ async function GetCookie() {
   }
 }
 
+// 提交 WSKEY
 async function SubmitCK() {
   let msg = '';
   // 构造请求
