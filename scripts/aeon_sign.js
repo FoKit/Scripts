@@ -153,10 +153,10 @@ async function getToken(code) {
       const user = $.userArr.find(user => user.mobile === mobile);
       if (user) {
         if (user.token == token) return;
-        $.log(`♻️ 更新用户 [${mobile}] Token: ${token}`);
+        $.log(`♻️ 更新用户 [${hideSensitiveData(mobile, 3, 4)}] Token: ${token}`);
         user.token = token;
       } else {
-        $.log(`🆕 新增用户 [${mobile}] Token: ${token}`);
+        $.log(`🆕 新增用户 [${hideSensitiveData(mobile, 3, 4)}] Token: ${token}`);
         $.userArr.push({ "mobile": mobile, "token": token, "nickname": nickname });
       }
       // 写入数据持久化
@@ -317,10 +317,10 @@ function GetCookie() {
       const user = $.userArr.find(user => user.mobile === mobile);
       if (user) {
         if (user.token == token) return;
-        msg += `♻️ 更新用户 [${mobile}] Token: ${token}`;
+        msg += `♻️ 更新用户 [${hideSensitiveData(mobile, 3, 4)}] Token: ${token}`;
         user.token = token;
       } else {
-        msg += `🆕 新增用户 [${mobile}] Token: ${token}`;
+        msg += `🆕 新增用户 [${hideSensitiveData(mobile, 3, 4)}] Token: ${token}`;
         $.userArr.push({ "mobile": mobile, "token": token, "nickname": nickname });
       }
       // 写入数据持久化

@@ -5,7 +5,7 @@
 ====================================================================================================
 配置 (Quantumult X)
 [rewrite_local]
-^https:\/\/app\.moutai519\.com\.cn\/xhr\/front\/mall\/message\/unRead\/query url script-request-headers https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_maotai_token.js
+^https:\/\/app\.moutai519\.com\.cn\/xhr\/front\/mall\/message\/unRead\/query url script-request-header https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_maotai_token.js
 
 [MITM]
 hostname = app.moutai519.com.cn

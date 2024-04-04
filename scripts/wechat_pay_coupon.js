@@ -152,7 +152,7 @@ async function getToken(code) {
         $.userArr.push({ "openid": openid, "token": session_token });
       }
       // 写入数据持久化
-      $.setdata($.toStr($.userArr), 'aeon_data');
+      $.setdata($.toStr($.userArr), 'wechat_pay_token');
     }
   } else {
     $.log(`❌ 获取 Token 失败: ${$.toStr(result)}`);
