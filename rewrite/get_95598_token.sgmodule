@@ -1,9 +1,0 @@
-#!name=南网在线Token
-#!desc=自动抓取南网在线Token，支持Surge和Quantumult-X（QX需要配合解析器）
-#!使用方法：打开 南网在线APP 登录即可自动抓取Token。资源解析器：https://t.me/QuanXNews/110
-
-[Script]
-南网在线Token = type=http-request,pattern=^https:\/\/95598\.csg\.cn\/ucs\/ma\/zt\/eleCustNumber\/queryBindEleUsers,requires-body=0,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/SouthernPower.js,script-update-interval=0
-
-[MITM]
-hostname = %APPEND% 95598.csg.cn

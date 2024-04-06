@@ -22,7 +22,7 @@ function getUsername(ck) {
 
 async function getScriptUrl() {
   const response = await $.http.get({
-    url: 'https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jd1_api.js',
+    url: 'https://raw.githubusercontent.com/dompling/Script/master/jd/ql_api.js',
   })
   return response.body
 }
@@ -95,9 +95,9 @@ function HTTP(defaultOptions = { baseURL: '' }) {
     const timeout = options.timeout;
     const events = {
       ...{
-        onRequest: () => {},
+        onRequest: () => { },
         onResponse: (resp) => resp,
-        onTimeout: () => {},
+        onTimeout: () => { },
       },
       ...options.events,
     };
@@ -142,21 +142,21 @@ function HTTP(defaultOptions = { baseURL: '' }) {
     let timeoutid;
     const timer = timeout
       ? new Promise((_, reject) => {
-          timeoutid = setTimeout(() => {
-            events.onTimeout();
-            return reject(
-              `${method} URL: ${options.url} exceeds the timeout ${timeout} ms`,
-            );
-          }, timeout);
-        })
+        timeoutid = setTimeout(() => {
+          events.onTimeout();
+          return reject(
+            `${method} URL: ${options.url} exceeds the timeout ${timeout} ms`,
+          );
+        }, timeout);
+      })
       : null;
 
     return (
       timer
         ? Promise.race([timer, worker]).then((res) => {
-            clearTimeout(timeoutid);
-            return res;
-          })
+          clearTimeout(timeoutid);
+          return res;
+        })
         : worker
     ).then((resp) => events.onResponse(resp));
   }

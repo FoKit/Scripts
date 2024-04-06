@@ -9,127 +9,70 @@
       "id": "ql",
       "name": "数据同步",
       "author": "@FoKit",
-      "descs_html": ["用于JD1/JD2和BoxJS之间的数据同步"],
+      "descs_html": ["用于青龙和BoxJS之间的数据同步（自用脚本）"],
       "icons": [
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/sync.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/sync.png"
       ],
       "scripts": [
         {
-          "name": "JD1同步到BoxJS",
-          "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jd1_sync_box.js"
-        },
-        {
-          "name": "JD2同步到BoxJS",
-          "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jd2_sync_box.js"
+          "name": "青龙同步到BoxJS",
+          "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/ql_to_boxjs"
         }
       ],
       "keys": [
-        "@ql.ip_jd1",
-        "@ql.client_id_jd1",
-        "@ql.client_secret_jd1",
-        "@ql.username_jd1",
-        "@ql.password_jd1",
-        "@ql.env_jd1",
-        "@ql.mute_jd1",
-        "@ql.is_pwd_jd1",
-        "@ql.ip_jd2",
-        "@ql.client_id_jd2",
-        "@ql.client_secret_jd2",
-        "@ql.username_jd2",
-        "@ql.password_jd2",
-        "@ql.env_jd2",
-        "@ql.mute_jd2",
-        "@ql.is_pwd_jd2"
+        "@ql.ip",
+        "@ql.client_id",
+        "@ql.client_secret",
+        "@ql.username",
+        "@ql.password",
+        "@ql.env",
+        "@ql.mute",
+        "@ql.is_pwd"
       ],
       "settings": [
         {
-          "id": "@ql.mute_jd1",
-          "name": "静默同步（JD1 > BoxJs）",
+          "id": "@ql.mute",
+          "name": "静默同步",
           "val": false,
           "type": "boolean",
           "desc": "同步时不会显示通知"
         },
         {
-          "id": "@ql.is_pwd_jd1",
-          "name": "使用密码登陆JD1容器",
-          "val": false,
-          "type": "boolean",
-          "desc": "优先使用密码登陆"
-        },
-        {
-          "id": "@ql.ip_jd1",
-          "name": "JD1 Domains",
-          "val": "",
-          "type": "text",
-          "placeholder": "ip:port"
-        },
-        {
-          "id": "@ql.username_jd1",
-          "name": "JD1 UserName",
-          "val": "",
-          "type": "text"
-        },
-        {
-          "id": "@ql.password_jd1",
-          "name": "JD1 PassWord",
-          "val": "",
-          "type": "text"
-        },
-        {
-          "id": "@ql.client_id_jd1",
-          "name": "JD1 Client ID",
-          "val": "",
-          "type": "text"
-        },
-        {
-          "id": "@ql.client_secret_jd1",
-          "name": "JD1 Client Secret",
-          "val": "",
-          "type": "text"
-        },
-        {
-          "id": "@ql.mute_jd2",
-          "name": "静默同步（JD2 > BoxJs）",
-          "val": false,
-          "type": "boolean",
-          "desc": "同步时不会显示通知"
-        },
-        {
-          "id": "@ql.is_pwd_jd2",
+          "id": "@ql.is_pwd",
           "name": "使用密码登陆",
-          "val": true,
+          "val": false,
           "type": "boolean",
-          "desc": "优先使用密码登陆"
+          "desc": ""
         },
         {
-          "id": "@ql.ip_jd2",
-          "name": "JD2 Domains",
+          "id": "@ql.ip",
+          "name": "Domains",
           "val": "",
           "type": "text",
           "placeholder": "ip:port"
         },
         {
-          "id": "@ql.username_jd2",
-          "name": "JD2 UserName",
+          "id": "@ql.username",
+          "name": "UserName",
           "val": "",
           "type": "text"
         },
         {
-          "id": "@ql.password_jd2",
-          "name": "JD2 PassWord",
+          "id": "@ql.password",
+          "name": "PassWord",
           "val": "",
           "type": "text"
         },
         {
-          "id": "@ql.client_id_jd2",
-          "name": "JD2 Client ID",
+          "id": "@ql.client_id",
+          "name": "Client ID",
           "val": "",
           "type": "text"
         },
         {
-          "id": "@ql.client_secret_jd2",
-          "name": "JD2 Client Secret",
+          "id": "@ql.client_secret",
+          "name": "Client Secret",
           "val": "",
           "type": "text"
         }
