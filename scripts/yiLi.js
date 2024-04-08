@@ -1,8 +1,26 @@
 /**
- * 脚本名称：伊利乳品
+ * 脚本名称：伊利乳品（修改自id77）
  * 活动说明：每日任务可获得积分，兼容 NE 手机代理和青龙等 Node.js 环境，变量名称 id77_yiLi_cookies
  * 脚本来源：https://github.com/id77/QuantumultX/blob/master/task/yiLi.js
  * 更新时间：2023-08-29
+ *
+ * > 支持多账号
+ * > 进入小程序点我的
+ *
+ * hostname = club.yili.com
+ *
+ * # Surge
+ * Rewrite: 伊利乳品 = type=http-request, requires-body=1, pattern=https:\/\/club\.yili\.com\/MALLIFChe\/MCSWSIAPI\.asmx\/Call,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yiLi.js
+ * Tasks: 伊利乳品 = type=cron,cronexp=10 0 * * *,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yiLi.js,wake-system=true
+ *
+ * # QuanX
+ * https:\/\/club\.yili\.com\/MALLIFChe\/MCSWSIAPI\.asmx\/Call url script-request-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yiLi.js
+ * 10 0 * * * https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yiLi.js, tag=伊利乳品, img-url=https://raw.githubusercontent.com/id77/QuantumultX/master/icon/yiLi.png
+ *
+ * # Loon
+ * http-request https:\/\/club\.yili\.com\/MALLIFChe\/MCSWSIAPI\.asmx\/Call script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yiLi.js, requires-body=true,
+ * cron "10 0 * * *" script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yiLi.js
+ *
  */
 
 const $ = new Env('伊利乳品');
@@ -38,65 +56,99 @@ const body = {
 };
 
 !(async () => {
-  if (!users) {
-    $.subt = '未找到Cookie';
-    $.desc = '请获取根据说明获取Cookie，点击前往';
-    $.msg($.name, $.subt, $.desc, {
-      'open-url':
-        'https://raw.githubusercontent.com/id77/QuantumultX/master/task/yiLi.cookie.js',
-    });
+  if (typeof $request !== `undefined` && $request.body.includes('MALLIFCheese.GetPointsBalance')) {
+    let reqBody = JSON.parse(
+      decodeURIComponent($request.body)
+        .replace(/RequestPack=/, '')
+        .replace(/\\/g, '')
+        .replace(/("(\{|\[))|((\}|\])")/g, '$2$4')
+    );
+    // $.log(JSON.stringify(reqBody));
 
-    $.done();
-    return;
-  }
+    const {
+      AuthKey,
+      Params: { OpenId },
+    } = reqBody;
 
-  for (let i = 0; i < $.openIds.length; i++) {
-    $.openId = $.openIds[i];
-    $.user = $.users[$.openId];
-    $.log('===>\n');
-    await anonymousLogin();
-    // $.log(JSON.stringify($.user));
-    const loginResult = await loginByWechatOpenId();
-    // const loginResult = await quickLoginMini();
+    $.userInfo = {
+      authKey: AuthKey,
+      openId: OpenId,
+    };
 
-    if (loginResult.Return === -100) {
-      $.subt = `${$.user.ClientName} Cookie 已失效`;
+    // 获取账号信息，写入 $.userInfo
+    await getUserInfo();
+
+    $.users[OpenId] = $.userInfo;
+
+    if ($.userInfo.aspnetUserId) {
+      if ($.setData(JSON.stringify($.users), $.COOKIES_KEY)) {
+        $.subt = `获取会话: 成功!`;
+      } else {
+        $.subt = `获取会话: 失败!`;
+      }
+      $.msg($.name, $.subt);
+    }
+  } else {
+    if (!users) {
+      $.subt = '未找到Cookie';
       $.desc = '请获取根据说明获取Cookie，点击前往';
       $.msg($.name, $.subt, $.desc, {
         'open-url':
-          'https://raw.githubusercontent.com/id77/QuantumultX/master/task/yiLi.cookie.js',
+          'https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yiLi.js',
       });
 
-      continue;
+      $.done();
+      return;
     }
-    if (!$.userInfo.aspnetUserId) {
-      $.subt = `${$.user.ClientName} 出错`;
-      $.desc = `${loginResult.ReturnInfo}`;
-      $.msg($.name, $.subt, $.desc);
 
-      continue;
-    } else {
-      $.users[$.openId] = $.userInfo;
-      $.setdata(JSON.stringify($.users), $.COOKIES_KEY);
+    for (let i = 0; i < $.openIds.length; i++) {
+      $.openId = $.openIds[i];
+      $.user = $.users[$.openId];
+      $.log('===>\n');
+      await anonymousLogin();
+      // $.log(JSON.stringify($.user));
+      const loginResult = await loginByWechatOpenId();
+      // const loginResult = await quickLoginMini();
 
-      const { aspnetUserId } = $.userInfo;
-      // $.inviteIds = $.inviteIds.filter((item) => item !== aspnetUserId);
+      if (loginResult.Return === -100) {
+        $.subt = `${$.user.ClientName} Cookie 已失效`;
+        $.desc = '请获取根据说明获取Cookie，点击前往';
+        $.msg($.name, $.subt, $.desc, {
+          'open-url':
+            'https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yiLi.js',
+        });
 
-      await sign();
+        continue;
+      }
+      if (!$.userInfo.aspnetUserId) {
+        $.subt = `${$.user.ClientName} 出错`;
+        $.desc = `${loginResult.ReturnInfo}`;
+        $.msg($.name, $.subt, $.desc);
 
-      // await inRecipe();
-      // await relatedRecipe();
-      await recipeTask();
-      await dryGoodsTask();
-      await shareTask();
-      await shareDryGoodsTask();
+        continue;
+      } else {
+        $.users[$.openId] = $.userInfo;
+        $.setdata(JSON.stringify($.users), $.COOKIES_KEY);
 
-      // for (let k = 0; k < $.inviteIds.length; k++) {
-      //   $.inviteId = $.inviteIds[k];
-      // await invite();
-      // }
+        const { aspnetUserId } = $.userInfo;
+        // $.inviteIds = $.inviteIds.filter((item) => item !== aspnetUserId);
 
-      await showMsg();
+        await sign();
+
+        // await inRecipe();
+        // await relatedRecipe();
+        await recipeTask();
+        await dryGoodsTask();
+        await shareTask();
+        await shareDryGoodsTask();
+
+        // for (let k = 0; k < $.inviteIds.length; k++) {
+        //   $.inviteId = $.inviteIds[k];
+        // await invite();
+        // }
+
+        await showMsg();
+      }
     }
   }
 })()
@@ -276,76 +328,76 @@ function loginByWechatOpenId() {
 // }
 
 // 进入阅读菜谱
-function inRecipe() {
-  const _this = this;
-  return new Promise((resolve) => {
-    const { openId, authKey } = $.userInfo;
+// function inRecipe() {
+//   const _this = this;
+//   return new Promise((resolve) => {
+//     const { openId, authKey } = $.userInfo;
 
-    const params = JSON.stringify({
-      CookBookID: $.cookBookID,
-    });
-    body.AuthKey = authKey;
-    body.Method = 'MALLIFCheese.GetCKCookBookByID';
-    body.Params = params;
+//     const params = JSON.stringify({
+//       CookBookID: $.cookBookID,
+//     });
+//     body.AuthKey = authKey;
+//     body.Method = 'MALLIFCheese.GetCKCookBookByID';
+//     body.Params = params;
 
-    const opts = {
-      headers,
-      body: `RequestPack=${encodeURIComponent(JSON.stringify(body))}`,
-    };
-    opts.url = `https://club.yili.com/MALLIFChe/MCSWSIAPI.asmx/Call`;
+//     const opts = {
+//       headers,
+//       body: `RequestPack=${encodeURIComponent(JSON.stringify(body))}`,
+//     };
+//     opts.url = `https://club.yili.com/MALLIFChe/MCSWSIAPI.asmx/Call`;
 
-    $.post(opts, (err, resp, data) => {
-      try {
-        if (!data) return;
+//     $.post(opts, (err, resp, data) => {
+//       try {
+//         if (!data) return;
 
-        // data = XMLtoJson(data);
+//         // data = XMLtoJson(data);
 
-        $.log(`阅读食谱`);
-      } catch (e) {
-        $.log(`========${_this.name}=====`);
-        $.logErr(e, resp);
-      } finally {
-        resolve(data);
-      }
-    });
-  });
-}
+//         $.log(`阅读食谱`);
+//       } catch (e) {
+//         $.log(`========${_this.name}=====`);
+//         $.logErr(e, resp);
+//       } finally {
+//         resolve(data);
+//       }
+//     });
+//   });
+// }
 
 // 任务食谱关联
-function relatedRecipe() {
-  const _this = this;
-  return new Promise((resolve) => {
-    const { openId, authKey } = $.userInfo;
+// function relatedRecipe() {
+//   const _this = this;
+//   return new Promise((resolve) => {
+//     const { openId, authKey } = $.userInfo;
 
-    const params = JSON.stringify({
-      ActivityCode: 'YLCheese_20200623_ViewMenu',
-    });
-    body.AuthKey = authKey;
-    body.Method = 'MALLIFCheese.IsHaveAddMemberPoints';
-    body.Params = params;
+//     const params = JSON.stringify({
+//       ActivityCode: 'YLCheese_20200623_ViewMenu',
+//     });
+//     body.AuthKey = authKey;
+//     body.Method = 'MALLIFCheese.IsHaveAddMemberPoints';
+//     body.Params = params;
 
-    const opts = {
-      headers,
-      body: `RequestPack=${encodeURIComponent(JSON.stringify(body))}`,
-    };
-    opts.url = `https://club.yili.com/MALLIFChe/MCSWSIAPI.asmx/Call`;
+//     const opts = {
+//       headers,
+//       body: `RequestPack=${encodeURIComponent(JSON.stringify(body))}`,
+//     };
+//     opts.url = `https://club.yili.com/MALLIFChe/MCSWSIAPI.asmx/Call`;
 
-    $.post(opts, (err, resp, data) => {
-      try {
-        if (!data) return;
+//     $.post(opts, (err, resp, data) => {
+//       try {
+//         if (!data) return;
 
-        // data = XMLtoJson(data);
+//         // data = XMLtoJson(data);
 
-        $.log(`关联食谱`);
-      } catch (e) {
-        $.log(`========${_this.name}=====`);
-        $.logErr(e, resp);
-      } finally {
-        resolve(data);
-      }
-    });
-  });
-}
+//         $.log(`关联食谱`);
+//       } catch (e) {
+//         $.log(`========${_this.name}=====`);
+//         $.logErr(e, resp);
+//       } finally {
+//         resolve(data);
+//       }
+//     });
+//   });
+// }
 
 // 浏览菜谱15s任务
 function recipeTask() {
@@ -618,6 +670,41 @@ function showMsg() {
       $.msg($.name, $.subt, $.desc);
     }
     resolve();
+  });
+}
+
+function getUserInfo() {
+  return new Promise((resolve) => {
+    const { authKey, openId } = $.userInfo;
+    const params = JSON.stringify({
+      OpenId: openId,
+      Platform: 'YLCheese_SmallPragram',
+      DeviceCode: 'DeviceCode',
+    });
+    body.AuthKey = authKey;
+    body.Method = 'MALLIFCheese.LoginByWechatOpenId';
+    body.Params = params;
+
+    const opts = {
+      headers,
+      body: `RequestPack=${encodeURIComponent(JSON.stringify(body))}`,
+    };
+    opts.url = `https://club.yili.com/MALLIFChe/MCSWSIAPI.asmx/Call`;
+
+    $.post(opts, (err, resp, data) => {
+      try {
+        data = XMLtoJson(data).Result.UserInfo;
+
+        $.userInfo = {
+          ...$.userInfo,
+          ...data,
+        };
+      } catch (e) {
+        $.logErr(e, resp);
+      } finally {
+        resolve();
+      }
+    });
   });
 }
 
