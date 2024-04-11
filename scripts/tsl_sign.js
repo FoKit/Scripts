@@ -82,8 +82,8 @@ async function main() {
       $.log(`----- 账号 [${i + 1}] 开始执行 -----`);
       // 初始化
       $.is_login = true;
-      $.token = $.userArr[i]['token'];
       $.mobile = $.userArr[i]['mobile'];
+      $.token = $.userArr[i]['token'].startsWith('Bearer ') ? $.userArr[i]['token'] : 'Bearer ' + $.userArr[i]['token'];  // 补全 Bearer
 
       // 输出账号
       $.messages.push(`\n账号: ${hideSensitiveData($.mobile, 3, 4)}`);
