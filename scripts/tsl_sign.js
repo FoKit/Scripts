@@ -213,7 +213,7 @@ function GetCookie() {
     debug($response.body);
     const body = $.toObj($response.body);
     if (body?.data?.user_info) {
-      const { mobile, nickname, openid, token, unionid } = result.data.user_info;
+      const { mobile, nickname, openid, token, unionid } = body.data.user_info;
       if (token && openid) {
         // 使用 find() 方法找到与 member_id 匹配的对象，以新增/更新用户 token
         const user = $.userArr.find(user => user.openid === openid);
