@@ -1,11 +1,12 @@
 /*
-脚本名称：托迈酷客
+脚本名称：复游会（托迈酷客）
 活动规则：每日签到可获得积分
 环境变量：ThomasCook_Cookie
-使用说明：添加重写规则进入“复游度假生活”小程序即可获取Cookie
+使用说明：添加重写规则进入"复游会"小程序即可获取Cookie
 更新记录：2023-11-10 新增每日浏览任务
          2023-11-12 代码优化
          2023-11-16 手机号脱敏
+         2024-04-09 修复变量作用域
 ====================================================================================================
 配置 (Surge)
 [MITM]
@@ -29,7 +30,7 @@ hostname = apis.folidaymall.com
 ====================================================================================================
 */
 
-const $ = new Env('托迈酷客');
+const $ = new Env('复游会');
 const ck_key = 'ThomasCook_Cookie';
 const origin = 'https://apis.folidaymall.com';
 
@@ -146,7 +147,7 @@ async function relationList() {
       const { activityTaskId, activityTaskRelationId, activityTaskName, activityTaskType, activityTaskDesc, taskProcessStatus, activityTaskSort, taskContentNum, taskRewardType, taskRewardTypeName, taskRewardValue, taskJumpAddressType, taskJumpAddressDesc, taskEventButton, taskFinishNum, successRewardDesc } = item;
       if (taskRewardTypeName == "积分") {
         $.activityTaskId = activityTaskId;
-        // if (!activityTaskRelationId) console.log(`\n活动名称: ${activityTaskName}\n活动说明: ${activityTaskDesc}\n活动奖励: ${taskRewardValue} ${taskRewardTypeName}`);
+        $.taskName = activityTaskName;
         if (taskProcessStatus == "NOT_COMPLETED") {
           $.taskContentNum = taskContentNum;
           console.log(`活动名称: ${activityTaskName}\n活动说明: ${activityTaskDesc}\n活动奖励: ${taskRewardValue} ${taskRewardTypeName}`);
@@ -171,9 +172,9 @@ async function toTask(obj) {
     let result = await httpRequest(options(obj.url, obj.body));
     debug(result);
     if (result?.responseCode == "0") {
-      console.log(`${taskName}: ${result['message']}`);
+      console.log(`${$.taskName}: ${result['message']}`);
     } else {
-      console.log(`${taskName}失败: ${$.toStr(result)}`);
+      console.log(`${$.taskName}失败: ${$.toStr(result)}`);
     }
   } catch (e) {
     console.log(e);

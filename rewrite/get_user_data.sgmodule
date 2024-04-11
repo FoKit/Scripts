@@ -1,0 +1,64 @@
+#!name=用户数据
+#!desc=获取用户数据模块（合集）
+#!category=FoKit
+
+[MITM]
+hostname = %APPEND% api.aeonbuy.com, app.moutai519.com.cn, member.mowgz.com, sweixin.hisense.com, yunbusiness.ccb.com, sytgate.jslife.com.cn, rest.zhimatech.com, api.660pp.com, apis.folidaymall.com, payapp.weixin.qq.com, api.tuhu.cn, club.yili.com, wox2019.woxshare.com, ccsp-egmas.sf-express.com, vip.heytea.com, www.kozbs.com, cdfmbrapi.cdfg.com.cn, tslmember-crm.tslj.com.cn, www.wandawic.com, qmwebapi.qmai.cn, webapi.qmai.cn, mxsa.mxbc.net, wechat.dairyqueen.com.cn, wxxcx.dairyqueen.com.cn, game.dominos.com.cn, developer.aliyun.com, auth.alipan.com, auth.aliyundrive.com, ulp.michelin.com.cn
+
+
+[Script]
+永旺 Aeon = type=http-response,pattern=https:\/\/api\.aeonbuy\.com\/api\/access-auth-api\/auth\/third\/silentWechatMiniLogin,requires-body=1,max-size=0,binary-body-mode=0,timeout=30,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/aeon_sign.js,script-update-interval=0
+
+i 茅台 = type=http-request,pattern=^https:\/\/app\.moutai519\.com\.cn\/xhr\/front\/mall\/message\/unRead\/query,requires-body=0,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_maotai_token.js,script-update-interval=0
+
+花城汇 = type=http-request,pattern=^https:\/\/member\.mowgz\.com\/bus\/getFunc\?busId=Member&methodId=getMember&getPram=gold%2Clevel&compId=\d+?&userId=\w+,requires-body=0,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/hch_sign.js
+
+海信数据 = type=http-response,pattern=^https:\/\/sweixin\.hisense\.com\/ecrp\/member\/initMember,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/Hisense.js
+
+建行数据 = type=http-request,pattern=^https:\/\/yunbusiness\.ccb\.com\/(clp_coupon|clp_service)\/txCtrl\?txcode=(A3341A038|autoLogin),requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jhsh_checkIn.js
+
+捷停车 = type=http-request, pattern=^https:\/\/sytgate\.jslife\.com\.cn\/core-gateway\/order\/carno\/pay\/info, requires-body=1, max-size=0, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/jparking_sign.js
+
+丽影云街 = type=http-request,pattern=https:\/\/rest\.zhimatech\.com\/v3\/api,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/livingmall.js
+
+PP 停车 = type=http-request,pattern=^https:\/\/api\.660pp\.com\/rest\/[\d\.]+?\/user\/token,requires-body=0,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/pp_parking.js
+
+复游会 = type=http-request,pattern=^https:\/\/apis\.folidaymall\.com\/online\/capi\/uc\/getCount,requires-body=0,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/ThomasCook.js
+
+途虎养车 = type=http-request,pattern=https:\/\/api\.tuhu\.cn\/User\/GetInternalCenterInfo,requires-body=0,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/tuhu.js
+
+微付金币 = type=http-response,pattern=https:\/\/payapp\.weixin\.qq\.com\/coupon-center-user\/home\/login,requires-body=1,max-size=0,binary-body-mode=0,timeout=30,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/wechat_pay_coupon.js,script-update-interval=0
+
+伊利乳品 = type=http-request, requires-body=1, pattern=https:\/\/club\.yili\.com\/MALLIFChe\/MCSWSIAPI\.asmx\/Call,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yiLi.js
+
+悦然荟 = type=http-request,pattern=^https?:\/\/wox2019\.woxshare\.com\/clientApi\/userCenterDetail,requires-body=0,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yueran_sign.js
+
+谢瑞麟 = type=http-response,pattern=https:\/\/tslmember-crm\.tslj\.com\.cn\/api\/auth\/login,requires-body=1,max-size=0,binary-body-mode=0,timeout=30,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/tsl_sign.js,script-update-interval=0
+
+#################### 以下为非本人脚本部分 ####################
+
+顺丰速运 = type=http-request,pattern=^https:\/\/ccsp-egmas.sf-express.com\/cx-app-member\/member\/app\/user\/universalSign,requires-body=1,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/chavyleung/scripts/master/sfexpress/sfexpress.cookie.js,script-update-interval=0
+
+喜茶 = type=http-response,pattern=^https:\/\/vip.heytea.com\/api\/service-member\/vip\/task\/member,requires-body=1,max-size=0,timeout=1000,script-path=https://gist.githubusercontent.com/Sliverkiss/cc0928ca661cf3d89f55902e11b28432/raw/heytea.js,script-update-interval=0
+
+植白说 = type=http-request,pattern=https:\/\/www\.kozbs\.com\/demo\/wx\/home\/signDay\?userId=.+,requires-body=0,max-size=0,timeout=1000,script-path=https://gist.githubusercontent.com/Sliverkiss/3bd5650dab5194261d9426869ae8cd38/raw/zbs.js,script-update-interval=0
+
+中免会员 = type=http-response,pattern=^https:\/\/cdfmbrapi\.cdfg\.com\.cn\/api\/user\/info,requires-body=1,max-size=0,timeout=1000,script-path=https://gist.githubusercontent.com/Sliverkiss/2babe9ffd5dc6c7929e667bb2203421a/raw/zmhy.js,script-update-interval=0
+
+万达商业 = type=http-response,pattern=^https?:\/\/www\.wandawic\.com\/api\/foreground\/loginregister\/queryUser,requires-body=1,max-size=0,binary-body-mode=0,timeout=30,script-path=https://raw.githubusercontent.com/leiyiyan/resource/main/script/wdzhsy/wdzhsy.js,script-update-interval=0
+
+霸王茶姬 = type=http-response,pattern=^https:\/\/(webapi|qmwebapi)\.qmai\.cn\/web\/(catering|catering2-apiserver)\/crm\/points-info,requires-body=1,max-size=0,binary-body-mode=0,timeout=30,script-path=https://gist.githubusercontent.com/Sliverkiss/4984f7f34d6df8bcdd1e13ecac4bba51/raw/bwcj.js,script-update-interval=0
+
+益禾堂 = type=http-request,pattern=^https:\/\/(webapi|qmwebapi)\.qmai\.cn\/web\/(catering|catering2-apiserver)\/crm\/points-info,requires-body=1,max-size=0,timeout=1000,script-path=https://gist.githubusercontent.com/Sliverkiss/df5dbbf01bc3acc3bccaf7880acd242b/raw/yht.js,script-update-interval=0
+
+蜜雪冰城 = type=http-response,pattern=^https:\/\/mxsa\.mxbc\.net\/api\/v1\/customer\/info,requires-body=1,max-size=0,binary-body-mode=0,timeout=30,script-path=https://gist.githubusercontent.com/Sliverkiss/865c82e42a5730bb696f6700ebb94cee/raw/mxbc.js,script-update-interval=0
+
+CFB (DQ) = type=http-request,pattern=^https:\/\/(wechat|wxxcx)\.dairyqueen\.com\.cn\/(candaoAppLogin|UserXueLi\?_actionName=getXueLiSign),requires-body=1,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/Sliverkiss/GoodNight/master/Script/cfb.js,script-update-interval=0
+
+达美乐披萨 = type=http-request,pattern=^https:\/\/game\.dominos\.com\.cn\/.+\/game\/gameDone,requires-body=1,max-size=0,timeout=1000,script-path=https://gist.githubusercontent.com/Sliverkiss/6b4da0d367d13790a9fd1d928c82bdf8/raw/dlm.js,script-update-interval=0
+
+阿里云社区 = type=http-response,pattern=^https?:\/\/developer\.aliyun\.com\/developer\/api\/my\/user\/getUser,requires-body=1,max-size=0,binary-body-mode=0,timeout=30,script-path=https://gist.githubusercontent.com/Sliverkiss/ba14fe4fb20b640c17118c445461f7c6/raw/aliyunWeb.js,script-update-interval=0
+
+阿里云盘 = type=http-request,pattern=^https:\/\/(auth|aliyundrive)\.alipan\.com\/v2\/account\/token,requires-body=1,max-size=0,timeout=1000,script-path=https://gist.githubusercontent.com/Sliverkiss/33800a98dcd029ba09f8b6fc6f0f5162/raw/aliyun.js,script-update-interval=0
+
+米其林俱乐部 = type=http-request,pattern=^https:\/\/ulp\.michelin\.com\.cn\/bff\/profile,requires-body=1,max-size=0,timeout=1000,script-path=https://gist.githubusercontent.com/Sliverkiss/49c5d5176cad6e47919ffe058606ed0d/raw/michelin.js,script-update-interval=0

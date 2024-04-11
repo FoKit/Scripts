@@ -3,24 +3,24 @@
  * 活动说明：每日任务可获得积分，兼容 NE 手机代理和青龙等 Node.js 环境，变量名称 id77_yiLi_cookies
  * 脚本来源：https://github.com/id77/QuantumultX/blob/master/task/yiLi.js
  * 更新时间：2023-08-29
- *
- * > 支持多账号
- * > 进入小程序点我的
- *
- * hostname = club.yili.com
- *
- * # Surge
- * Rewrite: 伊利乳品 = type=http-request, requires-body=1, pattern=https:\/\/club\.yili\.com\/MALLIFChe\/MCSWSIAPI\.asmx\/Call,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yiLi.js
- * Tasks: 伊利乳品 = type=cron,cronexp=10 0 * * *,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yiLi.js,wake-system=true
- *
- * # QuanX
- * https:\/\/club\.yili\.com\/MALLIFChe\/MCSWSIAPI\.asmx\/Call url script-request-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yiLi.js
- * 10 0 * * * https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yiLi.js, tag=伊利乳品, img-url=https://raw.githubusercontent.com/id77/QuantumultX/master/icon/yiLi.png
- *
- * # Loon
- * http-request https:\/\/club\.yili\.com\/MALLIFChe\/MCSWSIAPI\.asmx\/Call script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yiLi.js, requires-body=true,
- * cron "10 0 * * *" script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yiLi.js
- *
+
+ > 支持多账号
+ > 进入小程序点我的
+
+hostname = club.yili.com
+
+# Surge
+伊利乳品 = type=http-request, requires-body=1, pattern=https:\/\/club\.yili\.com\/MALLIFChe\/MCSWSIAPI\.asmx\/Call,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yiLi.js
+伊利乳品 = type=cron,cronexp=10 0 * * *,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yiLi.js,wake-system=true
+
+# QuanX
+https:\/\/club\.yili\.com\/MALLIFChe\/MCSWSIAPI\.asmx\/Call url script-request-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yiLi.js
+10 0 * * * https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yiLi.js, tag=伊利乳品, img-url=https://raw.githubusercontent.com/id77/QuantumultX/master/icon/yiLi.png
+
+# Loon
+http-request https:\/\/club\.yili\.com\/MALLIFChe\/MCSWSIAPI\.asmx\/Call script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yiLi.js, requires-body=true,
+cron "10 0 * * *" script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yiLi.js
+
  */
 
 const $ = new Env('伊利乳品');
@@ -56,37 +56,39 @@ const body = {
 };
 
 !(async () => {
-  if (typeof $request !== `undefined` && $request.body.includes('MALLIFCheese.GetPointsBalance')) {
-    let reqBody = JSON.parse(
-      decodeURIComponent($request.body)
-        .replace(/RequestPack=/, '')
-        .replace(/\\/g, '')
-        .replace(/("(\{|\[))|((\}|\])")/g, '$2$4')
-    );
-    // $.log(JSON.stringify(reqBody));
+  if (typeof $request !== `undefined`) {
+    if ($request?.body?.includes('MALLIFCheese.GetPointsBalance')) {
+      let reqBody = JSON.parse(
+        decodeURIComponent($request.body)
+          .replace(/RequestPack=/, '')
+          .replace(/\\/g, '')
+          .replace(/("(\{|\[))|((\}|\])")/g, '$2$4')
+      );
+      // $.log(JSON.stringify(reqBody));
 
-    const {
-      AuthKey,
-      Params: { OpenId },
-    } = reqBody;
+      const {
+        AuthKey,
+        Params: { OpenId },
+      } = reqBody;
 
-    $.userInfo = {
-      authKey: AuthKey,
-      openId: OpenId,
-    };
+      $.userInfo = {
+        authKey: AuthKey,
+        openId: OpenId,
+      };
 
-    // 获取账号信息，写入 $.userInfo
-    await getUserInfo();
+      // 获取账号信息，写入 $.userInfo
+      await getUserInfo();
 
-    $.users[OpenId] = $.userInfo;
+      $.users[OpenId] = $.userInfo;
 
-    if ($.userInfo.aspnetUserId) {
-      if ($.setData(JSON.stringify($.users), $.COOKIES_KEY)) {
-        $.subt = `获取会话: 成功!`;
-      } else {
-        $.subt = `获取会话: 失败!`;
+      if ($.userInfo.aspnetUserId) {
+        if ($.setdata(JSON.stringify($.users), $.COOKIES_KEY)) {
+          $.subt = `获取会话: 成功!`;
+        } else {
+          $.subt = `获取会话: 失败!`;
+        }
+        $.msg($.name, $.subt);
       }
-      $.msg($.name, $.subt);
     }
   } else {
     if (!users) {

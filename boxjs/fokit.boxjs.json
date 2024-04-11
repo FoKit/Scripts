@@ -9,7 +9,7 @@
       "id": "ql",
       "name": "数据同步",
       "author": "@FoKit",
-      "descs_html": ["用于青龙和BoxJS之间的数据同步（自用脚本）"],
+      "descs_html": ["用于青龙和BoxJS之间的数据同步(自用脚本)"],
       "icons": [
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/sync.png",
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/sync.png"
@@ -173,7 +173,7 @@
       "descs_html": [
         "<h4 align=\"center\">获取Cookie以及脚本配置请查看<a href=\"https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/weibo_sign.js\">配置说明</a></h4>",
         "<br />",
-        "<p>其中<font color='#FF0000',font-weight: bold>wb_nick</font>为账号昵称，无需另外获取，脚本运行可自动生成，wb_cookie为任务红包余额，获取后方可显示，可选，sy_token_wb为微博签到token，必选</p>"
+        "<p>其中<font color='#FF0000',font-weight: bold>wb_nick</font>为账号昵称, 无需另外获取, 脚本运行可自动生成, wb_cookie为任务红包余额, 获取后方可显示, 可选, sy_token_wb为微博签到token, 必选</p>"
       ],
       "icons": [
         "https://cdn.jsdelivr.net/gh/Orz-3/mini@master/Alpha/weibo.png",
@@ -226,21 +226,21 @@
           "name": "自动提交WSKEY",
           "val": true,
           "type": "boolean",
-          "desc": "启用后，重写抓取的WSKEY会自动提交（上车）"
+          "desc": "启用后, 重写抓取的WSKEY会自动提交(上车)"
         },
         {
           "id": "WSKEY_TG_BOT_TOKEN",
           "name": "Telegram机器人Token",
           "val": "",
           "type": "text",
-          "desc": "填写 Telegram 机器人的 Token，格式：123456:abcdefgabcdefgabcdefg"
+          "desc": "填写 Telegram 机器人的 Token, 格式: 123456:abcdefgabcdefgabcdefg"
         },
         {
           "id": "WSKEY_TG_USER_ID",
           "name": "Telegram 会话ID",
           "val": "",
           "type": "text",
-          "desc": "填写 Telegram 会话ID，以数组形式保存[\"-1001701121614\"]"
+          "desc": "填写 Telegram 会话ID: -1001701121614"
         },
         {
           "id": "wskeyList",
@@ -271,7 +271,7 @@
           "type": "textarea",
           "autoGrow": true,
           "rows": 1,
-          "desc": "示例：replace@text 多条规则以换行分隔"
+          "desc": "示例: replace@text 多条规则以换行分隔"
         },
         {
           "id": "string_replace_all",
@@ -280,7 +280,7 @@
           "type": "textarea",
           "autoGrow": true,
           "rows": 1,
-          "desc": "示例：replace@text 多条规则以换行分隔"
+          "desc": "示例: replace@text 多条规则以换行分隔"
         }
       ]
     },
@@ -502,7 +502,7 @@
       "author": "@FoKit",
       "script": "",
       "descs_html": [
-        "用于京东、京喜和京喜特价京粉转链，支持慢慢买、购物党和什么值得买跳转比价。"
+        "用于京东、京喜和京喜特价京粉转链, 支持慢慢买、购物党和什么值得买跳转比价。"
       ],
       "icons": [
         "https://raw.githubusercontent.com/FoKit/Scripts/main/images/jingfen.png",
@@ -819,15 +819,15 @@
           "items": [
             {
               "key": "zh",
-              "label": "中文（简体）"
+              "label": "中文(简体)"
             },
             {
               "key": "yue",
-              "label": "中文（粤语）"
+              "label": "中文(粤语)"
             },
             {
               "key": "cht",
-              "label": "中文（繁体）"
+              "label": "中文(繁体)"
             },
             {
               "key": "en",
@@ -892,7 +892,7 @@
           "type": "textarea",
           "autoGrow": true,
           "rows": 1,
-          "desc": "填入服务器地址，不包括/，如http://127.0.0.1"
+          "desc": "填入服务器地址, 不包括/, 如http://127.0.0.1"
         },
         {
           "id": "@codeServer.guid",
@@ -1150,6 +1150,30 @@
       "settings": [
         {
           "id": "aeon_data",
+          "name": "用户信息",
+          "val": "",
+          "type": "textarea",
+          "autoGrow": true,
+          "rows": 1,
+          "desc": ""
+        }
+      ]
+    },
+    {
+      "id": "tsl_sign",
+      "name": "谢瑞麟 TSL",
+      "author": "@FoKit",
+      "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/tsl_sign.js",
+      "repo": "",
+      "icons": [
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/tsl.png",
+        "https://raw.githubusercontent.com/FoKit/Scripts/main/images/tsl.png"
+      ],
+      "descs_html": ["谢瑞麟 TSL - 签到"],
+      "keys": ["tsl_data"],
+      "settings": [
+        {
+          "id": "tsl_data",
           "name": "用户信息",
           "val": "",
           "type": "textarea",

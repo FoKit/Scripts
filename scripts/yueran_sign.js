@@ -207,17 +207,26 @@ async function getToken() {
 // 获取微信 Code
 async function getWxCode() {
   try {
-    $.codeServer = ($.isNode() ? process.env["CODESERVER_ADDRESS"] : $.getdata("@codeServer.address")) || '';
-    $.codeFuc = ($.isNode() ? process.env["CODESERVER_FUN"] : $.getdata("@codeServer.fun")) || '';
-    !$.codeServer && (await sendMsg(`❌ 未配置微信 Code Server，结束运行。`), $.done());
+    $.codeList = [];
+    $.codeServer = getEnv("CODESERVER_ADDRESS", "@codeServer.address");
+    $.codeFuc = getEnv("CODESERVER_FUN", "@codeServer.fun");
+    if (!$.codeServer) return $.log(`🐛 WeChat code server is not configured.\n`);
 
     $.codeList = ($.codeFuc
       ? (eval($.codeFuc), await WxCode($.appid))
       : (await Request(`${$.codeServer}/?wxappid=${$.appid}`))?.split("|"))
       .filter(item => item.length === 32);
-    debug($.codeList, "getWxCode()");
+    $.log(`♻️ 获取到 ${$.codeList.length} 个微信 Code:\n${$.codeList}`);
   } catch (e) {
     $.logErr(`❌ 获取微信 Code 失败！`);
+  }
+}
+
+// 获取环境变量
+function getEnv(...keys) {
+  for (let key of keys) {
+    var value = $.isNode() ? process.env[key] || process.env[key.toUpperCase()] || process.env[key.toLowerCase()] || $.getdata(key) : $.getdata(key);
+    if (value) return value;
   }
 }
 

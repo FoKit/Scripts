@@ -3,7 +3,7 @@
  * 活动规则：累计签到 x 天可获得奖励（优惠券）
  * 脚本说明：添加重写进入"永旺"小程序签到页面即可获取 Token（有效期28天，进入小程序失效），支持多账号，支持 NE / Node.js 环境。
  * 环境变量：AEON_DATA 或 CODESERVER_ADDRESS、CODESERVER_FUN
- * 更新时间：2024-04-03
+ * 更新时间：2024-04-11 更新活动 Code
 
 # BoxJs 订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
 
@@ -85,9 +85,7 @@ async function main() {
 
     // 活动列表
     const actMap = [
-      { "region": "活动A", "scene_code": "Igrhks91" },
-      { "region": "活动B", "scene_code": "HU1iqY0O" },
-      { "region": "活动C", "scene_code": "lNXAaKJr" },
+      { "region": "活动A", "scene_code": "HU1iqY0O" },
     ];
 
     // 遍历账号

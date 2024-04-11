@@ -1,43 +1,68 @@
 /**
  * 脚本名称：谢瑞麟 · TSL
  * 活动规则：每日签到可获取5积分，会员感恩月期问每连续签到7天可额外获得100积分奖励，签到积分有效期2年。
- * 更新时间：2024-02-23
- * 环境变量：CODESERVER_ADDRESS、CODESERVER_FUN
+ * 更新时间：2024-04-11 新增重写获取 Token，写入数据持久化（Token 有效期 < 24 hour）
+ * 环境变量：tsl_data 或 CODESERVER_ADDRESS、CODESERVER_FUN
  *
  ------------------ Surge 配置 -----------------
 
+[MITM]
+hostname = tslmember-crm.tslj.com.cn
+
 [Script]
-谢瑞麟 · TSL = type=cron,cronexp=17 7 * * *,timeout=60,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/tsl_sign.js,script-update-interval=0
+谢瑞麟² = type=http-response,pattern=https:\/\/tslmember-crm\.tslj\.com\.cn\/api\/auth\/login,requires-body=1,max-size=0,binary-body-mode=0,timeout=30,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/tsl_sign.js,script-update-interval=0
+
+[Script]
+谢瑞麟 = type=cron,cronexp=17 7 * * *,timeout=300,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/tsl_sign.js,script-update-interval=0
 
 ------------------ Loon 配置 ------------------
 
-[Script]
-http-request ^https?:\/\/wox2019\.woxshare\.com\/clientApi\/userCenterDetail tag=$谢瑞麟 · TSL$, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/tsl_sign.js,requires-body=0
+[MITM]
+hostname = tslmember-crm.tslj.com.cn
 
-cron "17 7 * * *" script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/tsl_sign.js,tag = 谢瑞麟 · TSL,enable=true
+[Script]
+http-response https:\/\/tslmember-crm\.tslj\.com\.cn\/api\/auth\/login tag=谢瑞麟²,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/tsl_sign.js,requires-body=1
+
+cron "17 7 * * *" script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/tsl_sign.js,tag = 谢瑞麟,enable=true
 
 -------------- Quantumult X 配置 --------------
+[MITM]
+hostname = tslmember-crm.tslj.com.cn
+
+[rewrite_local]
+https:\/\/tslmember-crm\.tslj\.com\.cn\/api\/auth\/login url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/tsl_sign.js
 
 [task_local]
-17 7 * * * https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/tsl_sign.js, tag=谢瑞麟 · TSL, img-url=https://raw.githubusercontent.com/FoKit/Scripts/main/images/tsl.png, enabled=true
+17 7 * * * https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/tsl_sign.js, tag=谢瑞麟, img-url=https://raw.githubusercontent.com/FoKit/Scripts/main/images/tsl.png, enabled=true
 
 ------------------ Stash 配置 -----------------
 
 cron:
   script:
-    - name: 谢瑞麟 · TSL
+    - name: 谢瑞麟
       cron: '17 7 * * *'
-      timeout: 10
+      timeout: 300
+
+http:
+  mitm:
+    - "tslmember-crm.tslj.com.cn"
+  script:
+    - match: https:\/\/tslmember-crm\.tslj\.com\.cn\/api\/auth\/login
+      name: 谢瑞麟²
+      type: response
+      require-body: true
 
 script-providers:
-  谢瑞麟 · TSL:
+  谢瑞麟:
     url: https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/tsl_sign.js
     interval: 86400
 
  */
 
 const $ = new Env('谢瑞麟 · TSL');
-$.is_debug = ($.isNode() ? process.env['IS_DEDUG'] : $.getdata('is_debug')) || 'false';  // 调试模式
+$.is_debug = getEnv('is_debug') || 'false';  // 调试模式
+$.userInfo = getEnv('tsl_data') || '';  // 获取账号
+$.userArr = $.toObj($.userInfo) || [];  // 用户信息
 $.appid = 'wx439d0e0cc6742818';  // 小程序 appId
 $.messages = [];
 
@@ -46,21 +71,35 @@ async function main() {
   // 获取微信 Code
   await getWxCode();
 
+  // 通过 Code 获取 Token
   for (let i = 0; i < $.codeList.length; i++) {
-    // 初始化
-    $.token = '';
-    $.wx_code = $.codeList[i];
+    await getToken($.codeList[i]);
+  }
 
-    // 获取 Token
-    await getToken();
+  if ($.userArr.length) {
+    // 遍历所有账号
+    for (let i = 0; i < $.userArr.length; i++) {
+      $.log(`----- 账号 [${i + 1}] 开始执行 -----`);
+      // 初始化
+      $.is_login = true;
+      $.token = $.userArr[i]['token'];
+      $.mobile = $.userArr[i]['mobile'];
 
-    if ($.token) {
+      // 输出账号
+      $.messages.push(`\n账号: ${hideSensitiveData($.mobile, 3, 4)}`);
+
       // 查询信息
       await userCenter();
+
+      // 无效 token 跳出
+      if (!$.is_login) continue;
 
       // 每日签到
       await sign();
     }
+    $.log(`----- 所有账号执行完成 -----`);
+  } else {
+    throw new Error('未找到 Token 变量 ❌');
   }
 }
 
@@ -109,12 +148,13 @@ async function userCenter() {
     msg = `积分: ${integral}  等级: ${grade}`;
   } else {
     msg = `❌ 会员信息查询失败: ${$.toStr(result)}`;
+    $.is_login = false;  // Token 失效
   }
   $.messages.push(msg) && $.log(msg);
 }
 
 // 获取 Token
-async function getToken() {
+async function getToken(code) {
   let msg = '';
   // 构造请求
   const options = {
@@ -122,18 +162,29 @@ async function getToken() {
     headers: {
       'Content-Type': `application/json`,
     },
-    body: `{"code" : "${$.wx_code}"}`
+    body: `{"code" : "${code}"}`
   };
 
   // 发起请求
   const result = await Request(options);
-  if (result?.code == 0) {
+  if (result?.code == 0 && result?.data?.user_info) {
     const { mobile, nickname, openid, token, unionid } = result.data.user_info;
-    $.openid = openid;
-    $.mobile = mobile;
-    $.token = 'Bearer ' + token;
-    msg = `账号: ${hideSensitiveData($.mobile, 3, 4)}`;
-    $.log(`✅ 成功获取 Token`);
+    if (openid && token) {
+      $.log(`✅ 成功获取 Token`);
+      // 使用 find() 方法找到与 mobile 匹配的对象，以新增/更新用户 token
+      const user = $.userArr.find(user => user.openid === openid);
+      if (user) {
+        if (user.token == token) return;
+        $.log(`♻️ 更新用户 [${openid}] Token: ${token}`);
+        user.token = token;
+        user.mobile = mobile;
+      } else {
+        $.log(`🆕 新增用户 [${openid}] Token: ${token}`);
+        $.userArr.push({ "openid": openid, "mobile": mobile, "token": token });
+      }
+      // 写入数据持久化
+      $.setdata($.toStr($.userArr), 'tsl_data');
+    }
   } else {
     msg = `❌ 获取 Token 失败: ${$.toStr(result)}`;
   }
@@ -143,26 +194,69 @@ async function getToken() {
 
 // 脚本执行入口
 !(async () => {
-  await main();  // 主函数
+  if (typeof $request !== `undefined`) {
+    GetCookie();
+  } else {
+    await main();  // 主函数
+  }
 })()
   .catch((e) => $.messages.push(e.message || e) && $.logErr(e))
   .finally(async () => {
-    await sendMsg($.messages.join('\n'));  // 推送通知
+    await sendMsg($.messages.join('\n').trimStart().trimEnd());  // 推送通知
     $.done();
   })
+
+// 获取用户数据
+function GetCookie() {
+  try {
+    let msg = '';
+    debug($response.body);
+    const body = $.toObj($response.body);
+    if (body?.data?.user_info) {
+      const { mobile, nickname, openid, token, unionid } = result.data.user_info;
+      if (token && openid) {
+        // 使用 find() 方法找到与 member_id 匹配的对象，以新增/更新用户 token
+        const user = $.userArr.find(user => user.openid === openid);
+        if (user) {
+          if (user.token == token) return;
+          msg += `♻️ 更新用户 [${openid}] Token: ${token}`;
+          user.token = token;
+          user.mobile = mobile;
+        } else {
+          msg += `🆕 新增用户 [${openid}] Token: ${token}`;
+          $.userArr.push({ "openid": openid, "mobile": mobile, "token": token });
+        }
+        // 写入数据持久化
+        $.setdata($.toStr($.userArr), 'tsl_data');
+        $.messages.push(msg), $.log(msg);
+      }
+    }
+  } catch (e) {
+    $.log("❌ 签到数据获取失败"), $.log(e);
+  }
+}
+
+// 获取环境变量
+function getEnv(...keys) {
+  for (let key of keys) {
+    var value = $.isNode() ? process.env[key] || process.env[key.toUpperCase()] || process.env[key.toLowerCase()] || $.getdata(key) : $.getdata(key);
+    if (value) return value;
+  }
+}
 
 // 获取微信 Code
 async function getWxCode() {
   try {
-    $.codeServer = ($.isNode() ? process.env["CODESERVER_ADDRESS"] : $.getdata("@codeServer.address")) || '';
-    $.codeFuc = ($.isNode() ? process.env["CODESERVER_FUN"] : $.getdata("@codeServer.fun")) || '';
-    !$.codeServer && (await sendMsg(`❌ 未配置微信 Code Server，结束运行。`), $.done());
+    $.codeList = [];
+    $.codeServer = getEnv("CODESERVER_ADDRESS", "@codeServer.address");
+    $.codeFuc = getEnv("CODESERVER_FUN", "@codeServer.fun");
+    if (!$.codeServer) return $.log(`\n🐛 WeChat code server is not configured.\n`);
 
     $.codeList = ($.codeFuc
       ? (eval($.codeFuc), await WxCode($.appid))
       : (await Request(`${$.codeServer}/?wxappid=${$.appid}`))?.split("|"))
       .filter(item => item.length === 32);
-    $.log(`♻️ 获取到 ${$.codeList.length} 个微信Code:\n${$.codeList}`);
+    $.log(`♻️ 获取到 ${$.codeList.length} 个微信 Code:\n${$.codeList}`);
   } catch (e) {
     $.logErr(`❌ 获取微信 Code 失败！`);
   }

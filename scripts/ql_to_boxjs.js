@@ -4,25 +4,18 @@
 */
 
 const $ = new API('ql', true);
-
-const title = '🐉 京东账号同步';
+const title = '京东账号同步';
 const cookiesKey = '#CookiesJD';
+const jd_cookies = JSON.parse($.read(cookiesKey) || '[]');
 
-let jd_cookies = [];
-try {
-  jd_cookies = JSON.parse($.read(cookiesKey) || '[]');
-} catch (e) {
-  console.log(e);
-}
-
-function getUsername(ck) {
-  if (!ck) return '';
-  return decodeURIComponent(ck.match(/pt_pin=(.+?);/)[1]);
-}
+// function getUsername(ck) {
+//   if (!ck) return '';
+//   return decodeURIComponent(ck.match(/pt_pin=(.+?);/)[1]);
+// }
 
 async function getScriptUrl() {
   const response = await $.http.get({
-    url: 'https://raw.githubusercontent.com/dompling/Script/master/jd/ql_api.js',
+    url: 'https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/ql_api.js',
   })
   return response.body
 }
@@ -32,6 +25,10 @@ async function getScriptUrl() {
   eval(ql_script);
   await $.ql.login();
   const configsRes = await $.ql.configs('cookies_user_info.json');
+  if (!configsRes) {
+    $.log(`读取 cookies_user_info.json 失败 ❌`);
+    $.done();
+  }
   const userInfos = JSON.parse(configsRes.data);
   const userInfosArr = Object.keys(userInfos);
   const cookies = [];
