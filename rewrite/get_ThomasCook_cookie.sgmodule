@@ -1,8 +1,0 @@
-#!name=托迈酷客 Cookie
-#!desc=添加重写进入小程序即可获取Cookie
-
-[Script]
-获取托迈酷客Cookie = type=http-request,pattern=^https:\/\/apis\.folidaymall\.com\/online\/capi\/uc\/getCount,requires-body=0,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/ThomasCook.js
-
-[MITM]
-hostname = %APPEND% apis.folidaymall.com

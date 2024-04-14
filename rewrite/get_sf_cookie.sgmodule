@@ -1,8 +1,0 @@
-#!name=获取顺丰速运Cookie
-#!desc=打开顺丰速运速运APP - 我 - 签到 即可获取Cookie
-
-[Script]
-顺丰速运 = type=http-request,pattern=^https:\/\/ccsp-egmas.sf-express.com\/cx-app-member\/member\/app\/user\/universalSign,requires-body=1,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/chavyleung/scripts/master/sfexpress/sfexpress.cookie.js,script-update-interval=0
-
-[MITM]
-hostname = %APPEND% ccsp-egmas.sf-express.com

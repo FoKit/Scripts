@@ -1,9 +1,0 @@
-#!name=获取中国联通Cookie
-#!desc=打开中国联通app，点击首页剩余话费/剩余流量即可获取Cookie
-
-[Script]
-# > 中国联通
-中国联通 = type=http-request,pattern=^https:\/\/m\.client\.10010\.com\/serviceimportantbusiness\/smart\/smartwisdomCommon,requires-body=0,max-size=0,timeout=1000,script-path=https://raw.githubusercontent.com/dompling/Script/master/10010/index.js
-
-[MITM]
-hostname = %INSERT% m.client.10010.com

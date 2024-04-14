@@ -1,8 +1,0 @@
-#!name=海信爱家
-#!desc=海信爱家签到活动（公众号）
-
-[MITM]
-hostname = %APPEND% sweixin.hisense.com
-
-[Script]
-海信数据 = type=http-response,pattern=^https:\/\/sweixin\.hisense\.com\/ecrp\/member\/initMember,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/Hisense.js
