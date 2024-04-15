@@ -130,11 +130,11 @@ async function SubmitCK() {
     url: "https://api.fokit.cn/submit",
     body: `text=${$.cookie}`
   };
-  if ($.bot_token && $.chat_id) {
-    options['params'] = {
+  if ($.bot_token && $.chat_id) { 
+    options['url'] += '?' + $.queryStr({
       bot_token: $.bot_token,
       chat_id: $.chat_id,
-    }
+    });
   }
 
   // 发起请求
