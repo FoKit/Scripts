@@ -610,7 +610,7 @@
         },
         {
           "id": "buy_helper_copy",
-          "name": "复制",
+          "name": "复制短链",
           "val": true,
           "type": "boolean",
           "desc": ""
