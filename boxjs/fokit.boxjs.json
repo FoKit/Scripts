@@ -518,7 +518,7 @@
         "buy_helper_zdm",
         "buy_helper_mmm",
         "buy_helper_gwd",
-        "buy_helper_jf"
+        "buy_helper_copy"
       ],
       "settings": [
         {
@@ -609,8 +609,8 @@
           "desc": ""
         },
         {
-          "id": "buy_helper_jf",
-          "name": "京粉",
+          "id": "buy_helper_copy",
+          "name": "复制",
           "val": true,
           "type": "boolean",
           "desc": ""
