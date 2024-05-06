@@ -460,7 +460,7 @@ async function sendMsg(message) {
 
 // Bark 通知
 async function barkNotice(title, content) {
-  const bark_key = ($.isNode() ? process.env.bark_key : $.getdata('bark_key')) || '';
+  const bark_key = ($.isNode() ? process.env._barkKey : $.getdata('_barkKey')) || '';
   if (!bark_key) return;
   // 构造请求
   let url = `https://api.day.app/${bark_key}/${encodeURIComponent(title)}/${encodeURIComponent(content.trimStart().trimEnd())}`

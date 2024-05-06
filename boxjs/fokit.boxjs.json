@@ -93,7 +93,7 @@
           "script": "https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/reRequest.js"
         }
       ],
-      "keys": ["reRequest", "bark_key", "is_debug"],
+      "keys": ["reRequest", "_barkKey", "is_debug"],
       "settings": [
         {
           "id": "@reRequest.options",
@@ -126,7 +126,7 @@
           "desc": "Request timeout (ms)"
         },
         {
-          "id": "bark_key",
+          "id": "_barkKey",
           "name": "Bark key",
           "val": "",
           "type": "text",
@@ -513,7 +513,6 @@
         "jd_positionId",
         "jtt_appid",
         "jtt_appkey",
-        "buy_helper_api",
         "buy_helper_LR",
         "buy_helper_zdm",
         "buy_helper_mmm",
@@ -523,7 +522,7 @@
       "settings": [
         {
           "id": "jd_unionId",
-          "name": "联盟ID",
+          "name": "联盟 ID",
           "val": "",
           "type": "text",
           "placeholder": "",
@@ -531,7 +530,7 @@
         },
         {
           "id": "jd_positionId",
-          "name": "推广位ID",
+          "name": "推广位 ID",
           "val": "",
           "type": "text",
           "placeholder": "",
@@ -539,7 +538,7 @@
         },
         {
           "id": "jtt_appid",
-          "name": "京推推AppId",
+          "name": "京推推 AppId",
           "val": "",
           "placeholder": "",
           "type": "text",
@@ -547,28 +546,11 @@
         },
         {
           "id": "jtt_appkey",
-          "name": "京推推AppKey",
+          "name": "京推推 AppKey",
           "val": "",
           "placeholder": "",
           "type": "text",
           "desc": ""
-        },
-        {
-          "id": "buy_helper_api",
-          "name": "接口选择",
-          "val": "jf",
-          "type": "radios",
-          "desc": "选择需要使用的转链接口",
-          "items": [
-            {
-              "key": "jf",
-              "label": "京粉"
-            },
-            {
-              "key": "jtt",
-              "label": "京推推"
-            }
-          ]
         },
         {
           "id": "buy_helper_LR",
