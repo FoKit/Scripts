@@ -45,8 +45,8 @@ async function main() {
   if (!_options['url']) {
     _options['url'] = /url\s?=\s?`(.+)?`/.exec(reRequest['options'])?.[1];
     _options['method'] = /method\s?=\s?`(.+)?`/.exec(reRequest['options'])?.[1];
-    _options['headers'] = /headers\s?=\s?(\{[\S\s]+?\})/.exec(reRequest['options'])?.[1];
-    _options['body'] = /body\s?=\s?`(.+)?`/.exec(reRequest['options'])?.[1];
+    _options['headers'] = /headers\s?=\s?(\{[\S\s]+?\})/.exec(reRequest['options'])?.[1] || {};
+    _options['body'] = /body\s?=\s?`(.+)?`/.exec(reRequest['options'])?.[1] || '';
   }
   if (!!_options['url']) throw new Error('请求 url 不存在, 结束运行');
   if (_options['method'].toLowerCase() !== 'post') delete _options['body'];
