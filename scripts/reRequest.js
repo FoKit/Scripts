@@ -48,14 +48,14 @@ async function main() {
     _options['headers'] = /headers\s?=\s?(\{[\S\s]+?\})/.exec(reRequest['options'])?.[1] || {};
     _options['body'] = /body\s?=\s?`(.+)?`/.exec(reRequest['options'])?.[1] || '';
   }
-  if (!!_options['url']) throw new Error('请求 url 不存在, 结束运行');
+  if (!_options['url']) throw new Error('请求 url 不存在, 结束运行');
   if (_options['method'].toLowerCase() !== 'post') delete _options['body'];
   _options['timeout'] = _timeout;
   for (let i = 0; i < _count; i++) {
     try {
       $.log(`\n ▸ 第[${i + 1}/${_count}]次请求 - ${_options['method']}:\n`);
       let result = await Request(_options, _options['method']);
-      $.log(result);
+      $.log($.toStr(result));
     } catch (err) {
       $.logErr(err);
     }
