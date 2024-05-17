@@ -2,10 +2,11 @@
  * 脚本名称：微信支付有优惠 - 领金币
  * 活动规则：每周累计使用微信支付 10 次可领取 15 金币。
  * 脚本说明：添加重写进入"微信支付有优惠"小程序即可获取 Token，支持多账号，仅支持 NE 环境。
- * 环境变量：WECHAT_PAY_TOKEN / CODESERVER_ADDRESS、CODESERVER_FUN
- * 更新时间：2024-03-30 新增兑换今日好礼，默认关闭需要到 Boxjs 开启或配置环境变量 WECHAT_PAY_EXCHANGE='true'
+ * 环境变量：CODESERVER_ADDRESS、CODESERVER_FUN
+ * 更新时间：2024-03-30 新增兑换今日好礼
             2024-03-31 优化通知内容
             2024-04-01 修复兑换今日好礼变量配置和多账号通知等问题
+            2024-05-18 新增并发兑换立减金
 
 # BoxJs 订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
 
@@ -15,7 +16,7 @@
 hostname = payapp.weixin.qq.com
 
 [Script]
-微付金币² = type=http-response,pattern=https:\/\/payapp\.weixin\.qq\.com\/coupon-center-user\/home\/login,requires-body=1,max-size=0,binary-body-mode=0,timeout=30,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/wechat_pay_coupon.js,script-update-interval=0
+微付金币² = type=http-response,pattern=https:\/\/payapp\.weixin\.qq\.com\/(coupon-center-user\/home\/login|coupon-center-award\/award\/detail),requires-body=1,max-size=0,binary-body-mode=0,timeout=30,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/wechat_pay_coupon.js,script-update-interval=0
 
 微付金币 = type=cron,cronexp=30 9 * * *,timeout=60,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/wechat_pay_coupon.js,script-update-interval=0
 
@@ -25,7 +26,7 @@ hostname = payapp.weixin.qq.com
 hostname = payapp.weixin.qq.com
 
 [Script]
-http-response https:\/\/payapp\.weixin\.qq\.com\/coupon-center-user\/home\/login tag=微付金币²,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/wechat_pay_coupon.js,requires-body=1
+http-response https:\/\/payapp\.weixin\.qq\.com\/(coupon-center-user\/home\/login|coupon-center-award\/award\/detail) tag=微付金币²,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/wechat_pay_coupon.js,requires-body=1
 
 cron "30 9 * * *" script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/wechat_pay_coupon.js,tag=微付金币,enable=true
 
@@ -35,7 +36,7 @@ cron "30 9 * * *" script-path=https://raw.githubusercontent.com/FoKit/Scripts/ma
 hostname = payapp.weixin.qq.com
 
 [rewrite_local]
-https:\/\/payapp\.weixin\.qq\.com\/coupon-center-user\/home\/login url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/wechat_pay_coupon.js
+https:\/\/payapp\.weixin\.qq\.com\/(coupon-center-user\/home\/login|coupon-center-award\/award\/detail) url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/wechat_pay_coupon.js
 
 [task_local]
 30 9 * * * https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/wechat_pay_coupon.js, tag=微付金币, img-url=https://raw.githubusercontent.com/FoKit/Scripts/main/images/wechat_pay_coupon.png, enabled=true
@@ -52,7 +53,7 @@ http:
   mitm:
     - "payapp.weixin.qq.com"
   script:
-    - match: https:\/\/payapp\.weixin\.qq\.com\/coupon-center-user\/home\/login
+    - match: https:\/\/payapp\.weixin\.qq\.com\/(coupon-center-user\/home\/login|coupon-center-award\/award\/detail)
       name: 微付金币
       type: response
       require-body: true
@@ -66,11 +67,13 @@ script-providers:
 
 const $ = new Env('微信支付有优惠');
 $.is_debug = getEnv('is_debug') || 'false';  // 调试模式
-$.version = getEnv('wechat_pay_version') || '6.49.5';  // 小程序版本
-$.exchange = getEnv('wechat_pay_exchange') || 'false';  // 兑换好礼
-$.userInfo = getEnv('wechat_pay_token') || '';  // 获取账号
+$.version = getEnv('wechat_pay_version') || '6.51.8';  // 小程序版本
+$.exchange = getEnv('wechat_pay_exchange') || 'false';  // 兑换立减金
+$.exchangeInfo = getEnv('wechat_pay_exchange_award');  // 兑换参数
+$.userInfo = getEnv('wechat_pay_token') || '';  // 账号信息
 $.userArr = $.toObj($.userInfo) || [];  // 用户信息
 $.appid = 'wxe73c2db202c7eebf';  // 小程序 appId
+$.exchangeList = [];  // 兑换列表
 $.Messages = [];
 
 
@@ -93,13 +96,20 @@ async function main() {
       $.token = $.userArr[i]['token'];
       $.openid = $.userArr[i]['openid'];
 
+      // 判断是否执行兑换立减金
+      if ($.exchange == 'true' && $.exchangeInfo) {
+        let exchange = $.exchangeInfo.split(':');
+        $.exchangeList.push(getGift(exchange[0], exchange[1], i + 1));
+        continue;
+      }
+
       // 集章任务
       await collectstamp();
 
       if (!$.is_login) continue;  // 无效 token 跳出
 
       // 获取今日好礼
-      if ($.exchange == 'true') await todaygift();
+      await todaygift();
 
       // 获取任务列表
       await getTask();
@@ -118,6 +128,15 @@ async function main() {
       $.Messages = $.Messages.concat($.messages);
 
     }
+
+    // 并发兑换
+    if ($.exchangeList.length) {
+      $.log(`----- 开始并发兑换 -----`);
+      await Promise.all($.exchangeList);
+      $.log(`----- 并发兑换完成 -----`);
+      $.setdata('false', 'wechat_pay_exchange');
+    }
+
     $.log(`----- 所有账号执行完成 -----`);
   } else {
     throw new Error('未找到 Token 变量 ❌');
@@ -364,7 +383,7 @@ async function todaygift() {
 }
 
 
-// 兑换今日好礼
+// 兑换好礼
 async function getGift(award_id, name) {
   let msg = ''
   // 构造请求
@@ -379,8 +398,8 @@ async function getGift(award_id, name) {
       award_id,
       obtain_source: {
         award_detail_page: true,
-        share_source: "OBTAIN_SHARE_SOURCE_NOT_SHARE",
-        award_obtain_source: "AWARD_OBTAIN_SOURCE_TODAY_GIFT_SHELF"
+        share_source: /立减金/.test(name) ? "OBTAIN_SHARE_SOURCE_QR_CODE" : "OBTAIN_SHARE_SOURCE_NOT_SHARE",
+        award_obtain_source: /立减金/.test(name) ? "AWARD_OBTAIN_SOURCE_SHARE" : "AWARD_OBTAIN_SOURCE_TODAY_GIFT_SHELF"
       }
     })
   }
@@ -388,10 +407,10 @@ async function getGift(award_id, name) {
   // 发起请求
   const result = await Request(options);
   if (result?.errcode == 0 && result?.data) {
-    msg += `任务: 兑换好礼, 获得${name} 🎉`;
+    msg += `${index ? `账号[${index}] ` : '任务: '}兑换好礼, 获得${name} 🎉`;
 
   } else {
-    msg += `任务: 兑换好礼失败, ${result.msg} ❌`;
+    msg += `${index ? `账号[${index}] ` : '任务: '}兑换好礼失败, ${result.msg} ❌`;
     $.log($.toStr(result));
   }
   $.messages.push(msg), $.log(msg);
@@ -419,31 +438,45 @@ function GetCookie() {
     let msg = '';
     debug($response.body);
     const body = $.toObj($response.body);
-    const { session_token, openid } = body['data'];
-    const version = new URLSearchParams($request.url).get('coutom_version');
-    if (version) $.setdata(version, 'wechat_pay_version');
-    if (session_token && openid) {
-      // 使用 find() 方法找到与 member_id 匹配的对象，以新增/更新用户 token
-      const user = $.userArr.find(user => user.openid === openid);
-      if (user) {
-        if (user.token == session_token) return;
-        msg += `更新用户 [${openid}] Token: ${session_token}`;
-        user.token = session_token;
-      } else {
-        msg += `新增用户 [${openid}] Token: ${session_token}`;
-        $.userArr.push({ "openid": openid, "token": session_token });
+    if (/coupon-center-user/.test($request.url)) {
+      const { session_token, openid } = body['data'];
+      const version = new URLSearchParams($request.url).get('coutom_version');
+      if (version) $.setdata(version, 'wechat_pay_version');
+      if (session_token && openid) {
+        // 使用 find() 方法找到与 member_id 匹配的对象，以新增/更新用户 token
+        const user = $.userArr.find(user => user.openid === openid);
+        if (user) {
+          if (user.token == session_token) return;
+          msg += `更新用户 [${openid}] Token ✅`;
+          user.token = session_token;
+        } else {
+          msg += `新增用户 [${openid}] Token ✅`;
+          $.userArr.push({ "openid": openid, "token": session_token });
+        }
+        // 写入数据持久化
+        $.setdata($.toStr($.userArr), 'wechat_pay_token');
+
       }
-      // 写入数据持久化
-      $.setdata($.toStr($.userArr), 'wechat_pay_token');
-      $.Messages.push(msg), $.log(msg);
+    } else if (/coupon-center-award/.test($request.url)) {
+      if (body?.data?.award) {
+        const { award_id, name } = body['data']['award'];
+        $.setdata(`${award_id}:${name}`, 'wechat_pay_exchange_award');
+        msg += `[${award_id}]${name} 已写入缓存 ✅`;
+      }
     }
+    $.Messages.push(msg), $.log(msg);
   } catch (e) {
-    $.log("❌ 签到数据获取失败"), $.log(e);
+    $.log("❌ 数据获取失败"), $.log(e);
   }
 }
 
 
-// 获取环境变量
+/**
+ * 获取环境变量值
+ *
+ * @param keys 环境变量名
+ * @returns 返回对应的环境变量值，若未找到则返回 undefined
+ */
 function getEnv(...keys) {
   for (let key of keys) {
     var value = $.isNode() ? process.env[key] || process.env[key.toUpperCase()] || process.env[key.toLowerCase()] || $.getdata(key) : $.getdata(key);
@@ -472,9 +505,14 @@ async function getWxCode() {
 
 
 /**
- * 请求函数二次封装
- * @param {(object|string)} options - 构造请求内容，可传入对象或 Url
- * @returns {(object|string)} - 根据 options['respType'] 传入的 {status|headers|rawBody} 返回对象或字符串，默认为 body
+ * 发起网络请求
+ *
+ * @param options 请求配置对象，可以是url字符串或包含url属性的对象
+ * @param options._method 请求方法，默认为'post'（当options对象中存在body属性时）或'get'
+ * @param options._respType 响应数据类型，默认为'body', 可选'all'(返回响应对象)或'rawBody'(返回原始响应体)或'headers'(返回响应头)或'status
+ * @param options._timeout 请求超时时间，单位为毫秒，默认为15000毫秒
+ * @returns Promise对象，resolve参数为请求响应结果
+ * @throws 抛出请求异常信息
  */
 async function Request(options) {
   try {
@@ -525,9 +563,10 @@ async function sendMsg(message) {
 
 
 /**
- * DEBUG
- * @param {*} content - 传入内容
- * @param {*} title - 标题
+ * 打印调试信息
+ *
+ * @param content 调试内容，可以是字符串或对象
+ * @param title 调试标题，默认为"debug"
  */
 function debug(content, title = "debug") {
   let start = `\n----- ${title} -----\n`;
