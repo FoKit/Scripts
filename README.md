@@ -9,7 +9,7 @@
 | 序号 | 脚本名称                                                                                            | 脚本类型       | 更新时间   | 运行环境  | 可用状态 |
 | ---- | --------------------------------------------------------------------------------------------------- | -------------- | ---------- | --------- | -------- |
 | 01   | [中国电信](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_10000_cookie.js)        | rewrite        | 2022-11-11 | NE        | ✅       |
-| 02   | [京东 WSKEY](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_jd_wskey.js)          | rewrite        | 2024-04-05 | NE        | ✅       |
+| 02   | [京东 WSKEY](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_jd_wskey.js)          | rewrite        | 2024-05-11 | NE        | ✅       |
 | 03   | [找不同 8000 关+](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/zbt.js)              | rewrite        | 2023-07-17 | NE        | ✅       |
 | 04   | [Geocaching](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js)     | rewrite        | 2024-02-27 | NE        | ✅       |
 | 05   | [青龙变量同步](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/ql_env_sync.js)         | task           | 2023-06-27 | Node      | ✅       |
@@ -26,8 +26,8 @@
 | 16   | [悦然荟](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/yueran_sign.js)               | task & rewrite | 2024-02-26 | NE & Node | ✅       |
 | 17   | [花城汇](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/hch_sign.js)                  | task & rewrite | 2024-02-26 | NE & Node | ✅       |
 | 18   | [途虎养车](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/tuhu.js)                    | task & rewrite | 2023-03-20 | NE & Node | ❌       |
-| 19   | [谢瑞麟 · TSL](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/tsl_sign.js)            | task & rewrite | 2024-04-11 | NE & Node | ✅       |
-| 20   | [微信支付有优惠](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/wechat_pay_coupon.js) | task & rewrite | 2024-04-05 | NE        | ✅       |
+| 19   | [谢瑞麟 · TSL](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/tsl_sign.js)            | task & rewrite | 2024-04-12 | NE & Node | ✅       |
+| 20   | [微信支付有优惠](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/wechat_pay_coupon.js) | task & rewrite | 2024-05-18 | NE        | ✅       |
 | 21   | [永旺 Aeon](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/aeon_sign.js)              | task & rewrite | 2024-04-11 | NE & Node | ❌       |
 
 ---

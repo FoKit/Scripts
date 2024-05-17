@@ -1123,8 +1123,8 @@
         {
           "id": "wechat_pay_exchange_award",
           "name": "兑换信息",
-          "val": false,
-          "type": "boolean",
+          "val": "",
+          "type": "text",
           "desc": ""
         }
       ]
