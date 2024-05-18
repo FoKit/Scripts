@@ -135,6 +135,7 @@ async function main() {
       await Promise.all($.exchangeList);
       $.log(`----- 并发兑换完成 -----`);
       $.setdata('false', 'wechat_pay_exchange');
+      $.Messages = $.Messages.concat($.messages);
     }
 
     $.log(`----- 所有账号执行完成 -----`);
@@ -392,25 +393,16 @@ async function getGift(award_id, name, index = 0) {
     headers: {
       'content-type': 'application/json'
     },
-    body: $.toStr({
-      coutom_version: $.version,
-      idempotent_id: `${$.openid}_${award_id}_${parseInt(Date.now() / 1000)}`,
-      award_id,
-      obtain_source: {
-        award_detail_page: true,
-        share_source: /立减金/.test(name) ? "OBTAIN_SHARE_SOURCE_QR_CODE" : "OBTAIN_SHARE_SOURCE_NOT_SHARE",
-        award_obtain_source: /立减金/.test(name) ? "AWARD_OBTAIN_SOURCE_SHARE" : "AWARD_OBTAIN_SOURCE_TODAY_GIFT_SHELF"
-      }
-    })
+    body: `{"award_id":${award_id},"idempotent_id":"${$.openid}_${award_id}_${parseInt(Date.now() / 1000)}","obtain_source":{"award_obtain_source":"${/立减金/.test(name) ? "AWARD_OBTAIN_SOURCE_SHARE" : "AWARD_OBTAIN_SOURCE_TODAY_GIFT_SHELF"}","award_detail_page":true,"share_source":"${/立减金/.test(name) ? "OBTAIN_SHARE_SOURCE_QR_CODE" : "OBTAIN_SHARE_SOURCE_NOT_SHARE"}"},"coutom_version":"${$.version}"}`
   }
 
   // 发起请求
   const result = await Request(options);
   if (result?.errcode == 0 && result?.data) {
-    msg += `${index ? `账号[${index}] ` : '任务: '}兑换好礼, 获得${name} 🎉`;
+    msg += `${index ? `账号[${index}] ` : '任务: '}兑换成功, 获得${name} 🎉`;
 
   } else {
-    msg += `${index ? `账号[${index}] ` : '任务: '}兑换好礼失败, ${result.msg} ❌`;
+    msg += `${index ? `账号[${index}] ` : '任务: '}兑换失败, ${result.msg} ❌`;
     $.log($.toStr(result));
   }
   $.messages.push(msg), $.log(msg);
