@@ -384,7 +384,7 @@ async function todaygift() {
 
 
 // 兑换好礼
-async function getGift(award_id, name) {
+async function getGift(award_id, name, index = 0) {
   let msg = ''
   // 构造请求
   const options = {
