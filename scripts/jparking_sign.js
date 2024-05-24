@@ -4,8 +4,8 @@
 签到规则：连签奖励，首日 6 停车币、次日 7 停车币，以此类推7天封顶
 活动奖励：停车币可用于兑换停车券，比例 1000:1
 环境变量：jtc_userId（Node环境，多账号以@隔开）
-使用说明：添加重写规则并打开捷停车APP即可获取userId
-更新时间：2024-02-01
+使用说明：添加重写规则并打开捷停车 APP 即可获取 userId 和 Token
+更新时间：2024-05-24
 
 ================ Surge 配置 ================
 [MITM]
@@ -165,7 +165,7 @@ function GetCookie() {
 
 // 提交任务（浏览 & 签到）
 async function receive(taskNo) {
-  let result = await httpRequest(options(Api.receive.url, `{"userId":"${$.userId}","reqSource":"APP_JTC","taskNo":"${taskNo}"}`));
+  let result = await httpRequest(options(Api.receive.url, `{"userId":"${$.userId}","reqSource":"APP_JTC","taskNo":"${taskNo}","token":"${$.token}"}`));
   debug(result, "receive");
   if (result.success) {
     $.result += `${$.taskMap[taskNo]} 任务完成, 获得 ${result.data} 停车币\n`;
@@ -176,7 +176,7 @@ async function receive(taskNo) {
 
 // 浏览
 async function browse() {
-  let result = await httpRequest(options(Api.complete.url, `{"userId":"${$.userId}","reqSource":"APP_JTC","taskNo":"T01"}`));
+  let result = await httpRequest(options(Api.complete.url, `{"userId":"${$.userId}","reqSource":"APP_JTC","taskNo":"T01","token":"${$.token}"}`));
   debug(result, "browse");
   if (!result.success) {
     console.log(`❌ 领取${$.taskMap['T01']}任务失败: ${result.message}`);
