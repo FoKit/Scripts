@@ -134,7 +134,7 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
       obj['profile']['membershipTypeId'] = parseInt(membershipTypeId);
       $.log(`🔓 MembershipTypeId modify to [${membershipTypeId}].`);
     }
-  } else {
+  } else if (obj?.name) {
     // 翻译 cache
     await translate_cache();
     $.error_msg && $.notifyMsg.push(`❌ 翻译失败: ${$.error_msg}`);
@@ -151,6 +151,9 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     obj['postedCoordinates']['latitude'] = result.lat;
     obj['postedCoordinates']['longitude'] = result.lon;
     $.log("✔️ 坐标转换完成");
+  } else {
+    var openUrl = 'https://coord.info/' + /geocaches\/(\w{7})/.exec($request.url)?.[1];
+    $.msg(`点击跳转到浏览器打开`, ``, openUrl, { $open: openUrl });
   }
 })()
   .catch((e) => {

@@ -11,7 +11,7 @@
 | 01   | [中国电信](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_10000_cookie.js)        | rewrite        | 2022-11-11 | NE        | ✅       |
 | 02   | [京东 WSKEY](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_jd_wskey.js)          | rewrite        | 2024-05-11 | NE        | ✅       |
 | 03   | [找不同 8000 关+](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/zbt.js)              | rewrite        | 2023-07-17 | NE        | ✅       |
-| 04   | [Geocaching](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js)     | rewrite        | 2024-02-27 | NE        | ✅       |
+| 04   | [Geocaching](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js)     | rewrite        | 2024-05-24 | NE        | ✅       |
 | 05   | [青龙变量同步](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/ql_env_sync.js)         | task           | 2023-06-27 | Node      | ✅       |
 | 06   | [京东账号同步](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/ql_to_boxjs.js)         | task           | 2023-04-09 | NE        | ✅       |
 | 07   | [海信爱家](https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/Hisense.js)                 | task & rewrite | 2024-03-19 | NE & Node | ✅       |

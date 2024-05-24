@@ -113,7 +113,7 @@ async function main() {
     await browse();
 
     // 看视频任务
-    watchVideo == 'true' && $.token && await videos();
+    // watchVideo == 'true' && $.token && await videos();
 
     // 领取签到奖励
     await receive("T00");
