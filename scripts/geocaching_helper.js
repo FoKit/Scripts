@@ -152,7 +152,7 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     obj['postedCoordinates']['longitude'] = result.lon;
     $.log("✔️ 坐标转换完成");
   } else {
-    var openUrl = 'https://coord.info/' + /geocaches\/(\w{7})/.exec($request.url)?.[1];
+    var openUrl = 'https://www.geocaching.com/geocache/' + /geocaches\/(\w{7})/.exec($request.url)?.[1];
     $.msg(`点击跳转到浏览器打开`, ``, openUrl, { $open: openUrl });
   }
 })()
