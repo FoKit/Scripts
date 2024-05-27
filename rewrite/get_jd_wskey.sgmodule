@@ -1,18 +1,13 @@
 #!name=京东 WSKEY
 #!desc=自动抓取京东WSKEY, 仅支持 Surge, 未经允许请勿使用。（自动上车）
-#!使用方法：划掉后台重新打开 京东APP 即可自动抓取WSKEY。
+#!使用方法：划掉后台重新打开 京东APP 即可自动抓取 WSKEY。抓完 WSKEY 不能在京东 app 点退出登录（会导致 WSKEY 失效），切换账号的正确姿势是先断网（飞行模式）再点击退出登录，划掉后台重新打开 APP 再登录新的账号。
 
 #!Quantumult X版本：https://raw.githubusercontent.com/FoKit/Scripts/main/rewrite/get_jd_wskey.conf
 
-[Rule]
-URL-REGEX,^https:\/\/wlogin\.m\.jd\.com\/applogin_v2$,REJECT
-
-URL-REGEX,^https:\/\/wlmonitor\.m\.jd\.com\/login_report$,REJECT
-
 [Script]
-京东 WSKEY = type=http-request,pattern=https:\/\/api\.m\.jd\.com\/client\.action\?functionId=xview2Config,requires-body=0,max-size=0,binary-body-mode=0,timeout=30,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_jd_wskey.js,script-update-interval=0
+京东 WSKEY = type=http-request,pattern=https:\/\/blackhole\.m\.jd\.com\/getinfo,requires-body=0,max-size=0,binary-body-mode=0,timeout=30,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_jd_wskey.js,script-update-interval=0
 
 京东 PIN = type=http-request,pattern=https:\/\/perf\.m\.jd\.com\/app_monitor\/v2\/getRule,requires-body=0,max-size=0,binary-body-mode=0,timeout=30,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/get_jd_wskey.js,script-update-interval=0
 
 [MITM]
-hostname = %APPEND% api.m.jd.com, perf.m.jd.com, wlogin.m.jd.com, wlmonitor.m.jd.com
+hostname = %APPEND% blackhole.m.jd.com, perf.m.jd.com
