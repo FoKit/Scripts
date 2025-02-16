@@ -4,6 +4,7 @@
  * 脚本说明：配置重写和百度翻译 appid 和 securityKey 即可使用。
  * BoxJs ：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
  * 仓库地址：https://github.com/FoKit/Scripts
+ * 更新日期：2025-02-16 兼容 v2 版本 logs 翻译请求
  * 更新日期：2024-02-27 增加翻译和坐标转换开关
  * 更新日期：2024-01-06 通知添加 difficulty 和 terrain
  * 更新日期：2023-12-30 优化通知
@@ -22,7 +23,7 @@ https://raw.githubusercontent.com/FoKit/Scripts/main/rewrite/geocaching_helper.s
 hostname = api.groundspeak.com
 
 [Script]
-Geocaching logs = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{7}\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
+Geocaching logs = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/geocaches\/[A-Z0-9]{7}\/geocachelogs\?(onlyFriendLogs=\w+&)?skip=\d+&take=20,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 Geocaching cache = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{7}$,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 Geocaching gps = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/map\/search\?adventuresTake,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 Geocaching unlock = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/profileview,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
@@ -33,7 +34,7 @@ Geocaching unlock = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\
 hostname = api.groundspeak.com
 
 [Script]
-http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{7}\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20 tag=Geocaching logs, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
+http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/geocaches\/[A-Z0-9]{7}\/geocachelogs\?(onlyFriendLogs=\w+&)?skip=\d+&take=20 tag=Geocaching logs, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
 http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{7}$ tag=Geocaching logs, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
 http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/map\/search\?adventuresTake tag=Geocaching cache, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
 http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/profileview tag=Geocaching unlock, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
@@ -44,7 +45,7 @@ http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/profileview tag=Geoc
 hostname = api.groundspeak.com
 
 [rewrite_local]
-^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{7}\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20 url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
+^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/geocaches\/[A-Z0-9]{7}\/geocachelogs\?(onlyFriendLogs=\w+&)?skip=\d+&take=20 url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{7}$ url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/map\/search\?adventuresTake url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/profileview url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
@@ -55,7 +56,7 @@ http:
   mitm:
     - "api.groundspeak.com"
   script:
-    - match: ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{7}\/geocachelogs\?onlyFriendLogs=\w+&skip=\d+&take=20
+    - match: ^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/geocaches\/[A-Z0-9]{7}\/geocachelogs\?(onlyFriendLogs=\w+&)?skip=\d+&take=20
       name: Geocaching logs
       type: response
       require-body: true
@@ -179,7 +180,7 @@ async function translate_logs() {
     if (result) {
       obj['data'][i]['text'] = result + `\n--------------------------------------------------\n原文:\n${obj['data'][i]['text']}`;
     }
-    await $.wait(50);
+    // await $.wait(50);
   }
 }
 
