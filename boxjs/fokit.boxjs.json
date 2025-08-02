@@ -874,25 +874,16 @@
           "type": "textarea",
           "autoGrow": true,
           "rows": 1,
-          "desc": "填入服务器地址, 不包括/, 如http://127.0.0.1"
+          "desc": "填写服务器地址, 不包含/, 如 http://127.0.0.1:8888"
         },
         {
-          "id": "@codeServer.guid",
-          "name": "实例 GUID",
+          "id": "@codeServer.wxid",
+          "name": "wxid",
           "val": "",
           "type": "textarea",
           "autoGrow": true,
           "rows": 1,
-          "desc": "微信实例 GUID"
-        },
-        {
-          "id": "@codeServer.password",
-          "name": "接口密码",
-          "val": "",
-          "type": "textarea",
-          "autoGrow": true,
-          "rows": 1,
-          "desc": "API 接口密码"
+          "desc": "微信原始ID, 多个id以英文逗号隔开"
         },
         {
           "id": "@codeServer.fun",
