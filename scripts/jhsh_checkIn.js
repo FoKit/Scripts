@@ -81,8 +81,8 @@ let skipDay = getEnv('JHSH_SKIPDAY') || '';  // 下个断签日 (适用于借记
 let bodyArr = bodyStr ? bodyStr.split("|") : [];
 let bodyArr2 = autoLoginInfo ? autoLoginInfo.split("|") : [];
 $.is_debug = getEnv('is_debug') || 'false';
-
-if (isGetCookie = typeof $request !== `undefined`) {
+const isGetCookie = typeof $request !== `undefined`;
+if (isGetCookie) {
   GetCookie();
   $.done();
 } else {
