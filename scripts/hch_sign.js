@@ -1,7 +1,7 @@
 /**
  * 脚本名称：花城汇小程序（广州）
  * 活动规则：每日签到可获得 10-30 积分，兼容 NE 和 Node.js 环境。
- * 更新时间：2024-02-26
+ * 更新时间：2025-08-23
  * 环境变量：HCH_USERID
  * BoxJs订阅：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
 
@@ -72,12 +72,13 @@ async function main() {
   for (let i = 0; i < $.userList.length; i++) {
     // 初始化
     $.user_id = $.userList[i];
+    $.log(`账号 ${i+1} 开始执行 \n`); 
 
     // 查询信息
     await userCenter();
 
     // 每日签到
-    await sign();
+    if ($.user_id) await sign();
   }
 }
 
@@ -91,11 +92,11 @@ async function sign() {
   // 发起请求
   const result = await Request(opt);
   if (result?.status === '1') {
-    msg = `签到成功, ${result.error} 🎉`;
+    msg = `🎉签到成功, ${result.error}\n`;
   } else if (result?.status === '0') {
-    msg = `签到失败, ${result.error} ❌`;
+    msg = `❌签到失败, ${result.error}\n`;
   } else {
-    msg = `每日签到任务失败 ❌`;
+    msg = `❌每日签到任务失败\n`;
   }
   $.messages.push(msg) && $.log(msg);
 }
@@ -109,11 +110,14 @@ async function userCenter() {
 
   // 发起请求
   const result = await Request(opt);
-  if (result?.errcode === 0) {
+  if (result?.errcode === 0 && result?.data?.lvInfo) {
     const { nickname, mobile, gold, lvInfo } = result.data;
-    msg = `账号: ${hideSensitiveData(mobile, 3, 4)}  昵称: ${nickname}\n积分: ${gold}  等级: ${lvInfo['lv_now']['name']}`;
+    var user = hideSensitiveData(mobile, 3, 4) || $.user_id;
+    msg = `账号: ${user}  昵称: ${nickname}\n积分: ${gold}  等级: ${lvInfo['lv_now']['name']}`;
   } else {
-    msg = `❌ 会员信息查询失败: ${$.toStr(result)}`;
+    msg = `账号: ${$.user_id}\n❌会员信息查询失败\n`;
+    $.user_id = null;
+    $.log($.toStr(result));
   }
   $.messages.push(msg) && $.log(msg);
 }
