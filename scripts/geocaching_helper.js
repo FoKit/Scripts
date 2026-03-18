@@ -4,10 +4,10 @@
  * 脚本说明：配置重写和百度翻译 appid 和 securityKey 即可使用。
  * BoxJs ：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
  * 仓库地址：https://github.com/FoKit/Scripts
+ * 更新日期：2026-03-19 优先使用 userCorrectedCoordinates 坐标
  * 更新日期：2025-02-16 兼容 v2 版本 logs 翻译请求
  * 更新日期：2024-02-27 增加翻译和坐标转换开关
  * 更新日期：2024-01-06 通知添加 difficulty 和 terrain
- * 更新日期：2023-12-30 优化通知
  * 更新日期：2023-12-29 支持解锁 Premium 会员
  * 更新日期：2023-12-27 修复单个 cache 详情页 GPS 坐标偏移问题
  * 更新日期：2023-11-26 初版，支持修正坐标和翻译功能
@@ -99,7 +99,7 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     if (geocaching_gps_fix == 'false') throw new Error('⚠️ 未启用转换坐标功能');
     $.log("🔁 开始转换坐标");
     // 通过 map 方法创建一个新数组，用于遍历转换坐标
-    let coordinatesArr = obj.geocaches.map(item => item.postedCoordinates);
+    let coordinatesArr = obj.geocaches.map(item => item.callerSpecific?.userCorrectedCoordinates || item.postedCoordinates); // 优先使用 userCorrectedCoordinates，无则用 postedCoordinates
     for (let i = 0; i < coordinatesArr.length; i++) {
       // 提取经纬度变量
       let { latitude, longitude } = coordinatesArr[i];
@@ -144,7 +144,7 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     if (geocaching_gps_fix == 'false') throw new Error('⚠️ 未启用转换坐标功能');
     $.log("🔁 开始转换坐标");
     // 提取经纬度变量
-    let { latitude, longitude } = obj.postedCoordinates;
+    let { latitude, longitude } = obj.callerSpecific?.userCorrectedCoordinates || obj.postedCoordinates;  // 优先使用 userCorrectedCoordinates，无则用 postedCoordinates
     // GPS 坐标转换 WGS-84 -> GCJ-02
     let result = GPS.gcj_encrypt(latitude, longitude);
     debug(`🔁 ${latitude}, ${longitude} --> ${result.lat}, ${result.lon}`);
