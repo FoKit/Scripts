@@ -98,65 +98,62 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
   if (/map\/search\?adventuresTake/.test($request.url)) {
     if (geocaching_gps_fix == 'false') throw new Error('⚠️ 未启用转换坐标功能');
     $.log("🔁 开始转换坐标");
-    // 通过 map 方法创建一个新数组，用于遍历转换坐标
-    let coordinatesArr = obj.geocaches.map(item => item.callerSpecific?.userCorrectedCoordinates || item.postedCoordinates); // 优先使用 userCorrectedCoordinates，无则用 postedCoordinates
-    for (let i = 0; i < coordinatesArr.length; i++) {
-      // 提取经纬度变量
-      let { latitude, longitude } = coordinatesArr[i];
-      // GPS 坐标转换 WGS-84 -> GCJ-02
-      let result = GPS.gcj_encrypt(latitude, longitude);
-      debug(`🔁 ${latitude}, ${longitude} --> ${result.lat}, ${result.lon}`);
-      // 转换后重新赋值到 body 对象对应的 key
-      obj['geocaches'][i]['postedCoordinates']['latitude'] = result.lat;
-      obj['geocaches'][i]['postedCoordinates']['longitude'] = result.lon;
-      // 坐标转换数量 +1
-      gps_convert_num += 1;
-    }
-    $.log(`✔️ 坐标转换完成, 修正定位 ${gps_convert_num} 个`);
-    !gps_convert_num && $.notifyMsg.push(`❌ 修正定位失败`);
-    // $.notifyMsg.push(`修正定位 ${gps_convert_num} 个, 用时 x.xx 秒 🎉`);
-  } else if (/geocachelogs/.test($request.url)) {
-    // 翻译 logs
-    await translate_logs();
-
-    // 读取持久化数据中的信息 push 到通知
-    $.cache = $.getjson('geocaching_temp'); // 读取持久化数据 (object格式)
-    if ($.cache) {
-      const { name, hints, difficulty, terrain } = $.cache[obj.data[0].geocache.referenceCode];
-      $.cache && $.notifyMsg.push(`地点: ${name}\n提示: ${hints} | 难度: ${difficulty} | 地形: ${terrain}`);
-    }
-    $.error_msg && $.notifyMsg.push(`❌ 翻译失败: ${$.error_msg}`);
-    // 翻译耗时
-    const costTime = (new Date().getTime() - startTime) / 1000;
-    $.log(`翻译: ${success_num} 次, 用时 ${costTime} 秒 🎉`);
-  } else if (/\/mobile\/v1\/profileview/.test($request.url)) {
-    const membershipTypeId = $.getdata('Geo_membershipTypeId') || '';
-    if (membershipTypeId) {
-      obj['profile']['membershipTypeId'] = parseInt(membershipTypeId);
-      $.log(`🔓 MembershipTypeId modify to [${membershipTypeId}].`);
-    }
-  } else if (obj?.name) {
-    // 翻译 cache
-    await translate_cache();
-    $.error_msg && $.notifyMsg.push(`❌ 翻译失败: ${$.error_msg}`);
-
-    // 此页面需要转换当前 cache 坐标，否则会导致定位偏移
-    if (geocaching_gps_fix == 'false') throw new Error('⚠️ 未启用转换坐标功能');
-    $.log("🔁 开始转换坐标");
-    // 提取经纬度变量
-    let { latitude, longitude } = obj.callerSpecific?.userCorrectedCoordinates || obj.postedCoordinates;  // 优先使用 userCorrectedCoordinates，无则用 postedCoordinates
-    // GPS 坐标转换 WGS-84 -> GCJ-02
-    let result = GPS.gcj_encrypt(latitude, longitude);
-    debug(`🔁 ${latitude}, ${longitude} --> ${result.lat}, ${result.lon}`);
-    // 转换后重新赋值到 body 对象对应的 key
-    obj['postedCoordinates']['latitude'] = result.lat;
-    obj['postedCoordinates']['longitude'] = result.lon;
-    $.log("✔️ 坐标转换完成");
-  } else {
-    var openUrl = 'https://www.geocaching.com/geocache/' + /geocaches\/(\w{7})/.exec($request.url)?.[1];
-    $.msg(`点击跳转到浏览器打开`, ``, openUrl, { $open: openUrl });
+    // 遍历 geocaches 转换坐标
+    obj.geocaches.forEach(item => {
+      // 提取 userCorrected
+      const userCorrected = item.callerSpecific?.userCorrectedCoordinates;
+      if (userCorrected) {
+        item.callerSpecific.userCorrectedCoordinates = convertCoordinates(userCorrected);
+      } else {
+        item.postedCoordinates = convertCoordinates(item.postedCoordinates);
+      }
+      gps_convert_num += 1;  // 坐标转换数量 +1
+    });
   }
-})()
+  $.log(`✔️ 坐标转换完成, 修正定位 ${gps_convert_num} 个`);
+  !gps_convert_num && $.notifyMsg.push(`❌ 修正定位失败`);
+  // $.notifyMsg.push(`修正定位 ${gps_convert_num} 个, 用时 x.xx 秒 🎉`);
+} else if (/geocachelogs/.test($request.url)) {
+  // 翻译 logs
+  await translate_logs();
+
+  // 读取持久化数据中的信息 push 到通知
+  $.cache = $.getjson('geocaching_temp'); // 读取持久化数据 (object格式)
+  if ($.cache) {
+    const { name, hints, difficulty, terrain } = $.cache[obj.data[0].geocache.referenceCode];
+    $.cache && $.notifyMsg.push(`地点: ${name}\n提示: ${hints} | 难度: ${difficulty} | 地形: ${terrain}`);
+  }
+  $.error_msg && $.notifyMsg.push(`❌ 翻译失败: ${$.error_msg}`);
+  // 翻译耗时
+  const costTime = (new Date().getTime() - startTime) / 1000;
+  $.log(`翻译: ${success_num} 次, 用时 ${costTime} 秒 🎉`);
+} else if (/\/mobile\/v1\/profileview/.test($request.url)) {
+  const membershipTypeId = $.getdata('Geo_membershipTypeId') || '';
+  if (membershipTypeId) {
+    obj['profile']['membershipTypeId'] = parseInt(membershipTypeId);
+    $.log(`🔓 MembershipTypeId modify to [${membershipTypeId}].`);
+  }
+} else if (obj?.name) {
+  // 翻译 cache
+  await translate_cache();
+  $.error_msg && $.notifyMsg.push(`❌ 翻译失败: ${$.error_msg}`);
+
+  // 此页面需要转换当前 cache 坐标，否则会导致定位偏移
+  if (geocaching_gps_fix == 'false') throw new Error('⚠️ 未启用转换坐标功能');
+  $.log("🔁 开始转换坐标");
+  // 提取 userCorrected
+  const userCorrected = obj.callerSpecific?.userCorrectedCoordinates;
+  if (userCorrected) {
+    obj.callerSpecific.userCorrectedCoordinates = convertCoordinates(userCorrected);
+  } else {
+    obj.postedCoordinates = convertCoordinates(obj.postedCoordinates);
+  }
+  $.log("✔️ 坐标转换完成");
+} else {
+  var openUrl = 'https://www.geocaching.com/geocache/' + /geocaches\/(\w{7})/.exec($request.url)?.[1];
+  $.msg(`点击跳转到浏览器打开`, ``, openUrl, { $open: openUrl });
+}
+}) ()
   .catch((e) => {
     $.log(`❌ ${$.name}, 失败! 原因: ${e}!`);
   })
@@ -286,7 +283,17 @@ function debug(content, title = "debug") {
   }
 }
 
-/** GPS 坐标转换
+// GPS 坐标转换 WGS-84 -> GCJ-02
+function convertCoordinates(coord) {
+  const result = GPS.gcj_encrypt(coord.latitude, coord.longitude);
+  debug(`🔁 ${coord.latitude}, ${coord.longitude} --> ${result.lat}, ${result.lon}`);
+  return {
+    latitude: result.lat,
+    longitude: result.lon
+  };
+}
+
+/** 坐标转换器
  * WGS-84 to GCJ-02 ：gcj_encrypt(lat, lon)
  * GCJ-02 to WGS-84 ：gcj_decrypt(lat, lon)
  * GCJ-02 to WGS-84 exactly : gcj_decrypt_exact(lat, lon)
