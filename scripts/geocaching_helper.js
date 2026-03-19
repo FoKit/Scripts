@@ -109,51 +109,50 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
       }
       gps_convert_num += 1;  // 坐标转换数量 +1
     });
-  }
-  $.log(`✔️ 坐标转换完成, 修正定位 ${gps_convert_num} 个`);
-  !gps_convert_num && $.notifyMsg.push(`❌ 修正定位失败`);
-  // $.notifyMsg.push(`修正定位 ${gps_convert_num} 个, 用时 x.xx 秒 🎉`);
-} else if (/geocachelogs/.test($request.url)) {
-  // 翻译 logs
-  await translate_logs();
+    $.log(`✔️ 坐标转换完成, 修正定位 ${gps_convert_num} 个`);
+    !gps_convert_num && $.notifyMsg.push(`❌ 修正定位失败`);
+    // $.notifyMsg.push(`修正定位 ${gps_convert_num} 个, 用时 x.xx 秒 🎉`);
+  } else if (/geocachelogs/.test($request.url)) {
+    // 翻译 logs
+    await translate_logs();
 
-  // 读取持久化数据中的信息 push 到通知
-  $.cache = $.getjson('geocaching_temp'); // 读取持久化数据 (object格式)
-  if ($.cache) {
-    const { name, hints, difficulty, terrain } = $.cache[obj.data[0].geocache.referenceCode];
-    $.cache && $.notifyMsg.push(`地点: ${name}\n提示: ${hints} | 难度: ${difficulty} | 地形: ${terrain}`);
-  }
-  $.error_msg && $.notifyMsg.push(`❌ 翻译失败: ${$.error_msg}`);
-  // 翻译耗时
-  const costTime = (new Date().getTime() - startTime) / 1000;
-  $.log(`翻译: ${success_num} 次, 用时 ${costTime} 秒 🎉`);
-} else if (/\/mobile\/v1\/profileview/.test($request.url)) {
-  const membershipTypeId = $.getdata('Geo_membershipTypeId') || '';
-  if (membershipTypeId) {
-    obj['profile']['membershipTypeId'] = parseInt(membershipTypeId);
-    $.log(`🔓 MembershipTypeId modify to [${membershipTypeId}].`);
-  }
-} else if (obj?.name) {
-  // 翻译 cache
-  await translate_cache();
-  $.error_msg && $.notifyMsg.push(`❌ 翻译失败: ${$.error_msg}`);
+    // 读取持久化数据中的信息 push 到通知
+    $.cache = $.getjson('geocaching_temp'); // 读取持久化数据 (object格式)
+    if ($.cache) {
+      const { name, hints, difficulty, terrain } = $.cache[obj.data[0].geocache.referenceCode];
+      $.cache && $.notifyMsg.push(`地点: ${name}\n提示: ${hints} | 难度: ${difficulty} | 地形: ${terrain}`);
+    }
+    $.error_msg && $.notifyMsg.push(`❌ 翻译失败: ${$.error_msg}`);
+    // 翻译耗时
+    const costTime = (new Date().getTime() - startTime) / 1000;
+    $.log(`翻译: ${success_num} 次, 用时 ${costTime} 秒 🎉`);
+  } else if (/\/mobile\/v1\/profileview/.test($request.url)) {
+    const membershipTypeId = $.getdata('Geo_membershipTypeId') || '';
+    if (membershipTypeId) {
+      obj['profile']['membershipTypeId'] = parseInt(membershipTypeId);
+      $.log(`🔓 MembershipTypeId modify to [${membershipTypeId}].`);
+    }
+  } else if (obj?.name) {
+    // 翻译 cache
+    await translate_cache();
+    $.error_msg && $.notifyMsg.push(`❌ 翻译失败: ${$.error_msg}`);
 
-  // 此页面需要转换当前 cache 坐标，否则会导致定位偏移
-  if (geocaching_gps_fix == 'false') throw new Error('⚠️ 未启用转换坐标功能');
-  $.log("🔁 开始转换坐标");
-  // 提取 userCorrected
-  const userCorrected = obj.callerSpecific?.userCorrectedCoordinates;
-  if (userCorrected) {
-    obj.callerSpecific.userCorrectedCoordinates = convertCoordinates(userCorrected);
+    // 此页面需要转换当前 cache 坐标，否则会导致定位偏移
+    if (geocaching_gps_fix == 'false') throw new Error('⚠️ 未启用转换坐标功能');
+    $.log("🔁 开始转换坐标");
+    // 提取 userCorrected
+    const userCorrected = obj.callerSpecific?.userCorrectedCoordinates;
+    if (userCorrected) {
+      obj.callerSpecific.userCorrectedCoordinates = convertCoordinates(userCorrected);
+    } else {
+      obj.postedCoordinates = convertCoordinates(obj.postedCoordinates);
+    }
+    $.log("✔️ 坐标转换完成");
   } else {
-    obj.postedCoordinates = convertCoordinates(obj.postedCoordinates);
+    var openUrl = 'https://www.geocaching.com/geocache/' + /geocaches\/(\w{7})/.exec($request.url)?.[1];
+    $.msg(`点击跳转到浏览器打开`, ``, openUrl, { $open: openUrl });
   }
-  $.log("✔️ 坐标转换完成");
-} else {
-  var openUrl = 'https://www.geocaching.com/geocache/' + /geocaches\/(\w{7})/.exec($request.url)?.[1];
-  $.msg(`点击跳转到浏览器打开`, ``, openUrl, { $open: openUrl });
-}
-}) ()
+})()
   .catch((e) => {
     $.log(`❌ ${$.name}, 失败! 原因: ${e}!`);
   })
