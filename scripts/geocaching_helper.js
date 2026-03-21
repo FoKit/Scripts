@@ -100,13 +100,13 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     $.log("🔁 开始转换坐标");
     // 遍历 geocaches 转换坐标
     obj.geocaches.forEach(item => {
-      // 提取 userCorrected
-      const userCorrected = item.callerSpecific?.userCorrectedCoordinates;
-      if (userCorrected) {
-        item.callerSpecific.userCorrectedCoordinates = convertCoordinates(userCorrected);
-      } else {
-        item.postedCoordinates = convertCoordinates(item.postedCoordinates);
+      // 获取用户校正的坐标
+      const { userCorrectedCoordinates } = item.callerSpecific ?? {};
+      if (userCorrectedCoordinates) {
+        item.callerSpecific.userCorrectedCoordinates = convertCoordinates(userCorrectedCoordinates);
       }
+      // 转换 postedCoordinates
+      item.postedCoordinates = convertCoordinates(item.postedCoordinates);
       gps_convert_num += 1;  // 坐标转换数量 +1
     });
     $.log(`✔️ 坐标转换完成, 修正定位 ${gps_convert_num} 个`);
@@ -136,17 +136,13 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     // 翻译 cache
     await translate_cache();
     $.error_msg && $.notifyMsg.push(`❌ 翻译失败: ${$.error_msg}`);
-
-    // 此页面需要转换当前 cache 坐标，否则会导致定位偏移
-    if (geocaching_gps_fix == 'false') throw new Error('⚠️ 未启用转换坐标功能');
-    $.log("🔁 开始转换坐标");
-    // 提取 userCorrected
-    const userCorrected = obj.callerSpecific?.userCorrectedCoordinates;
-    if (userCorrected) {
-      obj.callerSpecific.userCorrectedCoordinates = convertCoordinates(userCorrected);
-    } else {
-      obj.postedCoordinates = convertCoordinates(obj.postedCoordinates);
+    // 获取用户校正的坐标
+    const { userCorrectedCoordinates } = obj.callerSpecific ?? {};
+    if (userCorrectedCoordinates) {
+      obj.callerSpecific.userCorrectedCoordinates = convertCoordinates(userCorrectedCoordinates);
     }
+    // 转换 postedCoordinates
+    obj.postedCoordinates = convertCoordinates(obj.postedCoordinates);
     $.log("✔️ 坐标转换完成");
   } else {
     var openUrl = 'https://www.geocaching.com/geocache/' + /geocaches\/(\w{7})/.exec($request.url)?.[1];
