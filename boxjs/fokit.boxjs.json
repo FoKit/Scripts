@@ -753,7 +753,8 @@
         "geocaching_gps_fix",
         "Geo_membershipTypeId",
         "BaiDu_APP_ID",
-        "BaiDu_SECURITY_KEY",
+        "BaiDu_API_KEY",
+        "BAIDU_TRANSLATE_FROM_KEY",
         "BAIDU_TRANSLATE_TO_KEY",
         "geocaching_temp"
       ],
@@ -787,10 +788,59 @@
           "desc": ""
         },
         {
-          "id": "BaiDu_SECURITY_KEY",
-          "name": "百度翻译 securityKey",
+          "id": "BaiDu_API_KEY",
+          "name": "百度翻译 API Key",
           "val": "",
           "type": "text",
+          "desc": ""
+        },
+        {
+          "id": "BAIDU_TRANSLATE_FROM_KEY",
+          "name": "翻译原始语言",
+          "val": "en",
+          "type": "selects",
+          "items": [
+            {
+              "key": "auto",
+              "label": "自动识别"
+            },
+            {
+              "key": "zh",
+              "label": "中文(简体)"
+            },
+            {
+              "key": "yue",
+              "label": "中文(粤语)"
+            },
+            {
+              "key": "cht",
+              "label": "中文(繁体)"
+            },
+            {
+              "key": "en",
+              "label": "English - 英语"
+            },
+            {
+              "key": "jp",
+              "label": "日本語 - 日语"
+            },
+            {
+              "key": "kor",
+              "label": "한국어 - 韩语"
+            },
+            {
+              "key": "fra",
+              "label": "Français - 法语"
+            },
+            {
+              "key": "de",
+              "label": "Deutsch - 德语"
+            },
+            {
+              "key": "spa",
+              "label": "Español - 西班牙语"
+            }
+          ],
           "desc": ""
         },
         {

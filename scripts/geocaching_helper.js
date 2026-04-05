@@ -1,9 +1,11 @@
 /**
  * 脚本名称：Geocaching 助手
  * 活动说明：用于修正 Geocaching 的 GPS 坐标、翻译 log / describe
- * 脚本说明：配置重写和百度翻译 appid 和 securityKey 即可使用。
+ * 脚本说明：配置重写和百度翻译 appid 和 API Key 即可使用。
+ * 百度翻译：百度翻译开放平台 https://fanyi-api.baidu.com/
  * BoxJs ：https://raw.githubusercontent.com/FoKit/Scripts/main/boxjs/fokit.boxjs.json
  * 仓库地址：https://github.com/FoKit/Scripts
+ * 更新日期：2026-04-06 升级百度大模型翻译接口提升效率
  * 更新日期：2026-03-19 优先使用 userCorrectedCoordinates 坐标
  * 更新日期：2025-02-16 兼容 v2 版本 logs 翻译请求
  * 更新日期：2024-02-27 增加翻译和坐标转换开关
@@ -23,10 +25,9 @@ https://raw.githubusercontent.com/FoKit/Scripts/main/rewrite/geocaching_helper.s
 hostname = api.groundspeak.com
 
 [Script]
-Geocaching logs = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/geocaches\/[A-Z0-9]{7}\/geocachelogs\?(onlyFriendLogs=\w+&)?skip=\d+&take=20,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
-Geocaching cache = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{7}$,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
-Geocaching gps = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/map\/search\?adventuresTake,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
-Geocaching unlock = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v1\/profileview,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
+Geocaching cache = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/geocaches\/GC[A-Z0-9]{5}(?:\/(geocachelogs|userwaypoints|additionalwaypoints))?(?:\?.*)?$,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
+Geocaching map = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/map\/search\?adventuresTake,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
+Geocaching unlock = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/profileview,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 
 ------------------ Loon 配置 ------------------
 
@@ -34,10 +35,9 @@ Geocaching unlock = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\
 hostname = api.groundspeak.com
 
 [Script]
-http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/geocaches\/[A-Z0-9]{7}\/geocachelogs\?(onlyFriendLogs=\w+&)?skip=\d+&take=20 tag=Geocaching logs, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
-http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{7}$ tag=Geocaching logs, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
-http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/map\/search\?adventuresTake tag=Geocaching cache, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
-http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/profileview tag=Geocaching unlock, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
+http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/geocaches\/GC[A-Z0-9]{5}(?:\/(geocachelogs|userwaypoints|additionalwaypoints))?(?:\?.*)?$ tag=Geocaching cache, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
+http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/map\/search\?adventuresTake tag=Geocaching map, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
+http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/profileview tag=Geocaching unlock, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
 
 -------------- Quantumult X 配置 --------------
 
@@ -45,10 +45,9 @@ http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/profileview tag=Geoc
 hostname = api.groundspeak.com
 
 [rewrite_local]
-^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/geocaches\/[A-Z0-9]{7}\/geocachelogs\?(onlyFriendLogs=\w+&)?skip=\d+&take=20 url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
-^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{7}$ url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
-^https:\/\/api\.groundspeak\.com\/mobile\/v1\/map\/search\?adventuresTake url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
-^https:\/\/api\.groundspeak\.com\/mobile\/v1\/profileview url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
+^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/geocaches\/GC[A-Z0-9]{5}(?:\/(geocachelogs|userwaypoints|additionalwaypoints))?(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
+^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/map\/search\?adventuresTake url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
+^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/profileview url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 
 ------------------ Stash 配置 -----------------
 
@@ -56,19 +55,15 @@ http:
   mitm:
     - "api.groundspeak.com"
   script:
-    - match: ^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/geocaches\/[A-Z0-9]{7}\/geocachelogs\?(onlyFriendLogs=\w+&)?skip=\d+&take=20
-      name: Geocaching logs
-      type: response
-      require-body: true
-    - match: ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/geocaches\/[A-Z0-9]{7}$
+    - match: ^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/geocaches\/GC[A-Z0-9]{5}(?:\/(geocachelogs|userwaypoints|additionalwaypoints))?(?:\?.*)?$
       name: Geocaching cache
       type: response
       require-body: true
-    - match: ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/map\/search\?adventuresTake
-      name: Geocaching gps
+    - match: ^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/map\/search\?adventuresTake
+      name: Geocaching map
       type: response
       require-body: true
-    - match: ^https:\/\/api\.groundspeak\.com\/mobile\/v1\/profileview
+    - match: ^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/profileview
       name: Geocaching unlock
       type: response
       require-body: true
@@ -82,8 +77,9 @@ script-providers:
 
 const $ = new Env('Geocaching helper');
 const appid = $.getdata('BaiDu_APP_ID') || '';  // 百度翻译 appid
-const securityKey = $.getdata('BaiDu_SECURITY_KEY') || '';  // 百度翻译 securityKey
-const translateTo = $.getdata('BAIDU_TRANSLATE_TO_KEY') || 'zh';  // 翻译后的语言
+const apiKey = $.getdata('BaiDu_API_KEY') || '';  // 百度翻译 API Key
+const translateFrom = $.getdata('BAIDU_TRANSLATE_FROM_KEY') || 'en';  // 原始语言
+const translateTo = $.getdata('BAIDU_TRANSLATE_TO_KEY') || 'zh';  // 目标语言
 const geocaching_translate = $.getdata('geocaching_translate') || 'false';  // 百度翻译
 const geocaching_gps_fix = $.getdata('geocaching_gps_fix') || 'true';  // 坐标转换
 let startTime = new Date().getTime();
@@ -96,6 +92,7 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
 !(async () => {
   if (!$request) throw new Error('❌ 非 cron 类脚本，不支持手动运行');
   if (/map\/search\?adventuresTake/.test($request.url)) {
+    // 坐标转换
     if (geocaching_gps_fix == 'false') throw new Error('⚠️ 未启用转换坐标功能');
     $.log("🔁 开始转换坐标");
     // 遍历 geocaches 转换坐标
@@ -112,30 +109,31 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     $.log(`✔️ 坐标转换完成, 修正定位 ${gps_convert_num} 个`);
     !gps_convert_num && $.notifyMsg.push(`❌ 修正定位失败`);
     // $.notifyMsg.push(`修正定位 ${gps_convert_num} 个, 用时 x.xx 秒 🎉`);
-  } else if (/geocachelogs/.test($request.url)) {
+  } else if (/geocaches\/GC[A-Z0-9]{5}\/geocachelogs/.test($request.url)) {
     // 翻译 logs
     await translate_logs();
-
     // 读取持久化数据中的信息 push 到通知
     $.cache = $.getjson('geocaching_temp'); // 读取持久化数据 (object格式)
     if ($.cache) {
       const { name, hints, difficulty, terrain } = $.cache[obj.data[0].geocache.referenceCode];
-      $.cache && $.notifyMsg.push(`地点: ${name}\n提示: ${hints} | 难度: ${difficulty} | 地形: ${terrain}`);
+      $.cache && $.notifyMsg.push(`地点: ${name}\n提示: ${hints} | 难度: D${difficulty} | 地形: T${terrain}`);
     }
     $.error_msg && $.notifyMsg.push(`❌ 翻译失败: ${$.error_msg}`);
     // 翻译耗时
     const costTime = (new Date().getTime() - startTime) / 1000;
     $.log(`翻译: ${success_num} 次, 用时 ${costTime} 秒 🎉`);
-  } else if (/\/mobile\/v1\/profileview/.test($request.url)) {
+  } else if (/\/mobile\/v\d\/profileview/.test($request.url)) {
+    // 解锁 Premium
     const membershipTypeId = $.getdata('Geo_membershipTypeId') || '';
     if (membershipTypeId) {
       obj['profile']['membershipTypeId'] = parseInt(membershipTypeId);
       $.log(`🔓 MembershipTypeId modify to [${membershipTypeId}].`);
     }
-  } else if (obj?.name) {
+  } else if (/geocaches\/GC[A-Z0-9]{5}$/.test($request.url) && obj?.name) {
     // 翻译 cache
     await translate_cache();
     $.error_msg && $.notifyMsg.push(`❌ 翻译失败: ${$.error_msg}`);
+    if (geocaching_gps_fix == 'false') throw new Error('⚠️ 未启用转换坐标功能');
     // 获取用户校正的坐标
     const { userCorrectedCoordinates } = obj.callerSpecific ?? {};
     if (userCorrectedCoordinates) {
@@ -144,6 +142,13 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     // 转换 postedCoordinates
     obj.postedCoordinates = convertCoordinates(obj.postedCoordinates);
     $.log("✔️ 坐标转换完成");
+  } else if (/geocaches\/GC[A-Z0-9]{5}\/(userwaypoints|additionalwaypoints)/.test($request.url)) {
+    if (geocaching_gps_fix == 'false') throw new Error('⚠️ 未启用转换坐标功能');
+    // 转换 userwaypoints/additionalwaypoints 坐标
+    if (obj?.data[0]?.coordinates) {
+      obj.data[0].coordinates = convertCoordinates(obj.data[0].coordinates);
+      $.log("✔️ 坐标转换完成");
+    }
   } else {
     var openUrl = 'https://www.geocaching.com/geocache/' + /geocaches\/(\w{7})/.exec($request.url)?.[1];
     $.msg(`点击跳转到浏览器打开`, ``, openUrl, { $open: openUrl });
@@ -161,18 +166,28 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     $done({ body: JSON.stringify(obj) });
   })
 
+
 // 翻译 logs
 async function translate_logs() {
-  let textArr = obj.data.map(item => `${item.text}`);
-  // console.log(text);
-  $.log(`\n🌏 翻译 logs 数量: ${textArr.length}\n`);
-  for (let i = 0; i < textArr.length; i++) {
-    $.log(`🌏 翻译第[${i + 1}]条`);
-    let result = await translateApi(textArr[i]);
-    if (result) {
-      obj['data'][i]['text'] = result + `\n--------------------------------------------------\n原文:\n${obj['data'][i]['text']}`;
+  const logs = obj.data;
+  $.log(`\n🌏 开始翻译 logs (共 ${logs.length} 条)`);
+  const combinedText = logs.map(item => item.text).join("\n\n=====\n\n"); // 用分隔符拼接原始logs
+  try {
+    const translatedCombined = await translateApi(combinedText);
+    const translatedArr = translatedCombined.split(/=====/g)  // 分割译文
+      .map(s => s.trim())
+      .filter(s => s);
+    if (translatedArr.length === logs.length) {  // 判断数量是否一致
+      $.log(`✅ 译文数组解析成功`);
+      translatedArr.forEach((t, i) => {
+        const orig = logs[i].text;
+        obj.data[i].text = `${t}\n--------------------------------------------------\n${orig}`;
+      });
+      success_num += logs.length;
+      return;
     }
-    // await $.wait(50);
+  } catch (e) {
+    $.log(`❌ 批量翻译异常: ${e}`);
   }
 }
 
@@ -190,7 +205,7 @@ async function translate_cache() {
   }
   let _longDescription = await translateApi(longDescription);
   if (_longDescription) {
-    obj['longDescription'] = _longDescription + `\n--------------------------------------------------\r\n原文:\n ` + longDescription;
+    obj['longDescription'] = _longDescription + `\n--------------------------------------------------\r\n ` + longDescription;
   }
 
   // 把 cache 的信息缓存下来，用作通知调用
@@ -204,66 +219,54 @@ async function translate_cache() {
   $.setjson($.cache, 'geocaching_temp');
 }
 
-// 翻译接口
+// 百度大模型文本翻译 API
 async function translateApi(query) {
-  if (geocaching_translate == 'false' || !appid || !securityKey) {
-    $.log(`❌ 未配置百度翻译 appid / securityKey 或未启用, 跳过翻译。`);
-    return
+  if (geocaching_translate === 'false' || !appid || !apiKey) {
+    $.log(`❌ 翻译插件未启用或未配置 AppID/API Key`);
+    return null;
   }
-  const salt = Date.now();
-  query = query.replace(/\r\n/g, "===").replace(/\n/g, "---").replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, "");
-  const queryObj = {
-    q: query,
-    from: "auto",
-    to: translateTo,
-    appid,
-    salt,
-    sign: MD5(appid + query + salt + securityKey),
-  };
-  const requestBody = Object.entries(queryObj)
-    .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
-    .join("&");
-  let opt = {
-    url: `https://fanyi-api.baidu.com/api/trans/vip/translate`,
-    headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
-    body: requestBody
-  }
-  debug(opt, "请求");
-  return new Promise(resolve => {
-    $.post(opt, async (err, resp, data) => {
-      try {
-        err && $.log(err);
-        if (data) {
-          debug(data, "响应");
-          try {
-            let result = JSON.parse(data);
-            let dst = result?.trans_result?.[0]?.['dst'];
-            if (dst && dst != query) {
-              dst = dst.replace(/\-\-\-/g, `\n`).replace(/\=\=\=/g, `\r\n`);
-              resolve(dst);
-              success_num += 1;
-              $.log(`🎉 翻译成功`);
-            } else if (result?.error_msg) {
-              $.error_msg = result.error_msg;
-              $.log(`⚠️ 翻译失败: ${result.error_msg}`);
-            } else {
-              $.log(`⚠️ 无需翻译: ${query}`);
-            }
-          } catch (e) {
-            $.log(e);
-          };
-        } else {
-          console.log(`翻译接口请求失败`);
-        }
-      } catch (error) {
-        $.log(error);
-      } finally {
-        resolve();
-      }
-    })
-  })
-}
 
+  const opt = {
+    url: `https://fanyi-api.baidu.com/ait/api/aiTextTranslate`,
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${apiKey}`
+    },
+    body: JSON.stringify({
+      q: query,
+      from: translateFrom,
+      to: translateTo,
+      appid,
+    }),
+    timeout: 15000
+  };
+
+  return new Promise((resolve) => {
+    $.post(opt, (err, resp, data) => {
+      try {
+        if (err) {
+          $.log(`❌ 翻译请求失败: ${err}`);
+          return resolve(null);
+        }
+
+        const resObj = JSON.parse(data);
+        if (!resObj.trans_result) {
+          $.log(`⚠️ 未获取到翻译结果`);
+          return resolve(null);
+        }
+
+        // 过滤空结果，避免一堆空行干扰分割
+        const validList = resObj.trans_result.filter(item => item.dst?.trim());
+        const translatedText = validList.map(item => item.dst).join('\n');
+
+        resolve(translatedText || null);
+      } catch (e) {
+        $.log(`❌ 翻译解析异常: ${e}`);
+        resolve(null);
+      }
+    });
+  });
+}
 
 // DEBUG
 function debug(content, title = "debug") {
