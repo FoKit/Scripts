@@ -180,8 +180,9 @@ async function translate_logs() {
     if (translatedArr.length === logs.length) {  // 判断数量是否一致
       $.log(`✅ 译文数组解析成功`);
       translatedArr.forEach((t, i) => {
-        const orig = logs[i].text;
-        obj.data[i].text = `${t}\n--------------------------------------------------\n${orig}`;
+        if (t !== logs[i].text) {
+          obj.data[i].text = `${t}\n--------------------------------------------------\n${logs[i].text}`;
+        }
       });
       success_num += logs.length;
       return;
