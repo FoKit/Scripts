@@ -756,7 +756,8 @@
         "BaiDu_API_KEY",
         "BAIDU_TRANSLATE_FROM_KEY",
         "BAIDU_TRANSLATE_TO_KEY",
-        "geocaching_temp"
+        "geocaching_temp",
+        "geo_tags"
       ],
       "settings": [
         {
@@ -772,6 +773,13 @@
           "val": true,
           "type": "boolean",
           "desc": "用于修复高德地图坐标偏移 WGS-84 -> GCJ-02"
+        },
+        {
+          "id": "geo_tags",
+          "name": "翻译保持",
+          "val": "",
+          "type": "text",
+          "desc": "通过打标签保持无需翻译的字符串，用英文逗号隔开，如人名 John,Michael,David,James"
         },
         {
           "id": "Geo_membershipTypeId",
