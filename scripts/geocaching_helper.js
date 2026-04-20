@@ -16,6 +16,7 @@
  *          2026-04-11 解锁 D2/T2.5 缓存APP访问权限
  *          2026-04-12 支持从 web 页面获取 cache 信息
  *          2026-04-13 新增翻译保持功能（Boxjs 配置）
+ *          2026-04-21 增加 Adventure Lab 翻译功能
 /*
 --------------- BoxJS & 重写模块 --------------
 
@@ -31,6 +32,7 @@ hostname = api.groundspeak.com
 Geocaching cache = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/geocaches\/GC[A-Z0-9]{5}(?:\/(geocachelogs|userwaypoints|additionalwaypoints))?(?:\?.*)?$,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 Geocaching map = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/map\/search\?adventuresTake,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 Geocaching unlock = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/profileview,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
+Geocaching adventures = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/adventuresmobile\/v\d\/public\/adventures\/[a-zA-Z0-9-]+,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 
 ------------------ Loon 配置 ------------------
 
@@ -41,6 +43,7 @@ hostname = api.groundspeak.com
 http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/geocaches\/GC[A-Z0-9]{5}(?:\/(geocachelogs|userwaypoints|additionalwaypoints))?(?:\?.*)?$ tag=Geocaching cache, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
 http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/map\/search\?adventuresTake tag=Geocaching map, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
 http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/profileview tag=Geocaching unlock, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
+http-response ^https:\/\/api\.groundspeak\.com\/adventuresmobile\/v\d\/public\/adventures\/[a-zA-Z0-9-]+ tag=Geocaching adventures, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
 
 -------------- Quantumult X 配置 --------------
 
@@ -51,6 +54,8 @@ hostname = api.groundspeak.com
 ^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/geocaches\/GC[A-Z0-9]{5}(?:\/(geocachelogs|userwaypoints|additionalwaypoints))?(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 ^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/map\/search\?adventuresTake url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 ^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/profileview url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
+^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/map\/search\?adventuresTake url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
+^https:\/\/api\.groundspeak\.com\/adventuresmobile\/v\d\/public\/adventures\/[a-zA-Z0-9-]+ url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 
 ------------------ Stash 配置 -----------------
 
@@ -70,6 +75,10 @@ http:
       name: Geocaching unlock
       type: response
       require-body: true
+    - match: ^https:\/\/api\.groundspeak\.com\/adventuresmobile\/v\d\/public\/adventures\/[a-zA-Z0-9-]+
+      name: Geocaching adventures
+      type: response
+      require-body: true
 
 script-providers:
   Geocaching helper:
@@ -83,7 +92,8 @@ const appid = $.getdata('BaiDu_APP_ID') || '';  // 百度翻译 appid
 const apiKey = $.getdata('BaiDu_API_KEY') || '';  // 百度翻译 API Key
 const translateFrom = $.getdata('BAIDU_TRANSLATE_FROM_KEY') || 'en';  // 原始语言
 const translateTo = $.getdata('BAIDU_TRANSLATE_TO_KEY') || 'zh';  // 目标语言
-const geocaching_translate = $.getdata('geocaching_translate') || 'false';  // 百度翻译
+const geocaching_translate = $.getdata('geocaching_translate') || 'false';  // Geocaching 翻译
+const adventures_translate = $.getdata('adventures_translate') || 'true';  // Adventure Lab 翻译
 const geocaching_gps_fix = $.getdata('geocaching_gps_fix') || 'true';  // 坐标转换
 let body = JSON.parse($response.body);
 var GPS = gps_convert();
@@ -188,10 +198,18 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
   } else if (/geocaches\/GC[A-Z0-9]{5}\/(userwaypoints|additionalwaypoints)/.test($request.url)) {
     if (geocaching_gps_fix == 'false') throw new Error('⚠️ 未启用转换坐标功能');
     // 转换 userwaypoints/additionalwaypoints 坐标
-    if (body?.data[0]?.coordinates) {
-      body.data[0].coordinates = convertCoordinates(body.data[0].coordinates);
+    if (body?.data && Array.isArray(body.data)) {
+      body.data.forEach(item => {
+        if (item?.coordinates) {
+          item.coordinates = convertCoordinates(item.coordinates);
+        }
+      });
       $.log("✅ 坐标转换完成");
     }
+  } else if (/adventures\/[a-zA-Z0-9-]+/.test($request.url)) {
+    // 翻译 adventures 详情
+    if (adventures_translate == 'false') throw new Error('⚠️ 未启用 Adventure Lab 翻译功能');
+    await translate_adventures();
   } else {
     var openUrl = 'https://www.geocaching.com/geocache/' + /geocaches\/(\w{7})/.exec($request.url)?.[1];
     $.msg(`点击跳转到浏览器打开`, ``, openUrl, { $open: openUrl });
@@ -275,6 +293,57 @@ async function translate_cache() {
   }
 }
 
+// 翻译 adventures
+async function translate_adventures() {
+  try {
+    $.log("🌏 翻译 adventures");
+    let { title, description, stageSummaries } = body;
+    // 拼接 adventures 的 title 和 description
+    const combinedText = [title, description].join("\n\n=====\n\n");
+    // 调用翻译接口
+    const translatedCombined = await translateApi(combinedText);
+    // 拆分 3 段译文
+    const translatedArr = translatedCombined.split(/=====/g)
+      .map(s => s.trim())
+      .filter(s => s);
+    // 解析并赋值
+    if (translatedArr.length >= 2) {
+      let _title = translatedArr[0];
+      let _description = translatedArr[1];
+      if (_title !== title) body.title = _title + ` · ` + title;
+      if (_description !== description) body.description = _description + `\n--------------------------\n` + description;
+      $.log("✅ adventures 翻译完成");
+    }
+    // 翻译 stageSummaries
+    for (let stage of stageSummaries) {
+      const stageCombinedText = [stage.title, stage.description, stage.question, ...(stage.multiChoiceOptions || []).map(opt => opt.text)].join("\n\n=====\n\n");
+      const translatedStageCombined = await translateApi(stageCombinedText);
+      const translatedStageArr = translatedStageCombined.split(/=====/g)
+        .map(s => s.trim())
+        .filter(s => s);
+      if (translatedStageArr.length >= 3) {
+        let idx = 0;
+        let _title = translatedStageArr[idx++];
+        let _description = translatedStageArr[idx++];
+        let _question = translatedStageArr[idx++];
+        if (_title !== stage.title) stage.title = _title + ` · ` + stage.title;
+        if (_description !== stage.description) stage.description = _description + `\n--------------------------\n` + stage.description;
+        if (_question !== stage.question) stage.question = _question + `\n--------------------------\n` + stage.question;
+        if (stage.multiChoiceOptions && stage.multiChoiceOptions.length > 0) {
+          stage.multiChoiceOptions.forEach((opt, i) => {
+            const _opt_text = translatedStageArr[idx++];
+            if (_opt_text && _opt_text !== opt.text) {
+              stage.multiChoiceOptions[i].text = _opt_text + `\n--------------------------\n` + opt.text;
+            }
+          });
+        }
+      }
+    }
+  } catch (e) {
+    $.log(`❌ adventures 翻译异常: ${e}`);
+  }
+}
+
 // 百度大模型文本翻译 API
 async function translateApi(query) {
   try {
@@ -282,14 +351,17 @@ async function translateApi(query) {
       $.notifyMsg.push(`❌ 翻译插件未启用或未配置 AppID/API Key`);
       return null;
     }
-    let tags = ['FTF', 'TFTC', 'DNF', 'log', 'Nano', 'GZ', 'CO', 'EO', 'CITO'];
+    let tags = ['FTF', 'TFTC', 'DNF', 'FP', 'Nano', 'GZ', 'CO', 'EO', 'CITO', 'log', 'logs'];
     const geo_tags = $.getdata('geo_tags') || '';  // 从缓存中读取需要打自定义标签的内容
-    tags.push(...geo_tags.split(",").map(i => i.trim()).filter(Boolean));
+    tags.push(...geo_tags.split(",")
+      .map(i => i.trim().toLowerCase())  // 把所有标签都转为小写
+      .filter(Boolean));
+    tags = [...new Set(tags)];  // tags 去重避免标签嵌套问题
     for (let tag of tags) {
       if (!tag) continue;
-      query = query.replace(new RegExp(tag, "g"), `<geo>${tag}</geo>`);
+      query = query.replace(new RegExp("[ \t]*\\b" + tag + "\\b[ \t]*", "gi"), "<geo>$&</geo>");
     }
-    debug(query, 'query');
+    // debug(query, 'query');
     const opt = {
       url: `https://fanyi-api.baidu.com/ait/api/aiTextTranslate`,
       headers: {
