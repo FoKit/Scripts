@@ -26,14 +26,13 @@ https://raw.githubusercontent.com/FoKit/Scripts/main/rewrite/geocaching_helper.s
 ------------------ Surge 配置 -----------------
 
 [MITM]
-hostname = api.groundspeak.com
+hostname = %APPEND% api.groundspeak.com
 
 [Script]
 Geocaching cache = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/geocaches\/GC[A-Z0-9]{5}(?:\/(geocachelogs|userwaypoints|additionalwaypoints))?(?:\?.*)?$,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 Geocaching map = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/map\/search\?adventuresTake,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 Geocaching unlock = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/profileview,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
-Geocaching adventures = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/adventuresmobile\/v\d\/public\/adventures\/[a-zA-Z0-9-]+,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
-
+Adventure Lab = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/adventuresmobile\/v\d\/public\/adventures\/[a-zA-Z0-9-]+,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 ------------------ Loon 配置 ------------------
 
 [MITM]
@@ -43,7 +42,7 @@ hostname = api.groundspeak.com
 http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/geocaches\/GC[A-Z0-9]{5}(?:\/(geocachelogs|userwaypoints|additionalwaypoints))?(?:\?.*)?$ tag=Geocaching cache, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
 http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/map\/search\?adventuresTake tag=Geocaching map, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
 http-response ^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/profileview tag=Geocaching unlock, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
-http-response ^https:\/\/api\.groundspeak\.com\/adventuresmobile\/v\d\/public\/adventures\/[a-zA-Z0-9-]+ tag=Geocaching adventures, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
+http-response ^https:\/\/api\.groundspeak\.com\/adventuresmobile\/v\d\/public\/adventures\/[a-zA-Z0-9-]+ tag=Adventure Lab, script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js,requires-body=1
 
 -------------- Quantumult X 配置 --------------
 
@@ -76,7 +75,7 @@ http:
       type: response
       require-body: true
     - match: ^https:\/\/api\.groundspeak\.com\/adventuresmobile\/v\d\/public\/adventures\/[a-zA-Z0-9-]+
-      name: Geocaching adventures
+      name: Adventure Lab
       type: response
       require-body: true
 
@@ -206,10 +205,14 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
       });
       $.log("✅ 坐标转换完成");
     }
-  } else if (/adventures\/[a-zA-Z0-9-]+/.test($request.url)) {
-    // 翻译 adventures 详情
+  } else if (/adventures\/[a-zA-Z0-9-]+$/.test($request.url)) {
+    // 翻译 Adventure Lab 详情
     if (adventures_translate == 'false') throw new Error('⚠️ 未启用 Adventure Lab 翻译功能');
     await translate_adventures();
+  } else if (/adventures\/[a-zA-Z0-9-]+\/reviews/.test($request.url)) {
+    // 翻译 Adventure Lab reviews
+    if (adventures_translate == 'false') throw new Error('⚠️ 未启用 Adventure Lab 翻译功能');
+    await translate_logs();
   } else {
     var openUrl = 'https://www.geocaching.com/geocache/' + /geocaches\/(\w{7})/.exec($request.url)?.[1];
     $.msg(`点击跳转到浏览器打开`, ``, openUrl, { $open: openUrl });
@@ -231,23 +234,37 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
 
 // 翻译 logs
 async function translate_logs() {
-  const logs = body.data;
-  $.log(`\n🌏 翻译 logs (共 ${logs.length} 条)`);
-  const combinedText = logs.map(item => item.text).join("\n\n=====\n\n"); // 用分隔符拼接原始logs
   try {
+    const isItemsMode = !!body?.items;
+    const logs = body?.data || body?.items;
+
+    const textField = isItemsMode ? 'reviewText' : 'text';
+    $.log(`\n🌏 翻译 logs (共 ${logs.length} 条)`);
+
+    // 批量翻译
+    const combinedText = logs.map(item => item[textField]).join("\n\n=====\n\n");
     const translatedCombined = await translateApi(combinedText);
-    const translatedArr = translatedCombined.split(/=====/g)  // 分割译文
-      .map(s => s.trim())
-      .filter(s => s);
-    if (translatedArr.length === logs.length) {  // 判断数量是否一致
-      $.log(`✅ 译文数组解析成功`);
-      translatedArr.forEach((t, i) => {
-        if (t !== logs[i].text) {
-          body.data[i].text = `${t}\n--------------------------------------------------\n${logs[i].text}`;
-        }
-      });
+
+    // 分割译文
+    const translatedArr = translatedCombined.split(/\n*=====\n*/).filter(Boolean);
+
+    // 译文数量不匹配时直接返回
+    if (translatedArr.length !== logs.length) {
+      $.log(`⚠️ 译文数量不匹配: [${logs.length}/${translatedArr.length}]`);
       return;
     }
+
+    $.log(`✅ 译文解析成功`);
+
+    // 批量更新
+    const target = isItemsMode ? body.items : body.data;
+    translatedArr.forEach((t, i) => {
+      const original = logs[i][textField];
+      if (t !== original) {
+        target[i][textField] = `${t}\n--------------------------------------------------\n${original}`;
+      }
+    });
+
   } catch (e) {
     $.log(`❌ 翻译异常: ${e}`);
   }
