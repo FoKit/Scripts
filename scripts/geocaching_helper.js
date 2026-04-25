@@ -17,6 +17,7 @@
  *          2026-04-12 支持从 web 页面获取 cache 信息
  *          2026-04-13 新增翻译保持功能（Boxjs 配置）
  *          2026-04-21 增加 Adventure Lab 翻译功能
+ *          2026-04-26 增加 Adventure Lab 坐标转换
 /*
 --------------- BoxJS & 重写模块 --------------
 
@@ -92,7 +93,6 @@ const apiKey = $.getdata('BaiDu_API_KEY') || '';  // 百度翻译 API Key
 const translateFrom = $.getdata('BAIDU_TRANSLATE_FROM_KEY') || 'en';  // 原始语言
 const translateTo = $.getdata('BAIDU_TRANSLATE_TO_KEY') || 'zh';  // 目标语言
 const geocaching_translate = $.getdata('geocaching_translate') || 'false';  // Geocaching 翻译
-const adventures_translate = $.getdata('adventures_translate') || 'true';  // Adventure Lab 翻译
 const geocaching_gps_fix = $.getdata('geocaching_gps_fix') || 'true';  // 坐标转换
 let body = JSON.parse($response.body);
 var GPS = gps_convert();
@@ -205,13 +205,33 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
       });
       $.log("✅ 坐标转换完成");
     }
+  } else if (/adventures\/search$/.test($request.url)) {
+    let gps_convert_num = 0;
+    // Adventure Lab 坐标转换
+    if (geocaching_gps_fix == 'false') throw new Error('⚠️ 未启用转换坐标功能');
+    $.log("🔁 开始转换坐标");
+    // 遍历 adventures 转换坐标
+    body.items.forEach(item => {
+      // 转换 location
+      item.location = convertCoordinates(item.location);
+      gps_convert_num += 1;  // 坐标转换数量 +1
+    });
+    $.log(`✅ 坐标转换完成, 修正定位 ${gps_convert_num} 个`);
   } else if (/adventures\/[a-zA-Z0-9-]+$/.test($request.url)) {
     // 翻译 Adventure Lab 详情
-    if (adventures_translate == 'false') throw new Error('⚠️ 未启用 Adventure Lab 翻译功能');
     await translate_adventures();
+    if (geocaching_gps_fix == 'false') throw new Error('⚠️ 未启用转换坐标功能');
+    // 转换 location
+    body.location = convertCoordinates(body.location);
+    // 转换 location for each stage
+    body.stageSummaries.forEach(item => {
+      if (item.location) {
+        item.location = convertCoordinates(item.location);
+      }
+    });
+    $.log("✅ 坐标转换完成");
   } else if (/adventures\/[a-zA-Z0-9-]+\/reviews/.test($request.url)) {
     // 翻译 Adventure Lab reviews
-    if (adventures_translate == 'false') throw new Error('⚠️ 未启用 Adventure Lab 翻译功能');
     await translate_logs();
   } else {
     var openUrl = 'https://www.geocaching.com/geocache/' + /geocaches\/(\w{7})/.exec($request.url)?.[1];
@@ -235,6 +255,7 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
 // 翻译 logs
 async function translate_logs() {
   try {
+    if (geocaching_translate === 'false' || !appid || !apiKey) throw new Error('⚠️ 未配置翻译功能, 跳过翻译');
     const isItemsMode = !!body?.items;
     const logs = body?.data || body?.items;
 
@@ -273,6 +294,7 @@ async function translate_logs() {
 // 翻译 cache
 async function translate_cache() {
   try {
+    if (geocaching_translate === 'false' || !appid || !apiKey) throw new Error('⚠️ 未配置翻译功能, 跳过翻译');
     $.log("🌏 翻译 cache");
     let { name, hints, longDescription, difficulty, terrain, referenceCode } = body;
     const skipLongDesc = longDescription.length > 2000; // 超过 2000 字符不翻译
@@ -313,48 +335,42 @@ async function translate_cache() {
 // 翻译 adventures
 async function translate_adventures() {
   try {
+    if (geocaching_translate === 'false' || !appid || !apiKey) throw new Error('⚠️ 未配置翻译功能, 跳过翻译');
     $.log("🌏 翻译 adventures");
     let { title, description, stageSummaries } = body;
-    // 拼接 adventures 的 title 和 description
-    const combinedText = [title, description].join("\n\n=====\n\n");
-    // 调用翻译接口
-    const translatedCombined = await translateApi(combinedText);
-    // 拆分 3 段译文
-    const translatedArr = translatedCombined.split(/=====/g)
-      .map(s => s.trim())
-      .filter(s => s);
-    // 解析并赋值
-    if (translatedArr.length >= 2) {
-      let _title = translatedArr[0];
-      let _description = translatedArr[1];
-      if (_title !== title) body.title = _title + ` · ` + title;
-      if (_description !== description) body.description = _description + `\n--------------------------\n` + description;
-      $.log("✅ adventures 翻译完成");
-    }
-    // 翻译 stageSummaries
-    for (let stage of stageSummaries) {
-      const stageCombinedText = [stage.title, stage.description, stage.question, ...(stage.multiChoiceOptions || []).map(opt => opt.text)].join("\n\n=====\n\n");
-      const translatedStageCombined = await translateApi(stageCombinedText);
-      const translatedStageArr = translatedStageCombined.split(/=====/g)
-        .map(s => s.trim())
-        .filter(s => s);
-      if (translatedStageArr.length >= 3) {
-        let idx = 0;
-        let _title = translatedStageArr[idx++];
-        let _description = translatedStageArr[idx++];
-        let _question = translatedStageArr[idx++];
-        if (_title !== stage.title) stage.title = _title + ` · ` + stage.title;
-        if (_description !== stage.description) stage.description = _description + `\n--------------------------\n` + stage.description;
-        if (_question !== stage.question) stage.question = _question + `\n--------------------------\n` + stage.question;
-        if (stage.multiChoiceOptions && stage.multiChoiceOptions.length > 0) {
-          stage.multiChoiceOptions.forEach((opt, i) => {
-            const _opt_text = translatedStageArr[idx++];
-            if (_opt_text && _opt_text !== opt.text) {
-              stage.multiChoiceOptions[i].text = _opt_text + `\n--------------------------\n` + opt.text;
-            }
-          });
+
+    // 翻译 title 和 description
+    const [newTitle, newDesc] = (await translateApi([title, description].join("\n\n=====\n\n"))).split(/=====/g).map(s => s.trim()).filter(Boolean);
+    if (newTitle && newTitle !== title) body.title = newTitle + ` · ` + title;
+    if (newDesc && newDesc !== description) body.description = newDesc + `\n--------------------------\n` + description;
+    $.log("✅ adventures 翻译完成");
+
+    // 批量翻译 stages
+    if (stageSummaries?.length) {
+      // 构造翻译列表
+      const items = stageSummaries.flatMap((stage, idx) => [
+        { text: stage.title, path: [idx, 'title'] },
+        { text: stage.description, path: [idx, 'description'] },
+        { text: stage.question, path: [idx, 'question'] },
+        ...(stage.multiChoiceOptions?.map((opt, optIdx) => ({ text: opt.text, path: [idx, 'multiChoice', optIdx] })) || [])
+      ]);
+
+      // 批量翻译
+      const translated = (await translateApi(items.map(i => i.text).join("\n\n=====\n\n"))).split(/=====/g).map(s => s.trim()).filter(Boolean);
+
+      // 解析并赋值
+      translated.forEach((t, i) => {
+        if (t && t !== items[i].text) {
+          const [idx, field, optIdx] = items[i].path;
+          if (field === 'multiChoice') {
+            stageSummaries[idx].multiChoiceOptions[optIdx].text = t + `\n--------------------------\n` + items[i].text;
+          } else {
+            stageSummaries[idx][field] = t + `\n--------------------------\n` + items[i].text;
+          }
         }
-      }
+      });
+
+      $.log(`✅ stages 翻译完成`);
     }
   } catch (e) {
     $.log(`❌ adventures 翻译异常: ${e}`);
@@ -364,10 +380,6 @@ async function translate_adventures() {
 // 百度大模型文本翻译 API
 async function translateApi(query) {
   try {
-    if (geocaching_translate === 'false' || !appid || !apiKey) {
-      $.notifyMsg.push(`❌ 翻译插件未启用或未配置 AppID/API Key`);
-      return null;
-    }
     let tags = ['FTF', 'TFTC', 'DNF', 'FP', 'Nano', 'GZ', 'CO', 'EO', 'CITO', 'log', 'logs'];
     const geo_tags = $.getdata('geo_tags') || '';  // 从缓存中读取需要打自定义标签的内容
     tags.push(...geo_tags.split(",")

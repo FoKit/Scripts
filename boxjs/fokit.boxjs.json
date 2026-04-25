@@ -752,7 +752,6 @@
         "geocaching_translate",
         "geocaching_gps_fix",
         "Geo_membershipTypeId",
-        "adventures_translate",
         "BaiDu_APP_ID",
         "BaiDu_API_KEY",
         "BAIDU_TRANSLATE_FROM_KEY",
@@ -905,13 +904,6 @@
           "autoGrow": true,
           "rows": 1,
           "desc": ""
-        },
-        {
-          "id": "adventures_translate",
-          "name": "Adventure Lab 翻译",
-          "val": false,
-          "type": "boolean",
-          "desc": "开启后自动翻译 Adventure Lab 内容"
         }
       ]
     },
