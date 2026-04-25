@@ -762,10 +762,10 @@
       "settings": [
         {
           "id": "geocaching_translate",
-          "name": "Geocaching 翻译",
+          "name": "翻译功能",
           "val": false,
           "type": "boolean",
-          "desc": "开启后自动翻译 Geocaching log / describe"
+          "desc": "开启后自动翻译 Geocaching & Adventure"
         },
         {
           "id": "geocaching_gps_fix",
