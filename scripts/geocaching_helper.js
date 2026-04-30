@@ -153,9 +153,9 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
   } else if (/geocaches\/GC[A-Z0-9]{5}\/geocachelogs\?deleteDrafts/.test($request.url)) {
     // 日志发表结果通知
     if (body?.statusCode == 403) {
-      $.msg(`Code: [${$.gc_code}]`, ``, `❌ Log 提交失败，请清理缓存`);
+      $.msg(`❌ Code: ${$.gc_code}`, ``, `Log 提交失败`);
     } else {
-      $.msg(`Code: [${$.gc_code}]`, ``, `✅ Log 提交成功`);
+      $.msg(`✅ Code: ${$.gc_code}`, ``, `Log 提交成功`);
     }
   } else if (/\/mobile\/v\d\/profileview/.test($request.url)) {
     // 解锁 Premium
@@ -215,7 +215,8 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     // 翻译 cache
     await translate_cache();
 
-    // body.name = "🚧" + body.name;
+    // 无权限 log 的 cache 添加一个 🚧 前缀
+    body.name = "🚧" + body.name;
 
   } else if (/geocaches\/GC[A-Z0-9]{5}\/(userwaypoints|additionalwaypoints)/.test($request.url)) {
     if (geocaching_gps_fix == 'false') throw new Error('⚠️ 未启用转换坐标功能');
