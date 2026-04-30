@@ -92,10 +92,11 @@ const appid = $.getdata('BaiDu_APP_ID') || '';  // 百度翻译 appid
 const apiKey = $.getdata('BaiDu_API_KEY') || '';  // 百度翻译 API Key
 const translateFrom = $.getdata('BAIDU_TRANSLATE_FROM_KEY') || 'en';  // 原始语言
 const translateTo = $.getdata('BAIDU_TRANSLATE_TO_KEY') || 'zh';  // 目标语言
-const geocaching_translate = $.getdata('geocaching_translate') || 'false';  // Geocaching 翻译
-const geocaching_gps_fix = $.getdata('geocaching_gps_fix') || 'true';  // 坐标转换
+const geocaching_translate = $.getdata('geocaching_translate') || 'false';  // 翻译功能开关
+const geocaching_gps_fix = $.getdata('geocaching_gps_fix') || 'true';  // 坐标转换开关
+const GPS = gps_convert();
 let body = JSON.parse($response.body);
-var GPS = gps_convert();
+$.gc_code = /geocaches\/(\w{7})/.exec($request.url)?.[1] || '';
 $.notifyMsg = [];  // 为通知准备的空数组
 $.cache = $.getjson('geocaching_temp', {}); // 读取持久化数据 (object格式)
 $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false';
@@ -118,6 +119,14 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
       item.postedCoordinates = convertCoordinates(item.postedCoordinates);
       gps_convert_num += 1;  // 坐标转换数量 +1
 
+      // 如果缓存数量超过 80 则清理掉最早的 30 条，避免缓存过大导致性能问题
+      if (Object.keys($.cache).length > 80) {
+        const keys = Object.keys($.cache);
+        for (let i = 0; i < 30; i++) {
+          delete $.cache[keys[i]];
+        }
+      };
+
       // 判断 difficulty 和 terrain 等级以写入缓存
       if (item?.difficulty >= 2.0 || item?.terrain >= 2.5) {
         $.cache[item.referenceCode] = item;
@@ -125,15 +134,28 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     });
     $.log(`✅ 坐标转换完成, 修正定位 ${gps_convert_num} 个`);
     $.setjson($.cache, 'geocaching_temp'); // 写入新的缓存信息
-  } else if (/geocaches\/GC[A-Z0-9]{5}\/geocachelogs/.test($request.url)) {
+  } else if (/geocaches\/GC[A-Z0-9]{5}\/geocachelogs\?skip/.test($request.url)) {
     // 翻译 logs
-    if (body?.statusCode != 403) {
-      await translate_logs();
-      // 读取缓存并发送通知
-      const { name, hints, difficulty, terrain } = $.cache[body.data[0].geocache.referenceCode];
-      $.msg(`${name} (${body.data[0].geocache.referenceCode})`, `难度: D${difficulty}  |  地形: T${terrain}`, `提示: ${hints}`);
+    await translate_logs();
+    // 判断是否第一次请求日志列表（skip=0），如果是则发送通知
+    if (/skip=0&take=20/.test($request.url)) {
+      const cacheSize = {
+        6: 'Other',
+        2: '1-Micro',
+        8: '2-Small',
+        3: '3-Regular',
+        4: '4-Large',
+      }
+      let openUrl = `https://www.geocaching.com/live/geocache/${$.gc_code}/log`;
+      const { name, hints, difficulty, terrain, containerType } = $.cache[$.gc_code];
+      $.msg(`${name} (${$.gc_code})`, `难度: D${difficulty}  |  地形: T${terrain}  |  容器: ${cacheSize[containerType]}`, `提示: ${hints}`, { $open: openUrl });
+    }
+  } else if (/geocaches\/GC[A-Z0-9]{5}\/geocachelogs\?deleteDrafts/.test($request.url)) {
+    // 日志发表结果通知
+    if (body?.statusCode == 403) {
+      $.msg(`Code: [${$.gc_code}]`, ``, `❌ Log 提交失败，请清理缓存`);
     } else {
-      $.log($.toStr(body));
+      $.msg(`Code: [${$.gc_code}]`, ``, `✅ Log 提交成功`);
     }
   } else if (/\/mobile\/v\d\/profileview/.test($request.url)) {
     // 解锁 Premium
@@ -157,10 +179,9 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
   } else if (/geocaches\/GC[A-Z0-9]{5}$/.test($request.url) && $response.statusCode == "403") {
     // 构造 cache body
     $.log(`🔧 开始构造 body`);
-    const gc_code = /geocaches\/(\w{7})/.exec($request.url)?.[1];
-    const { hints, longDescription } = await get_cache_info('https://www.geocaching.com/geocache/' + gc_code);  // 从 web 页面获取 hints & longDescription
-    const { referenceCode, name, difficulty, terrain, ianaTimezoneId, favoritePoints, trackableCount, placedDate, owner, dateLastVisited, typeId, containerTypeId, state, postedCoordinates } = $.cache[gc_code];
-    debug($.cache[gc_code], '读取缓存')
+    const { hints, longDescription } = await get_cache_info('https://www.geocaching.com/geocache/' + $.gc_code);  // 从 web 页面获取 hints & longDescription
+    const { referenceCode, name, difficulty, terrain, ianaTimezoneId, favoritePoints, trackableCount, placedDate, owner, dateLastVisited, typeId, containerTypeId, state, postedCoordinates } = $.cache[$.gc_code];
+    // debug($.cache[$.gc_code], '读取缓存')
     body = {
       referenceCode,
       name,
@@ -193,6 +214,8 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
 
     // 翻译 cache
     await translate_cache();
+
+    // body.name = "🚧" + body.name;
 
   } else if (/geocaches\/GC[A-Z0-9]{5}\/(userwaypoints|additionalwaypoints)/.test($request.url)) {
     if (geocaching_gps_fix == 'false') throw new Error('⚠️ 未启用转换坐标功能');
@@ -234,7 +257,7 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     // 翻译 Adventure Lab reviews
     await translate_logs();
   } else {
-    var openUrl = 'https://www.geocaching.com/geocache/' + /geocaches\/(\w{7})/.exec($request.url)?.[1];
+    let openUrl = 'https://www.geocaching.com/geocache/' + $.gc_code;
     $.msg(`点击跳转到浏览器打开`, ``, openUrl, { $open: openUrl });
   }
 })()
@@ -296,7 +319,7 @@ async function translate_cache() {
   try {
     if (geocaching_translate === 'false' || !appid || !apiKey) throw new Error('⚠️ 未配置翻译功能, 跳过翻译');
     $.log("🌏 翻译 cache");
-    let { name, hints, longDescription, difficulty, terrain, referenceCode } = body;
+    let { name, hints, longDescription, difficulty, terrain, containerType } = body;
     const skipLongDesc = longDescription.length > 2000; // 超过 2000 字符不翻译
     // 拼接所有要翻译的内容
     const combinedText = [name, hints, skipLongDesc ? "" : longDescription].join("\n\n=====\n\n");
@@ -311,7 +334,12 @@ async function translate_cache() {
       let _name = translatedArr[0];
       let _hints = translatedArr[1];
       let _longDescription = translatedArr[2] || '';
-      if (_name !== name) body.name = _name + ` · ` + name;
+      // 如果缓存中已经有 name 则不修改 name 字段，避免出现嵌套翻译的情况
+      if ($.cache[$.gc_code]?.name) {
+        body.name = $.cache[$.gc_code].name;
+      } else {
+        body.name = _name + ` · ` + name;
+      }
       if (_hints !== hints) body.hints = _hints + `\n--------------------------\n` + hints;
       if (!skipLongDesc && _longDescription !== longDescription) {
         body.longDescription = _longDescription + `\n--------------------------------------------------\r\n ` + longDescription;
@@ -321,11 +349,12 @@ async function translate_cache() {
       $.log("✅ cache 翻译完成");
     }
     // 把 cache 的信息缓存下来，用作通知调用
-    if (!$.cache[referenceCode]) $.cache[referenceCode] = {};
-    $.cache[referenceCode].name = body.name;
-    $.cache[referenceCode].hints = body.hints.split("\n")[0] || hints;
-    $.cache[referenceCode].difficulty = difficulty;
-    $.cache[referenceCode].terrain = terrain;
+    if (!$.cache[$.gc_code]) $.cache[$.gc_code] = {};
+    $.cache[$.gc_code].name = body.name;
+    $.cache[$.gc_code].hints = body.hints.split("\n")[0] || hints;
+    $.cache[$.gc_code].difficulty = difficulty;
+    $.cache[$.gc_code].terrain = terrain;
+    $.cache[$.gc_code].containerType = containerType?.id || '';
     $.setjson($.cache, 'geocaching_temp');
   } catch (e) {
     $.log(`❌ cache 翻译异常: ${e}`);
