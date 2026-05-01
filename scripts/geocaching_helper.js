@@ -18,6 +18,7 @@
  *          2026-04-13 新增翻译保持功能（Boxjs 配置）
  *          2026-04-21 增加 Adventure Lab 翻译功能
  *          2026-04-26 增加 Adventure Lab 坐标转换
+ *          2026-05-01 优化翻译逻辑，增加翻译失败回退机制
 /*
 --------------- BoxJS & 重写模块 --------------
 
@@ -153,9 +154,9 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
   } else if (/geocaches\/GC[A-Z0-9]{5}\/geocachelogs\?deleteDrafts/.test($request.url)) {
     // 日志发表结果通知
     if (body?.statusCode == 403) {
-      $.msg(`❌ Code: ${$.gc_code}`, ``, `Log 提交失败`);
+      $.msg(`Code: ${$.gc_code}`, ``, `Log 提交失败 ❌`);
     } else {
-      $.msg(`✅ Code: ${$.gc_code}`, ``, `Log 提交成功`);
+      $.msg(`Code: ${$.gc_code}`, ``, `Log 提交成功 ✅`);
     }
   } else if (/\/mobile\/v\d\/profileview/.test($request.url)) {
     // 解锁 Premium
@@ -215,8 +216,9 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     // 翻译 cache
     await translate_cache();
 
-    // 无权限 log 的 cache 添加一个 🚧 前缀
-    body.name = "🚧" + body.name;
+    $.log(`🧰 单独翻译 name 字段`);
+    // 单独处理 name 字段，避免翻译导致的嵌套问题并添加🚧前缀
+    body.name = `🚧 ${(t => t?.trim() ? `${t} · ` : ``)(await translateApi(body.name))}${body.name}`;
 
   } else if (/geocaches\/GC[A-Z0-9]{5}\/(userwaypoints|additionalwaypoints)/.test($request.url)) {
     if (geocaching_gps_fix == 'false') throw new Error('⚠️ 未启用转换坐标功能');
@@ -284,34 +286,36 @@ async function translate_logs() {
     const logs = body?.data || body?.items;
 
     const textField = isItemsMode ? 'reviewText' : 'text';
-    $.log(`\n🌏 翻译 logs (共 ${logs.length} 条)`);
+    $.log(`\n🌏 开始翻译 logs (共 ${logs.length} 条)`);
 
-    // 批量翻译
-    const combinedText = logs.map(item => item[textField]).join("\n\n=====\n\n");
+    // 批量拼接原文
+    const combinedText = logs.map(item => item[textField] || '').join("\n\n=====\n\n");
     const translatedCombined = await translateApi(combinedText);
 
     // 分割译文
-    const translatedArr = translatedCombined.split(/\n*=====\n*/).filter(Boolean);
+    let translatedArr = translatedCombined.split(/\n*=====\n*/);
 
-    // 译文数量不匹配时直接返回
-    if (translatedArr.length !== logs.length) {
-      $.log(`⚠️ 译文数量不匹配: [${logs.length}/${translatedArr.length}]`);
-      return;
-    }
+    // 解析译文，处理翻译失败时使用原文回退的逻辑
+    translatedArr = translatedArr.map((text, index) => {
+      if (!text || text.trim() === '') {
+        return logs[index]?.[textField] || '';
+      }
+      return text.trim();
+    });
 
-    $.log(`✅ 译文解析成功`);
+    $.log(`✅ 译文解析完成`);
 
-    // 批量更新
+    // 批量回填
     const target = isItemsMode ? body.items : body.data;
     translatedArr.forEach((t, i) => {
-      const original = logs[i][textField];
+      const original = logs[i][textField] || '';
       if (t !== original) {
         target[i][textField] = `${t}\n--------------------------------------------------\n${original}`;
       }
     });
 
   } catch (e) {
-    $.log(`❌ 翻译异常: ${e}`);
+    $.log(`❌ 翻译异常: ${e.message || e}`);
   }
 }
 
