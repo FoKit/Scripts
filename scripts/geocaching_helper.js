@@ -153,7 +153,7 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     const lastCleanTime = $.getdata('geocaching_newCache_lastClean') || 0;
     if (Date.now() - lastCleanTime > 10 * 24 * 60 * 60 * 1000) {
       $.setjson([], 'geocaching_newCache');
-      $.setdata(Date.now(), 'geocaching_newCache_lastClean');
+      $.setdata($.toStr(Date.now()), 'geocaching_newCache_lastClean');
       $.log(`🧹 已清理 newCache 缓存`)
     };
   } else if (/geocaches\/GC[A-Z0-9]{5}\/geocachelogs\?skip/.test($request.url)) {
@@ -294,7 +294,7 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
       $.msg($.name, '', $.notifyMsg.join('\n'));
     }
     // 返回修改后的 body
-    debug(body, "body");
+    // debug(body, "body");
     $.done({ status: 'HTTP/1.1 200', body: JSON.stringify(body) });
   })
 
