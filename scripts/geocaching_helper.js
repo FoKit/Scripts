@@ -238,8 +238,8 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     await translate_cache();
 
     $.log(`🧰 单独翻译 name 字段`);
-    // 单独处理 name 字段，避免翻译导致的嵌套问题并添加🚧前缀
-    body.name = `🚧 ${(t => t?.trim() ? `${t} · ` : ``)(await translateApi(body.name))}${body.name}`;
+    // 单独处理 name 字段并添加 🚧 前缀，避免翻译导致的嵌套问题
+    body.name = `🚧 ${(geocaching_translate !== 'false' && appid && apiKey) ? `${(t => t?.trim() ? `${t} · ` : ``)(await translateApi(body.name))}${body.name}` : body.name}`;
 
   } else if (/geocaches\/GC[A-Z0-9]{5}\/(userwaypoints|additionalwaypoints)/.test($request.url)) {
     if (geocaching_gps_fix == 'false') throw new Error('⚠️ 未启用转换坐标功能');
@@ -271,11 +271,11 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     // 转换 location
     body.location = convertCoordinates(body.location);
     // 转换 location for each stage
-    body.stageSummaries.forEach(item => {
-      if (item.location) {
-        item.location = convertCoordinates(item.location);
-      }
-    });
+    // body.stageSummaries.forEach(item => {
+    //   if (item.location) {
+    //     item.location = convertCoordinates(item.location);
+    //   }
+    // });
     $.log("✅ 坐标转换完成");
   } else if (/adventures\/[a-zA-Z0-9-]+\/reviews/.test($request.url)) {
     // 翻译 Adventure Lab reviews
