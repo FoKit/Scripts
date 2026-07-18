@@ -72,13 +72,21 @@ async function main() {
   for (let i = 0; i < $.userList.length; i++) {
     // 初始化
     $.user_id = $.userList[i];
-    $.log(`账号 ${i+1} 开始执行 \n`); 
+    $.log(`账号 ${i + 1} 开始执行 \n`);
 
     // 查询信息
     await userCenter();
 
+    if (!$.user_id) {
+      $.log(`账号 ${i + 1} userId 为空，跳过签到任务\n`);
+      continue;
+    }
+
+    // 领取签到任务
+    await userCheckList();
+
     // 每日签到
-    if ($.user_id) await sign();
+    await sign();
   }
 }
 
@@ -120,6 +128,21 @@ async function userCenter() {
     $.log($.toStr(result));
   }
   $.messages.push(msg) && $.log(msg);
+}
+
+// 领取签到任务
+async function userCheckList() {
+  // 构造请求
+  let opt = `https://member.mowgz.com/json/getData?appName=IAppUser&funcName=userCheckList&data=%7B%22user_id%22%3A%22${$.user_id}%22%2C%22com_id%22%3A%2210018%22%7D`;
+
+  // 发起请求
+  const result = await Request(opt);
+  if (result?.list_data?.length > 0) {
+    $.log(`✅签到任务领取成功\n`);
+  } else {
+    $.log(`❌签到任务领取失败\n`);
+    $.user_id = null;
+  }
 }
 
 // 获取小程序数据
