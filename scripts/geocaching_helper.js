@@ -407,7 +407,7 @@ async function translate_adventures() {
         { text: stage.title, path: [idx, 'title'] },
         { text: stage.description, path: [idx, 'description'] },
         { text: stage.question, path: [idx, 'question'] },
-        ...(stage.multiChoiceOptions?.map((opt, optIdx) => ({ text: opt.text, path: [idx, 'multiChoice', optIdx] })) || [])
+        // ...(stage.multiChoiceOptions?.map((opt, optIdx) => ({ text: opt.text, path: [idx, 'multiChoice', optIdx] })) || [])  // 选择题选项保留原文，避免选项字符变化造成校验失败
       ]);
 
       // 批量翻译
@@ -416,12 +416,9 @@ async function translate_adventures() {
       // 解析并赋值
       translated.forEach((t, i) => {
         if (t && t !== items[i].text) {
-          const [idx, field, optIdx] = items[i].path;
-          if (field === 'multiChoice') {
-            stageSummaries[idx].multiChoiceOptions[optIdx].text = t + `\n--------------------------\n` + items[i].text;
-          } else {
-            stageSummaries[idx][field] = t + `\n--------------------------\n` + items[i].text;
-          }
+          const [idx, field] = items[i].path;
+          // 更新 title / description / question
+          stageSummaries[idx][field] = t + `\n--------------------------\n` + items[i].text;
         }
       });
 
