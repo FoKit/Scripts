@@ -20,6 +20,7 @@
  *          2026-04-26 增加 Adventure Lab 坐标转换
  *          2026-05-01 优化翻译逻辑，增加翻译失败回退机制
  *          2026-05-02 增加新发布 cache 上线提醒功能
+ *          2026-10-19 增加 Shadowrocket 配置，修复 hints 丢失问题
 /*
 --------------- BoxJS & 重写模块 --------------
 
@@ -36,6 +37,19 @@ Geocaching cache = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/
 Geocaching map = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/map\/search\?adventuresTake,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 Geocaching unlock = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/profileview,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 Adventure Lab = type=http-response,pattern=^https:\/\/api\.groundspeak\.com\/adventuresmobile\/v\d\/public\/adventures\/[a-zA-Z0-9-]+,requires-body=1,max-size=0,script-path=https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
+
+-------------- Shadowrocket 配置 --------------
+
+[MITM]
+hostname = %APPEND% api.groundspeak.com
+
+[Script]
+# Geocaching Helper
+^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/geocaches\/GC[A-Z0-9]{5}(?:\/(geocachelogs|userwaypoints|additionalwaypoints))?(?:\?.*)?$ script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
+^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/map\/search\?adventuresTake script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
+^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/profileview script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
+^https:\/\/api\.groundspeak\.com\/adventuresmobile\/v\d\/public\/adventures\/[a-zA-Z0-9-]+ script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
+
 ------------------ Loon 配置 ------------------
 
 [MITM]
@@ -56,7 +70,6 @@ hostname = api.groundspeak.com
 ^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/geocaches\/GC[A-Z0-9]{5}(?:\/(geocachelogs|userwaypoints|additionalwaypoints))?(?:\?.*)?$ url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 ^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/map\/search\?adventuresTake url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 ^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/profileview url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
-^https:\/\/api\.groundspeak\.com\/mobile\/v\d\/map\/search\?adventuresTake url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 ^https:\/\/api\.groundspeak\.com\/adventuresmobile\/v\d\/public\/adventures\/[a-zA-Z0-9-]+ url script-response-body https://raw.githubusercontent.com/FoKit/Scripts/main/scripts/geocaching_helper.js
 
 ------------------ Stash 配置 -----------------
@@ -358,7 +371,7 @@ async function translate_cache() {
     // 解析并赋值
     const [_name, _hints, _longDescription] = translatedArr.length >= 3
       ? translatedArr
-      : [translatedArr[0], '', translatedArr[1] || ''];
+      : [translatedArr[0], translatedArr[1], ''];
 
     // 如果缓存中已经有 name 则不修改 name 字段，避免出现嵌套翻译的情况
     if ($.cache[$.gc_code]?.name) {
