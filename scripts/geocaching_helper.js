@@ -145,8 +145,8 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     });
     $.log(`✅ 坐标转换完成, 修正定位 ${gps_convert_num} 个`);
     $.setjson($.cache, 'geocaching_temp'); // 写入新的缓存信息
-    // 如果缓存数量超过 300 则清理掉最早的 50 条，避免缓存过大导致性能问题
-    if (Object.keys($.cache).length > 300) {
+    // 如果缓存数量超过 150 则清理掉最早的 50 条，避免缓存过大导致性能问题
+    if (Object.keys($.cache).length > 150) {
       const keys = Object.keys($.cache);
       for (let i = 0; i < 50; i++) {
         delete $.cache[keys[i]];
@@ -285,8 +285,10 @@ $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'fal
     // 翻译 Adventure Lab reviews
     await translate_logs();
   } else {
-    let openUrl = 'https://www.geocaching.com/geocache/' + $.gc_code;
-    $.msg(`点击跳转到浏览器打开`, ``, openUrl, { $open: openUrl });
+    // let openUrl = 'https://www.geocaching.com/geocache/' + $.gc_code;
+    // $.msg(`点击跳转到浏览器打开`, ``, openUrl, { $open: openUrl });
+    $.log(`⚠️ 未匹配重写请求 URL: ${$request.url}`);
+    $.done();
   }
 })()
   .catch((e) => {
